@@ -185,7 +185,7 @@ async def on_message(message):
                     await channel.send(f"手動チェックに切替: {message.author.id}")
                     return
                 dt_now = datetime.now()
-                name = "tmp\\" + dt_now.strftime("%H.%M.%S.png")
+                name = "/tmp/" + dt_now.strftime("%H.%M.%S.png")
                 await a.save(name)
                 file_names.append(name)
                 await sleep(1)
