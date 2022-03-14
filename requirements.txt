@@ -1,1 +1,6 @@
-discord.py[voice]>=1.7.3
+git+https://github.com/Pycord-Development/pycord
+pynacl
+asyncio
+Pillow
+numpy
+pyocl
