@@ -206,7 +206,7 @@ async def on_message(message):
             upper = np.array([123, 102, 242])
             # 色検出しきい値範囲内の色を抽出するマスクを作成
             frame_mask = cv2.inRange(hsv, lower, upper)
-            dst = cv2.bitwise_and(
+            cv2.bitwise_and(
                 imgs[f"file{i}"], imgs[f"file{i}"], mask=frame_mask)  # 論理演算で色検出
             contours, hierarchy = cv2.findContours(
                 frame_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)  # 輪郭抽出
@@ -214,11 +214,11 @@ async def on_message(message):
             for j in range(len(areas)):
                 result = cv2.moments(contours[j])
                 try:
-                    x = int(result["m10"]/result["m00"])
+                    x = int(result["m10"] / result["m00"])
                 except ZeroDivisionError:
                     continue
                 try:
-                    y = int(result["m01"]/result["m00"])
+                    y = int(result["m01"] / result["m00"])
                 except ZeroDivisionError:
                     continue
                 xy_list.append([x, y])
@@ -226,7 +226,7 @@ async def on_message(message):
         separator = xy_list.index("|")
         xy_0 = xy_list[:separator]
         try:
-            xy_1 = xy_list[separator+1:]
+            xy_1 = xy_list[separator + 1:]
         except IndexError:
             xy_1 = []
         else:
@@ -243,11 +243,11 @@ async def on_message(message):
         if "troubleshooting" in all_text:
             await channel.send(f"手動チェックに切替: {message.author.id}")
             return
+        word_list = ["自動検出", "感度", "ノイズ抑制",
+                        "エコー除去", "ノイズ低減", "音量調節の自動化", "高度音声検出"]
         if "ノイズ抑制" not in all_text:  # ノイズ抑制は認識精度低 「マイクからのバックグラウンドノイズ」で代用
             error_msg.append("・例外検知（問題なし）: ノイズ抑制検知失敗")
             word_list[2] = "バックグラウンドノイズ"
-        word_list = ["自動検出", "感度", "ノイズ抑制",
-                    "エコー除去", "ノイズ低減", "音量調節の自動化", "高度音声検出"]
         for word in word_list:
             if word not in all_text:
                 error_msg.append(f"・検知失敗: {word}")
