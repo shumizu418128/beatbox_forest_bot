@@ -4,5 +4,5 @@ asyncio
 Pillow
 numpy
 pyocr
-python-opencv
+opencv-python
 scipy
