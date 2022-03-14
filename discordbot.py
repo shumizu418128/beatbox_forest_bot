@@ -243,8 +243,7 @@ async def on_message(message):
         if "troubleshooting" in all_text:
             await channel.send(f"手動チェックに切替: {message.author.id}")
             return
-        word_list = ["自動検出", "感度", "ノイズ抑制",
-                        "エコー除去", "ノイズ低減", "音量調節の自動化", "高度音声検出"]
+        word_list = ["自動検出", "感度", "ノイズ抑制", "エコー除去", "ノイズ低減", "音量調節の自動化", "高度音声検出"]
         if "ノイズ抑制" not in all_text:  # ノイズ抑制は認識精度低 「マイクからのバックグラウンドノイズ」で代用
             error_msg.append("・例外検知（問題なし）: ノイズ抑制検知失敗")
             word_list[2] = "バックグラウンドノイズ"
