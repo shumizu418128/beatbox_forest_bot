@@ -3,6 +3,6 @@ pynacl
 asyncio
 Pillow
 numpy
-pyocl
+pyocr
 python-opencv
 scipy
