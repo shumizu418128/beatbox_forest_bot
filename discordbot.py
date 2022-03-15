@@ -7,6 +7,7 @@ import cv2
 from scipy.spatial import distance
 import pyocr
 import pyocr.builders
+import subprocess
 intents = discord.Intents.all()  # デフォルトのIntentsオブジェクトを生成
 intents.typing = False  # typingを受け取らないように
 client = discord.Client(intents=intents)
@@ -168,11 +169,21 @@ async def on_message(message):
 
     if len(message.attachments) == 2 and message.channel.id == 952946795573571654:  # 画像提出
         # 初期設定
+        g_subprocess_startup_info = None
+        g_creation_flags = 0
+
+        TESSERACT_CMD = '/app/.apt/usr/bin/tesseract'
+        proc = subprocess.Popen([TESSERACT_CMD, "--list-langs"],
+                            startupinfo=g_subprocess_startup_info,
+                            creationflags=g_creation_flags,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT)
+        print(proc)
+
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
             return
-        pyocr.tesseract.TESSERACT_CMD = '/app/.apt/usr/bin/tesseract'
         tools = pyocr.get_available_tools()
         tool = tools[0]
         langs = tool.get_available_languages()
