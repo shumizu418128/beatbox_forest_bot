@@ -243,6 +243,7 @@ async def on_message(message):
                 file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=6))
             all_text += text1 + text2
         if "troubleshooting" in all_text:
+            await channel.send("specific word found: troubleshooting")
             await channel.send(f"手動チェックに切替: {message.author.id}")
             return
         word_list = ["自動検出", "感度", "ノイズ抑制", "エコー除去", "ノイズ低減", "音量調節の自動化", "高度音声検出"]
@@ -255,6 +256,7 @@ async def on_message(message):
                 error_code += 1
         if error_code > 0:
             if error_code == 7:
+                await channel.send("none of word found")
                 await channel.send(f"手動チェックに切替: {message.author.id}")
                 return
             error_msg.append("上記の設定が映るようにしてください。")
