@@ -172,7 +172,8 @@ async def on_message(message):
         g_subprocess_startup_info = None
         g_creation_flags = 0
 
-        TESSERACT_CMD = '/app/.apt/usr/bin/tesseract'
+        TESSERACT_CMD = './.apt/usr/share/tesseract-ocr'
+        TESSDATA_EXTENSION = ".traineddata"
         proc = subprocess.Popen([TESSERACT_CMD, "--list-langs"], startupinfo=g_subprocess_startup_info, creationflags=g_creation_flags, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         print(proc)
         try:
