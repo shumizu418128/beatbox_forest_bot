@@ -174,7 +174,7 @@ async def on_message(message):
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
             return
-        pyocr.tesseract.TESSERACT_CMD = '/app/.apt/usr/share/tesseract-ocr/tessdata'
+        pyocr.tesseract.TESSERACT_CMD = '/app/.apt/usr/share/tesseract-ocr'
         tools = pyocr.get_available_tools()
         tool = tools[0]
         langs = tool.get_available_languages()
