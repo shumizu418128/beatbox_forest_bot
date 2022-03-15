@@ -236,11 +236,11 @@ async def on_message(message):
         await channel.send("coordinate detection: finish")
         # ワード検出
         all_text = ""
+        image_opens = []
         for i in range(2):
-            text1 = tool.image_to_string(Image.open(
-                file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=12))
-            text2 = tool.image_to_string(Image.open(
-                file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=6))
+            image_opens.append(Image.open(file_names[i]))
+            text1 = tool.image_to_string(image_opens[i], lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=12))
+            text2 = tool.image_to_string(image_opens[i], lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=6))
             all_text += text1 + text2
         if "troubleshooting" in all_text:
             await channel.send(f"手動チェックに切替: {message.author.id}")
@@ -264,8 +264,8 @@ async def on_message(message):
         await channel.send("word detection: finish")
         # モバイルボイスオーバーレイ検出
         for i in range(2):
-            text_box1 = tool.image_to_string(Image.open(file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=12))
-            text_box2 = tool.image_to_string(Image.open(file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6))
+            text_box1 = tool.image_to_string(image_opens[i], lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=12))
+            text_box2 = tool.image_to_string(image_opens[i], lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6))
             text_box_list = [text_box1, text_box2]
             for text_box in text_box_list:
                 for texts in text_box:
