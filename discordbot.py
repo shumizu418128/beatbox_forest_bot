@@ -243,6 +243,7 @@ async def on_message(message):
                 file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=6))
             all_text += text1 + text2
         all_text = all_text.replace(' ', '')
+        print(all_text)
         if "troubleshooting" in all_text:
             await channel.send("specific word found: troubleshooting")
             await channel.send(f"手動チェックに切替: {message.author.id}")
