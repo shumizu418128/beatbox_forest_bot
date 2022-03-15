@@ -6,4 +6,4 @@ numpy
 pyocr
 opencv-python--headless
 scipy
-tesseract
+pytesseract
