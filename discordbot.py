@@ -168,8 +168,7 @@ async def on_message(message):
 
     if len(message.attachments) == 2 and message.channel.id == 952946795573571654:  # 画像提出
         # 初期設定
-
-        pyocr.tesseract.TESSERACT_CMD = './.apt/usr/share/tesseract-ocr'
+    #    pyocr.tesseract.TESSERACT_CMD = './.apt/usr/share/tesseract-ocr'
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
