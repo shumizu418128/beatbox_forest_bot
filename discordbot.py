@@ -242,10 +242,11 @@ async def on_message(message):
             text2 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=6))
             all_text += text1 + text2
+            print(all_text)
         all_text = all_text.replace(' ', '')
         print(all_text)
         if "troubleshooting" in all_text:
-            await channel.send("specific word found: troubleshooting")
+            await channel.send("word found: troubleshooting")
             await channel.send(f"手動チェックに切替: {message.author.id}")
             return
         word_list = ["自動検出", "感度", "ノイズ抑制", "エコー除去", "ノイズ低減", "音量調節の自動化", "高度音声検出"]
