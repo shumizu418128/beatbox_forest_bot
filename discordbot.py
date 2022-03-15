@@ -11,8 +11,6 @@ intents = discord.Intents.all()  # デフォルトのIntentsオブジェクト�
 intents.typing = False  # typingを受け取らないように
 client = discord.Client(intents=intents)
 print("ビト森杯bot: 起動完了")
-import os
-print(os.system('which tesseract'))
 
 @client.event
 async def on_member_update(before, after):
@@ -174,7 +172,7 @@ async def on_message(message):
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
             return
-        pyocr.tesseract.TESSERACT_CMD = '/app/.apt/usr/share/tesseract-ocr'
+        pyocr.tesseract.TESSERACT_CMD = '/app/.apt/usr/bin/tesseract'
         tools = pyocr.get_available_tools()
         tool = tools[0]
         langs = tool.get_available_languages()
