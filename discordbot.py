@@ -170,7 +170,6 @@ async def on_message(message):
         # 初期設定
 
         pyocr.tesseract.TESSERACT_CMD = './.apt/usr/share/tesseract-ocr'
-        pyocr.tesseract.TESSDATA_PREFIX = "./.apt/usr/share/tesseract-ocr/4.00/tessdata"
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
