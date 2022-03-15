@@ -11,6 +11,8 @@ intents = discord.Intents.all()  # デフォルトのIntentsオブジェクト�
 intents.typing = False  # typingを受け取らないように
 client = discord.Client(intents=intents)
 print("ビト森杯bot: 起動完了")
+import os
+print(os.system('where tesseract-ocr'))
 
 @client.event
 async def on_member_update(before, after):
