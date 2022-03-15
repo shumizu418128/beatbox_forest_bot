@@ -173,12 +173,8 @@ async def on_message(message):
         g_creation_flags = 0
 
         TESSERACT_CMD = '/app/.apt/usr/bin/tesseract'
-        proc = subprocess.Popen([TESSERACT_CMD, "--list-langs"],
-                            startupinfo=g_subprocess_startup_info,
-                            creationflags=g_creation_flags,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT)
-
+        proc = subprocess.Popen([TESSERACT_CMD, "--list-langs"], startupinfo=g_subprocess_startup_info, creationflags=g_creation_flags, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        print(proc)
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
