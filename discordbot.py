@@ -239,10 +239,8 @@ async def on_message(message):
         for i in range(2):
             text1 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=12))
-            print(text1)
             text2 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=6))
-            print(text2)
             all_text += text1 + text2
         all_text = all_text.replace(' ', '')
         if "troubleshooting" in all_text:
