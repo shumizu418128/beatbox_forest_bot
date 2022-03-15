@@ -175,6 +175,7 @@ async def on_message(message):
         tools = pyocr.get_available_tools()
         tool = tools[0]
         langs = tool.get_available_languages()
+        print(langs)
         lang = langs[1]
         file_names = []
         error_msg = []
