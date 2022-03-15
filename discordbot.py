@@ -1,3 +1,4 @@
+import shutil
 import discord
 from datetime import datetime
 from asyncio import sleep
@@ -11,6 +12,7 @@ intents = discord.Intents.all()  # デフォルトのIntentsオブジェクト�
 intents.typing = False  # typingを受け取らないように
 client = discord.Client(intents=intents)
 print("ビト森杯bot: 起動完了")
+shutil.copyfile("tessdata/jpn.tessdata", "/app/vendor/tesseract-ocr/share/tessdata/jpn.tessdata")
 
 @client.event
 async def on_member_update(before, after):
@@ -175,7 +177,6 @@ async def on_message(message):
         tools = pyocr.get_available_tools()
         tool = tools[0]
         langs = tool.get_available_languages()
-        print(langs)
         lang = langs[1]
         file_names = []
         error_msg = []
