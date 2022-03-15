@@ -178,10 +178,6 @@ async def on_message(message):
                             creationflags=g_creation_flags,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT)
-        langs = proc.stdout.read().decode('utf-8').splitlines(False)
-        ret = proc.wait()
-        if ret != 0:
-            exit(1)
 
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
