@@ -174,8 +174,8 @@ async def on_message(message):
 
         TESSERACT_CMD = './.apt/usr/share/tesseract-ocr'
         TESSDATA_EXTENSION = ".traineddata"
-        proc = subprocess.Popen([TESSERACT_CMD, "--list-langs"], startupinfo=g_subprocess_startup_info, creationflags=g_creation_flags, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        print(proc)
+    #    proc = subprocess.Popen([TESSERACT_CMD, "--list-langs"], startupinfo=g_subprocess_startup_info, creationflags=g_creation_flags, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    #    print(proc)
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
