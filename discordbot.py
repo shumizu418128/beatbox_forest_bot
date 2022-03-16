@@ -12,7 +12,7 @@ intents = discord.Intents.all()  # デフォルトのIntentsオブジェクト�
 intents.typing = False  # typingを受け取らないように
 client = discord.Client(intents=intents)
 print("ビト森杯bot: 起動完了")
-shutil.copyfile("tessdata/jpn.traineddata", "/app/vendor/tesseract-ocr/share/tessdata/jpn.traineddata")
+shutil.copyfile("tessdata/jpn.traineddata", "/app/vendor/tessdata/jpn.traineddata")
 
 @client.event
 async def on_member_update(before, after):
