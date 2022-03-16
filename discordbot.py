@@ -234,19 +234,13 @@ async def on_message(message):
         else:
             xy_1.remove("|")
         await channel.send("coordinate detection: finish")
-        # ワード検出(下準備)
+        # ワード検出(下準備) モバイルボイスオーバーレイ検出
         all_text = ""
         for i in range(2):
             text1 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=12))
             text2 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.TextBuilder(tesseract_layout=6))
-            all_text += text1 + text2
-            print(all_text)
-        all_text = all_text.replace(' ', '')
-        print(all_text)
-        # モバイルボイスオーバーレイ検出
-        for i in range(2):
             text_box1 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=12))
             text_box2 = tool.image_to_string(Image.open(
@@ -269,6 +263,9 @@ async def on_message(message):
                                     error_msg.append("・例外検知（問題なし）: モバイルボイスオーバーレイ")
                                     xy_1.remove(xy)
                                     break
+            all_text += text1 + text2
+        all_text = all_text.replace(' ', '')
+        print(all_text)
         for xy in xy_0:
             error_code += 1
             cv2.circle(img0, (xy), 65, (0, 0, 255), 20)
