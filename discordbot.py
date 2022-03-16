@@ -187,7 +187,7 @@ async def on_message(message):
                     await channel.send(f"手動チェックに切替: {message.author.id}")
                     return
                 dt_now = datetime.now()
-                name = "/tmp/tmpbq25hl8p/" + dt_now.strftime("%H.%M.%S.png")
+                name = "/app/tmp/" + dt_now.strftime("%H.%M.%S.png")
                 await a.save(name)
                 file_names.append(name)
                 await sleep(1)
@@ -234,7 +234,7 @@ async def on_message(message):
         else:
             xy_1.remove("|")
         await channel.send("coordinate detection: finish")
-        # ワード検出
+        # ワード検出(下準備)
         all_text = ""
         for i in range(2):
             text1 = tool.image_to_string(Image.open(
@@ -245,6 +245,40 @@ async def on_message(message):
             print(all_text)
         all_text = all_text.replace(' ', '')
         print(all_text)
+        # モバイルボイスオーバーレイ検出
+        for i in range(2):
+            text_box1 = tool.image_to_string(Image.open(
+                file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=12))
+            text_box2 = tool.image_to_string(Image.open(
+                file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6))
+            text_box_list = [text_box1, text_box2]
+            for text_box in text_box_list:
+                for texts in text_box:
+                    if "モバイルボイスオーバーレイ" in texts.content.replace(' ', ''):
+                        text_position = texts.position
+                        place_text = [text_position[1][0], text_position[1][1]]
+                        if i == 0:
+                            for xy in xy_0:
+                                if distance.euclidean(place_text, (xy)) < 200:
+                                    xy_0.remove(xy)
+                                    error_msg.append("・例外検知（問題なし）: モバイルボイスオーバーレイ")
+                                    break
+                        elif i == 1:
+                            for xy in xy_1:
+                                if distance.euclidean(place_text, (xy)) < 200:
+                                    error_msg.append("・例外検知（問題なし）: モバイルボイスオーバーレイ")
+                                    xy_1.remove(xy)
+                                    break
+        for xy in xy_0:
+            error_code += 1
+            cv2.circle(img0, (xy), 65, (0, 0, 255), 20)
+        for xy in xy_1:
+            error_code += 1
+            cv2.circle(img1, (xy), 65, (0, 0, 255), 20)
+        if len(xy_0) > 0 or len(xy_1) > 0:
+            error_msg.append("・丸で囲われた設定をOFFにしてください。")
+        await channel.send("setting check: finish")
+        # ワード検出
         if "troubleshooting" in all_text:
             await channel.send("word found: troubleshooting")
             await channel.send(f"手動チェックに切替: {message.author.id}")
@@ -270,40 +304,6 @@ async def on_message(message):
             error_msg.append('・「ハードウェア拡大縮小を有効にする」の項目が映らないようにしてください。')
             error_code += 1
         await channel.send("word detection: finish")
-        # モバイルボイスオーバーレイ検出
-        for i in range(2):
-            text_box1 = tool.image_to_string(Image.open(
-                file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=12))
-            text_box2 = tool.image_to_string(Image.open(
-                file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6))
-            text_box_list = [text_box1, text_box2]
-            for text_box in text_box_list:
-                for texts in text_box:
-                    if "モバイルボイスオーバーレイ" in texts.content.replace(' ', ''):
-                        text_position = texts.position
-                        place_text = [text_position[1][0], text_position[1][1]]
-                        if i == 0:
-                            for xy in xy_0:
-                                if distance.euclidean(place_text, (xy)) < 200:
-                                    xy_0.remove(xy)
-                                    error_msg.append("・例外検知（問題なし）: モバイルボイスオーバーレイ")
-                                    break
-                        if i == 1:
-                            for xy in xy_1:
-                                if distance.euclidean(place_text, (xy)) < 200:
-                                    error_msg.append("・例外検知（問題なし）: モバイルボイスオーバーレイ")
-                                    xy_1.remove(xy)
-                                    break
-                        continue
-        for xy in xy_0:
-            error_code += 1
-            cv2.circle(img0, (xy), 65, (0, 0, 255), 20)
-        for xy in xy_1:
-            error_code += 1
-            cv2.circle(img1, (xy), 65, (0, 0, 255), 20)
-        if len(xy_0) > 0 or len(xy_1) > 0:
-            error_msg.append("・丸で囲われた設定をOFFにしてください。")
-        await channel.send("setting check: finish")
         # 結果通知
         files = []
         if error_code == 0:
