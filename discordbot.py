@@ -141,16 +141,6 @@ async def on_message(message):
                 await message.channel.send("---finish---")
                 return
 
-    if message.content.startswith("手動チェックに切替:") and message.channel.id == 952946795573571654:  # 画像提出
-        await message.delete(delay=1)
-        contents = [(j) for j in message.content.split()]
-        member = message.guild.get_member(int(contents[1]))
-        admin = message.guild.get_role(904368977092964352)
-        await message.channel.send(f"{member.author}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
-        await message.add_reaction("⭕")
-        await message.add_reaction("❌")
-        return
-
     if len(message.attachments) != 2 and message.channel.id == 952946795573571654:  # 画像提出
         await message.delete(delay=1)
         await message.channel.send(f"{message.author.mention}\nError: 画像を2枚同時に投稿してください。")
