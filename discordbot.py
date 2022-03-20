@@ -100,9 +100,9 @@ async def on_message(message):
         await poll.add_reaction("2⃣")
         return
 
-    if message.content.startswith("s.entry"):
+    if message.content.startswith("s.check"):
         await message.delete(delay=1)
-        input_ = message.content[8:]  # s.entry をカット
+        input_ = message.content[8:]  # s.check をカット
         try:
             name = message.guild.get_member(int(input_))
         except ValueError:
