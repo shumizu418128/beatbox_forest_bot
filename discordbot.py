@@ -5,22 +5,6 @@ client = discord.Client(intents=intents)
 print("ビト森杯bot main: 起動完了")
 
 @client.event
-async def on_member_update(before, after):
-    if str(before.roles) != str(after.roles):
-        id_before = [role.id for role in before.roles]
-        id_after = [role.id for role in after.roles]
-        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        if 920320926887862323 in id_after and 920320926887862323 not in id_before:  # A部門ビト森杯
-            await channel.send(f"{after.mention}\nビト森杯🇦部門\nエントリーを受け付けました：{after.display_name}さん\nentry completed👍\n\n名前を変更する際は、一度エントリーをキャンセルしてください。")
-        if 920320926887862323 in id_before and 920320926887862323 not in id_after:  # A部門ビト森杯
-            await channel.send(f"{after.mention}\nビト森杯🇦部門\nエントリーを取り消しました❎\nentry canceled")
-        if 920321241976541204 in id_after and 920321241976541204 not in id_before:  # B部門ビト森杯
-            await channel.send(f"{after.mention}\nビト森杯🅱️部門\nエントリーを受け付けました：{after.display_name}さん\nentry completed👍\n\n名前を変更する際は、一度エントリーをキャンセルしてください。")
-        if 920321241976541204 in id_before and 920321241976541204 not in id_after:  # B部門ビト森杯
-            await channel.send(f"{after.mention}\nビト森杯🅱️部門\nエントリーを取り消しました❎\nentry canceled")
-        return
-
-@client.event
 async def on_raw_reaction_add(payload):
     emoji_list = ["⭕", "❌"]
     if payload.emoji.name in emoji_list:
