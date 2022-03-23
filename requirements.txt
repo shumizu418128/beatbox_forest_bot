@@ -1,9 +1,10 @@
 git+https://github.com/Pycord-Development/pycord
 pynacl
 asyncio
-Pillow
-numpy
-pyocr
-opencv-python--headless
-scipy
+#Pillow
+#numpy
+#pyocr
+#opencv-python--headless
+#scipy
 gspread
+oauth2client
