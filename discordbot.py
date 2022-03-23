@@ -12,7 +12,7 @@ worksheet = workbook.worksheet('botデータベース（さわらないでね）
 intents = discord.Intents.all()  # デフォルトのIntentsオブジェクトを生成
 intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
-print("powered by msn-local")
+print("ビト森杯bot: 起動完了")
 
 class ModalA(Modal):
     def __init__(self) -> None:
