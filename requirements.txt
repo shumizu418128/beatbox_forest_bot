@@ -6,3 +6,4 @@ numpy
 pyocr
 opencv-python--headless
 scipy
+gspread
