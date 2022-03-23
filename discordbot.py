@@ -167,7 +167,7 @@ async def on_message(message):
         worksheet.update_cell(entry_amount + 1, place_key + 1, f"{name.display_name}")
         worksheet.update_cell(entry_amount + 1, place_key + 2, f"{read.content}")
         worksheet.update_cell(entry_amount + 1, place_key + 3, f"{name.id}")
-        await member.add_roles(role)
+        await name.add_roles(role)
         embed = discord.Embed(title=f"{category}部門 エントリー完了", description=f"`名前：`{name.display_name}\n`読み：`{read.content}")
         await message.channel.send(embed=embed)
         return
