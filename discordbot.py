@@ -339,7 +339,7 @@ async def on_message(message):
         view = View()
         view.add_item(buttonA)
         view.add_item(buttonB)
-        await message.channel.send(view=view)
+        await message.channel.send(view=view, timeout=None)
         return
 
 client.run("OTUyOTYyOTAyMzI1ODg2OTg2.Yi9p3Q.bisIxDqKOMlESDLe1GBnvNseOBQ")
