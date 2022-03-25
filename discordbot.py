@@ -113,7 +113,7 @@ async def on_message(message):
                 except ValueError:
                     member = message.guild.get_member_named(input_)
                 if member is None:
-                    await message.channel.send("検索結果なし")
+                    await message.channel.send("Error: 検索結果なし")
                     return
                 cell = worksheet.find(f'{member.id}')
                 if cell is not None:
@@ -143,17 +143,6 @@ async def on_message(message):
     if message.content.startswith("s.entry"):  # s.entryA or B と記入する
         await message.delete(delay=1)
         input_ = message.content[9:]  # s.entryA or B をカット
-        try:
-            name = message.guild.get_member(int(input_))
-        except ValueError:
-            name = message.guild.get_member_named(input_)
-        if name is None:
-            await message.channel.send("検索結果なし")
-            return
-        await message.channel.send("名前の読みかたを入力してください：")
-        def check(m):
-            return m.channel == message.channel and m.author == message.author
-        read = await client.wait_for('message', check=check)
         if message.content.startswith("s.entryA"):
             entry_amount = int(worksheet.acell('J1').value) + 1
             place_key = 0
@@ -166,6 +155,20 @@ async def on_message(message):
             category = "🅱️"
             worksheet.update_cell(2, 10, f"{entry_amount}")
             role = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
+        else:
+            await message.channel.send("Error: 入力方法が間違っています。")
+            return
+        try:
+            name = message.guild.get_member(int(input_))
+        except ValueError:
+            name = message.guild.get_member_named(input_)
+        if name is None:
+            await message.channel.send("Error: 検索結果なし")
+            return
+        await message.channel.send("名前の読みかたを入力してください：")
+        def check(m):
+            return m.channel == message.channel and m.author == message.author
+        read = await client.wait_for('message', check=check)
         worksheet.update_cell(entry_amount + 1, place_key + 1, f"{name.display_name}")
         worksheet.update_cell(entry_amount + 1, place_key + 2, f"{read.content}")
         worksheet.update_cell(entry_amount + 1, place_key + 3, f"{name.id}")
@@ -194,7 +197,7 @@ async def on_message(message):
         except ValueError:
             name = message.guild.get_member_named(input_)
         if name is None:
-            await message.channel.send("検索結果なし")
+            await message.channel.send("Error: 検索結果なし")
             return
         cell = worksheet.find(f'{name.id}')
         if cell is not None:
@@ -311,11 +314,11 @@ async def on_message(message):
         except ValueError:
             member = message.guild.get_member_named(input_)
         if member is None:
-            await message.channel.send("検索結果なし")
+            await message.channel.send("Error: 検索結果なし")
             return
         cell = worksheet.find(f'{member.id}')
         if cell is None:
-            await message.channel.send("DB検索結果なし")
+            await message.channel.send("Error: DB検索結果なし")
             return
         read = worksheet.cell(cell.row - 1, cell.col).value
         await message.channel.send(f"名前：{member.display_name}\n読み：{read}")
