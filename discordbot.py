@@ -1,5 +1,6 @@
 import discord
 from discord.ui import InputText, Modal, Button, View
+import asyncio
 import re
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -86,6 +87,7 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_message(message):
+    emoji_list = ["⭕", "❌"]
     if message.content.startswith("contact:"):
         input_ = [j for j in message.content.split()]
         name = message.guild.get_member(int(input_[1]))
@@ -115,6 +117,21 @@ async def on_message(message):
                 if member is None:
                     await message.channel.send("Error: 検索結果なし")
                     return
+                notice = await message.channel.send(f"{member.display_name} さんのビト森杯エントリーを取り消します。\n\n⭕ 続行する\n❌ 中止")
+                await notice.add_reaction("⭕")
+                await notice.add_reaction("❌")
+
+                def check(reaction, user):
+                    return user == message.author and str(reaction.emoji) in emoji_list
+
+                try:
+                    reaction, user = await client.wait_for('reaction_add', timeout=10.0, check=check)
+                except asyncio.TimeoutError:
+                    await message.channel.send("Error: Timeout")
+                    return
+                if str(reaction.emoji) == "❌":
+                    await message.channel.send(f"{user.mention}\n中止しました。")
+                    return
                 cell = worksheet.find(f'{member.id}')
                 if cell is not None:
                     worksheet.update_cell(cell.row, cell.col, '')
@@ -137,7 +154,7 @@ async def on_message(message):
                         return
                 await message.channel.send("%sさんはビト森杯にエントリーしていません" % (member.display_name))
                 return
-        await message.channel.send(f"{message.author.mention}\nError: s.cancelはビト森杯運営専用コマンドです\n\n{message.content}")
+        await message.channel.send(f"{message.author.mention}\nError: s.cancelはビト森杯運営専用コマンドです\n\n`{message.content}`")
         return
 
     if message.content.startswith("s.entry"):  # s.entryA or B と記入する
