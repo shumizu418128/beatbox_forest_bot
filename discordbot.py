@@ -358,10 +358,10 @@ async def on_message(message):
             await interaction.response.send_modal(ModalB())
         buttonA.callback = buttonA_callback
         buttonB.callback = buttonB_callback
-        view = View()
+        view = View(timeout=None)
         view.add_item(buttonA)
         view.add_item(buttonB)
-        await message.channel.send(view=view, timeout=None)
+        await message.channel.send(view=view)
         return
 
 client.run("OTUyOTYyOTAyMzI1ODg2OTg2.Yi9p3Q.bisIxDqKOMlESDLe1GBnvNseOBQ")
