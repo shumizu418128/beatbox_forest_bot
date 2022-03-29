@@ -12,6 +12,7 @@ intents = discord.Intents.all()  # デフォルトのIntentsオブジェクト�
 intents.typing = False  # typingを受け取らないように
 client = discord.Client(intents=intents)
 print("ビト森杯bot-画像分析: 起動完了")
+shutil.copyfile("tessdata/jpn.traineddata", "/app/vendor/tessdata/jpn.traineddata")
 
 @client.event
 async def on_message(message):
@@ -21,7 +22,6 @@ async def on_message(message):
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
             return
-        shutil.copyfile("tessdata/jpn.traineddata", "/app/vendor/tessdata/jpn.traineddata")
     #    pyocr.tesseract.TESSERACT_CMD = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
         tools = pyocr.get_available_tools()
         tool = tools[0]
