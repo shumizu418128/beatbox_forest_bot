@@ -70,7 +70,7 @@ class ModalB(Modal):
 @client.event
 async def on_raw_reaction_add(payload):
     emoji_list = ["⭕", "❌"]
-    if payload.emoji.name in emoji_list:
+    if payload.emoji.name in emoji_list and payload.channel_id == 952946795573571654:
         for role in payload.member.roles:
             if role.id == 904368977092964352:  # ビト森杯運営
                 channel = payload.message.guild.get_channel(payload.channel_id)
@@ -117,7 +117,7 @@ async def on_message(message):
                 if member is None:
                     await message.channel.send("Error: 検索結果なし")
                     return
-                notice = await message.channel.send(f"{member.display_name} さんのビト森杯エントリーを取り消します。\n\n⭕ 続行する\n❌ 中止")
+                notice = await message.channel.send(f"{member.display_name} さんのビト森杯エントリーを取り消します。\n\n⭕ `OK`\n❌ 中止")
                 await notice.add_reaction("⭕")
                 await notice.add_reaction("❌")
 
