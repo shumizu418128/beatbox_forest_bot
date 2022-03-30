@@ -373,8 +373,8 @@ async def on_message(message):
         await message.channel.send(view=view)
         return
 
-
-    if len(message.attachments) == 2 and message.channel.id == 952946795573571654:  # 画像提出
+    # 画像提出
+    if len(message.attachments) == 2 and message.channel.id == 952946795573571654:
         # 初期設定
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
