@@ -350,6 +350,20 @@ async def on_message(message):
         await message.channel.send(f"名前：{member.display_name}\n読み：{read}")
         return
 
+    if message.content.startswith("s.verify"):
+        contents = [(j) for j in message.content.split()]
+        try:
+            member = message.guild.get_member(int(contents[1]))
+        except ValueError:
+            member = message.guild.get_member_named(contents[1])
+        if member is None:
+            await message.channel.send("Error: 検索結果なし")
+            return
+        verified = message.guild.get_role(952951691047747655)  # verified
+        await member.add_roles(verified)
+        await message.channel.send(f"{member.display_name}にverifiedロールを追加しました。")
+        return
+
     if len(message.attachments) != 2 and message.channel.id == 952946795573571654:  # 画像提出
         await message.delete(delay=1)
         await message.channel.send(f"{message.author.mention}\nError: 画像を2枚同時に投稿してください。")
