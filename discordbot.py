@@ -82,7 +82,10 @@ async def on_raw_reaction_add(payload):
     if payload.emoji.name in emoji_list:
         for role in payload.member.roles:
             if role.id == 904368977092964352:  # ビト森杯運営
-                channel = payload.message.guild.get_channel(payload.channel_id)
+                try:
+                    channel = payload.message.guild.get_channel(payload.channel_id)
+                except AttributeError:
+                    return
                 message = channel.get_partial_message(payload.message_id)
                 contents = [(j) for j in message.content.split()]
                 member = message.guild.get_member(int(contents[1]))
