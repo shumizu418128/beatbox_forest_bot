@@ -131,7 +131,7 @@ async def on_message(message):
         await status.edit(embed=embed)
         # ワード検出
         if "モバイルボイスオーバーレイ" in all_text:
-            error_msg.append("・例外検知: モバイルボイスオーバーレイがオンになっている場合、正しい結果が出力されません。お手数ですが、オフにして再提出をお願いします。")
+            error_msg.append("・例外検知: モバイルボイスオーバーレイがオンになっている場合、正しい結果が出力されません。もしオンになっている場合、お手数ですがオフにして再提出をお願いします。")
         if "troubleshooting" in all_text:
             await channel.send("word found: troubleshooting")
             notice = await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
