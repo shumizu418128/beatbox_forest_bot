@@ -57,6 +57,7 @@ async def on_message(message):
         imgs = {"file0": img0, "file1": img1}
         for i in range(2):
             h, w, c = imgs[f"file{i}"].shape  # 高さ、幅
+            print(h, w, c)
             # BGR色空間からHSV色空間への変換
             hsv = cv2.cvtColor(imgs[f"file{i}"], cv2.COLOR_BGR2HSV)
             lower = np.array([113, 92, 222])  # 色検出しきい値の設定 (青)
@@ -67,6 +68,7 @@ async def on_message(message):
                 imgs[f"file{i}"], imgs[f"file{i}"], mask=frame_mask)  # 論理演算で色検出
             contours, hierarchy = cv2.findContours(
                 frame_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)  # 輪郭抽出
+            print(hierarchy)
             areas = np.array(list(map(cv2.contourArea, contours)))  # 面積を計算
             for j in range(len(areas)):
                 result = cv2.moments(contours[j])
