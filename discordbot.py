@@ -79,7 +79,7 @@ class ModalB(Modal):
 @client.event
 async def on_raw_reaction_add(payload):
     emoji_list = ["⭕", "❌"]
-    if payload.emoji.name in emoji_list and payload.channel_id == 952946795573571654:
+    if payload.emoji.name in emoji_list:
         for role in payload.member.roles:
             if role.id == 904368977092964352:  # ビト森杯運営
                 channel = payload.message.guild.get_channel(payload.channel_id)
