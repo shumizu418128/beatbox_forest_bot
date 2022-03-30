@@ -448,7 +448,7 @@ async def on_message(message):
             xy_1 = []
         else:
             xy_1.remove("|")
-        embed = discord.Embed(title="分析中...", description="40% 完了")
+        embed = discord.Embed(title="分析中...", description="40% 完了\n一番時間のかかる作業を行っています...")
         await status.edit(embed=embed)
         # モバイルボイスオーバーレイ検出
         """for i in range(2):
