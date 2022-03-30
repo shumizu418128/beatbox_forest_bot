@@ -22,6 +22,8 @@ async def on_message(message):
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
             return
+        embed = discord.Embed(title="分析中...", description="0% 完了")
+        status = await channel.send(embed=embed)
     #    pyocr.tesseract.TESSERACT_CMD = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
         tools = pyocr.get_available_tools()
         tool = tools[0]
@@ -30,10 +32,13 @@ async def on_message(message):
         file_names = []
         error_msg = []
         error_code = 0
+        admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
         for a in message.attachments:
             if a.content_type == "image/jpeg" or a.content_type == "image/png":
                 if a.height < a.width:
-                    await channel.send(f"手動チェックに切替: {message.author.id}")
+                    notice = await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
+                    await notice.add_reaction("⭕")
+                    await notice.add_reaction("❌")
                     return
                 dt_now = datetime.now()
                 name = "/tmp/" + dt_now.strftime("%H.%M.%S.png")  # "/tmp/" +
@@ -43,7 +48,8 @@ async def on_message(message):
             else:
                 await channel.send("Error: jpg, jpeg, png画像を投稿してください。")
                 return
-        await channel.send("attachments save: finish")
+        embed = discord.Embed(title="分析中...", description="20% 完了")
+        await status.edit(embed=embed)
         # 設定オン座標調査
         xy_list = []
         img0 = cv2.imread(file_names[0])
@@ -82,7 +88,8 @@ async def on_message(message):
             xy_1 = []
         else:
             xy_1.remove("|")
-        await channel.send("coordinate detection: finish")
+        embed = discord.Embed(title="分析中...", description="40% 完了")
+        await status.edit(embed=embed)
         # モバイルボイスオーバーレイ検出
         """for i in range(2):
             text_box1 = tool.image_to_string(Image.open(
@@ -118,12 +125,16 @@ async def on_message(message):
             all_text += text1 + text2
         all_text = all_text.replace(' ', '')
         print(all_text)
+        embed = discord.Embed(title="分析中...", description="60% 完了")
+        await status.edit(embed=embed)
         # ワード検出
         if "モバイルボイスオーバーレイ" in all_text:
             error_msg.append("・例外検知: モバイルボイスオーバーレイがオンになっている場合、正しい結果が出力されません。お手数ですが、オフにして再提出をお願いします。")
         if "troubleshooting" in all_text:
             await channel.send("word found: troubleshooting")
-            await channel.send(f"手動チェックに切替: {message.author.id}")
+            notice = await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
+            await notice.add_reaction("⭕")
+            await notice.add_reaction("❌")
             return
         word_list = ["自動検出", "ノイズ抑制", "エコー除去", "ノイズ低減", "音量調節の自動化", "高度音声検出"]
         if "ノイズ抑制" not in all_text:  # ノイズ抑制は認識精度低 「マイクからのバックグラウンドノイズ」で代用
@@ -141,7 +152,8 @@ async def on_message(message):
         if "ハードウェア" in all_text:
             error_msg.append('・「ハードウェア拡大縮小を有効にする」の項目が映らないようにしてください。')
             error_code += 1
-        await channel.send("word detection: finish")
+        embed = discord.Embed(title="分析中...", description="80% 完了")
+        await status.edit(embed=embed)
         # オンの設定検出
         for xy in xy_0:
             error_code += 1
@@ -151,7 +163,8 @@ async def on_message(message):
             cv2.circle(img1, (xy), 65, (0, 0, 255), 20)
         if len(xy_0) > 0 or len(xy_1) > 0:
             error_msg.append("・丸で囲われた設定をOFFにしてください。")
-        await channel.send("setting check: finish")
+        embed = discord.Embed(title="分析中...", description="100% 完了")
+        await status.edit(embed=embed, delete_after=5)
         # 結果通知
         files = []
         if error_code == 0:
@@ -161,7 +174,8 @@ async def on_message(message):
             await message.author.add_roles(verified)
         else:
             color = 0xff0000
-            description = "以下の問題が見つかりました。\n"
+            contact = client.get_channel(920620259810086922)  # お問い合わせ
+            description = f"以下の問題が見つかりました。\n内容に誤りがあると思われる場合、お手数ですが{contact.mention}までご連絡ください。\n\n"
             cv2.imwrite(file_names[0], img0)
             files.append(discord.File(file_names[0]))
             cv2.imwrite(file_names[1], img1)
