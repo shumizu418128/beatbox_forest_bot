@@ -5,7 +5,6 @@ from asyncio import sleep
 from PIL import Image
 import numpy as np
 import cv2
-from scipy.spatial import distance
 import pyocr
 import pyocr.builders
 intents = discord.Intents.all()  # デフォルトのIntentsオブジェクトを生成
