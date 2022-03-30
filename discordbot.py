@@ -84,7 +84,7 @@ async def on_message(message):
             xy_1.remove("|")
         await channel.send("coordinate detection: finish")
         # モバイルボイスオーバーレイ検出
-        for i in range(2):
+        """for i in range(2):
             text_box1 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.WordBoxBuilder(tesseract_layout=12))
             text_box2 = tool.image_to_string(Image.open(
@@ -107,7 +107,7 @@ async def on_message(message):
                                 if distance.euclidean(place_text, (xy)) < 200:
                                     error_msg.append("・例外検知（問題なし）: モバイルボイスオーバーレイ")
                                     xy_1.remove(xy)
-                                    break
+                                    break"""
         # ワード検出(下準備)
         all_text = ""
         for i in range(2):
@@ -128,6 +128,8 @@ async def on_message(message):
             error_msg.append("・丸で囲われた設定をOFFにしてください。")
         await channel.send("setting check: finish")
         # ワード検出
+        if "モバイルボイスオーバーレイ" in all_text:
+            error_msg.append("・例外検知: モバイルボイスオーバーレイがオンになっている場合、正しい結果が出力されません。お手数ですが、オフにして再提出をお願いします。")
         if "troubleshooting" in all_text:
             await channel.send("word found: troubleshooting")
             await channel.send(f"手動チェックに切替: {message.author.id}")
