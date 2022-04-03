@@ -99,6 +99,9 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_message(message):
+    if message.author.id == 952962902325886986:  # ビト森杯bot
+        return
+
     emoji_list = ["⭕", "❌"]
     if message.content.startswith("contact:"):
         input_ = [j for j in message.content.split()]
@@ -396,9 +399,22 @@ async def on_message(message):
     # 画像提出
     if len(message.attachments) == 2 and message.channel.id == 952946795573571654:
         # 初期設定
+        contact = client.get_channel(920620259810086922)  # お問い合わせ
+        overwrite = discord.PermissionOverwrite()
+        overwrite.send_messages = False
+        overwrite.view_channel = True
+        roleA = message.guild.get_role(920320926887862323)  # ビト森杯 A部門
+        roleB = message.guild.get_role(920321241976541204)  # ビト森杯 B部門
+        await message.channel.set_permissions(roleA, overwrite=overwrite)
+        await message.channel.set_permissions(roleB, overwrite=overwrite)
+        overwrite.send_messages = True
+        close_notice = await message.channel.send(f"一時的に提出受付をストップしています。しばらくお待ちください。\n\n※長時間続いている場合は、お手数ですが {contact.mention} までご連絡ください。")
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
         except AttributeError:
+            await message.channel.set_permissions(roleA, overwrite=overwrite)
+            await message.channel.set_permissions(roleB, overwrite=overwrite)
+            await close_notice.delete()
             return
         embed = discord.Embed(title="分析中...", description="0% 完了")
         status = await channel.send(embed=embed)
@@ -417,6 +433,9 @@ async def on_message(message):
                     notice = await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
                     await notice.add_reaction("⭕")
                     await notice.add_reaction("❌")
+                    await message.channel.set_permissions(roleA, overwrite=overwrite)
+                    await message.channel.set_permissions(roleB, overwrite=overwrite)
+                    await close_notice.delete()
                     return
                 dt_now = datetime.now()
                 name = "/tmp/" + dt_now.strftime("%H.%M.%S.png")  # "/tmp/" +
@@ -425,6 +444,9 @@ async def on_message(message):
                 await sleep(1)
             else:
                 await channel.send("Error: jpg, jpeg, png画像を投稿してください。")
+                await message.channel.set_permissions(roleA, overwrite=overwrite)
+                await message.channel.set_permissions(roleB, overwrite=overwrite)
+                await close_notice.delete()
                 return
         embed = discord.Embed(title="分析中...", description="20% 完了")
         await status.edit(embed=embed)
@@ -515,6 +537,9 @@ async def on_message(message):
             notice = await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
             await notice.add_reaction("⭕")
             await notice.add_reaction("❌")
+            await message.channel.set_permissions(roleA, overwrite=overwrite)
+            await message.channel.set_permissions(roleB, overwrite=overwrite)
+            await close_notice.delete()
             return
         word_list = ["自動検出", "ノイズ抑制", "エコー除去", "ノイズ低減", "音量調節の自動化", "高度音声検出"]
         if "ノイズ抑制" not in all_text:  # ノイズ抑制は認識精度低 「マイクからのバックグラウンドノイズ」で代用
@@ -554,8 +579,7 @@ async def on_message(message):
             await message.author.add_roles(verified)
         else:
             color = 0xff0000
-            contact = client.get_channel(920620259810086922)  # お問い合わせ
-            description = f"以下の問題が見つかりました。\n内容に誤りがあると思われる場合、お手数ですが{contact.mention}までご連絡ください。\n\n"
+            description = f"以下の問題が見つかりました。\n内容に誤りがあると思われる場合、お手数ですが {contact.mention} までご連絡ください。\n\n"
             cv2.imwrite(file_names[0], img0)
             files.append(discord.File(file_names[0]))
             cv2.imwrite(file_names[1], img1)
@@ -569,6 +593,9 @@ async def on_message(message):
             value = '\n' + error_msg.replace('\'', '')
         embed.add_field(name="エラーログ", value=value, inline=False)
         await channel.send(content=f"{message.author.mention}", embed=embed, files=files)
+        await message.channel.set_permissions(roleA, overwrite=overwrite)
+        await message.channel.set_permissions(roleB, overwrite=overwrite)
+        await close_notice.delete()
         return
 
 client.run("OTUyOTYyOTAyMzI1ODg2OTg2.Yi9p3Q.bisIxDqKOMlESDLe1GBnvNseOBQ")
