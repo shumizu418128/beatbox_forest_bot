@@ -378,10 +378,13 @@ async def on_message(message):
         await message.delete()
         buttonA = Button(label="Entry", style=discord.ButtonStyle.primary, emoji="🇦")
         buttonB = Button(label="Entry", style=discord.ButtonStyle.red, emoji="🅱️")
+        channel = client.get_channel(897784178958008322)  # bot用チャット
         async def buttonA_callback(interaction):
             await interaction.response.send_modal(ModalA())
+            await channel.send(f"interaction-A: {interaction.user.display_name}\nID: {interaction.user.id}")
         async def buttonB_callback(interaction):
             await interaction.response.send_modal(ModalB())
+            await channel.send(f"interaction-B: {interaction.user.display_name}\nID: {interaction.user.id}")
         buttonA.callback = buttonA_callback
         buttonB.callback = buttonB_callback
         view = View(timeout=None)
