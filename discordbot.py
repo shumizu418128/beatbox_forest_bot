@@ -1,17 +1,19 @@
-import shutil
-import discord
-from datetime import datetime
-from asyncio import sleep
-from PIL import Image
-import numpy as np
-import cv2
-import pyocr
-import pyocr.builders
-from discord.ui import InputText, Modal, Button, View
 import asyncio
 import re
+import shutil
+from asyncio import sleep
+from datetime import datetime
+
+import cv2
+import discord
 import gspread
+import numpy as np
+import pyocr
+import pyocr.builders
+from discord.ui import Button, InputText, Modal, View
 from oauth2client.service_account import ServiceAccountCredentials
+from PIL import Image
+
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name('makesomenoise-4243a19364b1.json', scope)
 gc = gspread.authorize(credentials)
