@@ -79,27 +79,6 @@ class ModalB(Modal):
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
 
 @client.event
-async def on_raw_reaction_add(payload):
-    emoji_list = ["⭕", "❌"]
-    if payload.emoji.name in emoji_list:
-        for role in payload.member.roles:
-            if role.id == 904368977092964352:  # ビト森杯運営
-                try:
-                    channel = payload.message.guild.get_channel(payload.channel_id)
-                except AttributeError:
-                    return
-                message = channel.get_partial_message(payload.message_id)
-                contents = [(j) for j in message.content.split()]
-                member = message.guild.get_member(int(contents[1]))
-                if payload.emoji.name == emoji_list[0]:
-                    verified = payload.message.guild.get_role(952951691047747655)  # verified
-                    await member.add_roles(verified)
-                    embed = discord.Embed(title="確認完了", description="運営による確認が終わりました。\n🙇‍♂️ご協力ありがとうございました！🙇‍♂️", color=0x00ff00)
-                elif payload.emoji.name == emoji_list[1]:
-                    embed = discord.Embed(title="確認結果", description="運営による確認の結果、問題が見つかりました。", color=0xff0000)
-                await message.channel.send(embed=embed)
-
-@client.event
 async def on_message(message):
     if message.author.id == message.guild.me.id:
         return
@@ -432,9 +411,7 @@ async def on_message(message):
         for a in message.attachments:
             if a.content_type == "image/jpeg" or a.content_type == "image/png":
                 if a.height < a.width:
-                    notice = await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
-                    await notice.add_reaction("⭕")
-                    await notice.add_reaction("❌")
+                    await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
                     await message.channel.set_permissions(roleA, overwrite=overwrite)
                     await message.channel.set_permissions(roleB, overwrite=overwrite)
                     await close_notice.delete()
@@ -536,9 +513,7 @@ async def on_message(message):
             error_msg.append("・例外検知: モバイルボイスオーバーレイがオンになっている場合、正しい結果が出力されません。もしオンになっている場合、お手数ですがオフにして再提出をお願いします。")
         if "troubleshooting" in all_text:
             await channel.send("word found: troubleshooting")
-            notice = await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
-            await notice.add_reaction("⭕")
-            await notice.add_reaction("❌")
+            await channel.send(f"{message.author.mention}\nbotでの画像分析ができない画像のため、運営による手動チェックに切り替えます。\nしばらくお待ちください。\n\n{admin.mention}")
             await message.channel.set_permissions(roleA, overwrite=overwrite)
             await message.channel.set_permissions(roleB, overwrite=overwrite)
             await close_notice.delete()
