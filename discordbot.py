@@ -101,7 +101,7 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_message(message):
-    if message.author.id == 952962902325886986:  # ビト森杯bot
+    if message.author.id == message.guild.me.id:
         return
 
     emoji_list = ["⭕", "❌"]
