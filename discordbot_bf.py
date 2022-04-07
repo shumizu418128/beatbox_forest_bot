@@ -79,6 +79,31 @@ class ModalB(Modal):
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
 
 @client.event
+async def on_member_update(before, after):
+    if before.display_name != after.display_name:
+        entryA = after.get_role(920320926887862323)  # A部門 ビト森杯
+        entryB = after.get_role(920321241976541204)  # B部門 ビト森杯
+        if entryA is None and entryB is None:
+            return
+        if entryA is not None and entryB is not None:
+            await channel.send(f"{admin.mention} 重複エントリー検知\n\n{after.display_name}")
+            return
+        cell = worksheet.find(f'{after.id}')
+        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
+        if cell is None:
+            admin = after.guild.get_role(904368977092964352)  # ビト森杯運営
+            if entryA is None:
+                await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {entryB.name}")
+                return
+            if entryB is None:
+                await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {entryA.name}")
+                return
+        right_name = worksheet.cell(cell.row, cell.col - 2).value
+        if after.display_name != right_name:
+            await after.edit(nick=right_name)
+            await channel.send(f"{after.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
+
+@client.event
 async def on_message(message):
     if message.author.id == message.guild.me.id:
         return
