@@ -89,14 +89,13 @@ async def on_member_update(before, after):
             return
         if entryA is not None and entryB is not None:
             await channel.send(f"{admin.mention} 重複エントリー検知\n\n{after.display_name}")
-            return
         cell = worksheet.find(f'{after.id}')
         if cell is None:
             if entryA is None:
-                await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {entryB.name}")
+                await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {after.id}\nB部門")
                 return
             if entryB is None:
-                await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {entryA.name}")
+                await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {after.id}\nA部門")
                 return
         right_name = worksheet.cell(cell.row, cell.col - 2).value
         if after.display_name != right_name:
