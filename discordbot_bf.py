@@ -110,6 +110,8 @@ async def on_message(message):
 
     emoji_list = ["⭕", "❌"]
     if message.content.startswith("contact:"):
+        admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
+        await message.channel.send(admin.mention)
         input_ = [j for j in message.content.split()]
         name = message.guild.get_member(int(input_[1]))
         if name is None:
