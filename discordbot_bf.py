@@ -364,11 +364,11 @@ async def on_message(message):
         return
 
     if message.content.startswith("s.verify"):
-        contents = [(j) for j in message.content.split()]
+        contents = message.content[9:]
         try:
-            member = message.guild.get_member(int(contents[1]))
+            member = message.guild.get_member(int(contents))
         except ValueError:
-            member = message.guild.get_member_named(contents[1])
+            member = message.guild.get_member_named(contents)
         if member is None:
             await message.channel.send("Error: 検索結果なし")
             return
