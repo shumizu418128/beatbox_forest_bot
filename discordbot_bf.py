@@ -10,6 +10,7 @@ import gspread
 import numpy as np
 import pyocr
 import pyocr.builders
+from discord import Embed
 from discord.ui import Button, InputText, Modal, View
 from oauth2client.service_account import ServiceAccountCredentials
 from PIL import Image
@@ -41,14 +42,14 @@ class ModalA(Modal):
             worksheet.update_cell(entry_amount + 1, 1, f"{interaction.user.display_name}")
             worksheet.update_cell(entry_amount + 1, 2, f"{self.children[0].value}")
             worksheet.update_cell(entry_amount + 1, 3, f"{interaction.user.id}")
-            embed = discord.Embed(title="🇦部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
+            embed = Embed(title="🇦部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}", value=f"`読み：`{self.children[0].value}", inline=False)
             role = interaction.guild.get_role(920320926887862323)  # ビト森杯 A部門
             await interaction.user.add_roles(role)
             await interaction.response.send_message("🇦部門 受付完了", ephemeral=True)  # 全ての作業が終わってから送信する！
             await channel.send(f"{interaction.user.mention}", embed=embed)
         else:
-            embed = discord.Embed(title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
+            embed = Embed(title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
             await channel.send(interaction.user.mention, embed=embed)
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
 
@@ -67,14 +68,14 @@ class ModalB(Modal):
             worksheet.update_cell(entry_amount + 1, 5, f"{interaction.user.display_name}")
             worksheet.update_cell(entry_amount + 1, 6, f"{self.children[0].value}")
             worksheet.update_cell(entry_amount + 1, 7, f"{interaction.user.id}")
-            embed = discord.Embed(title="🅱️部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
+            embed = Embed(title="🅱️部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}", value=f"`読み：`{self.children[0].value}", inline=False)
             role = interaction.guild.get_role(920321241976541204)  # ビト森杯 B部門
             await interaction.user.add_roles(role)
             await interaction.response.send_message("🅱️部門 受付完了", ephemeral=True)  # 全ての作業が終わってから送信する！
             await channel.send(f"{interaction.user.mention}", embed=embed)
         else:
-            embed = discord.Embed(title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
+            embed = Embed(title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
             await channel.send(interaction.user.mention, embed=embed)
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
 
@@ -212,7 +213,7 @@ async def on_message(message):
         worksheet.update_cell(entry_amount + 1, place_key + 2, f"{read.content}")
         worksheet.update_cell(entry_amount + 1, place_key + 3, f"{name.id}")
         await name.add_roles(role)
-        embed = discord.Embed(title=f"{category}部門 エントリー完了", description=f"`名前：`{name.display_name}\n`読み：`{read.content}")
+        embed = Embed(title=f"{category}部門 エントリー完了", description=f"`名前：`{name.display_name}\n`読み：`{read.content}")
         await message.channel.send(embed=embed)
         return
 
@@ -222,7 +223,7 @@ async def on_message(message):
         if len(names) != 2:
             await message.channel.send("Error: 入力方法が間違っています。")
             return
-        embed = discord.Embed(title="投票箱", description="1⃣ %s\n2⃣ %s" % (names[0], names[1]))
+        embed = Embed(title="投票箱", description="1⃣ %s\n2⃣ %s" % (names[0], names[1]))
         poll = await message.channel.send(embed=embed)
         await poll.add_reaction("1⃣")
         await poll.add_reaction("2⃣")
@@ -359,7 +360,7 @@ async def on_message(message):
         if cell is None:
             await message.channel.send("Error: DB検索結果なし")
             return
-        read = worksheet.cell(cell.row - 1, cell.col).value
+        read = worksheet.cell(cell.row, cell.col - 1).value
         await message.channel.send(f"名前：{member.display_name}\n読み：{read}")
         return
 
@@ -423,7 +424,7 @@ async def on_message(message):
             await message.channel.set_permissions(roleB, overwrite=overwrite)
             await close_notice.delete()
             return
-        embed = discord.Embed(title="分析中...", description="0% 完了")
+        embed = Embed(title="分析中...", description="0% 完了")
         status = await channel.send(embed=embed)
     #    pyocr.tesseract.TESSERACT_CMD = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
         tools = pyocr.get_available_tools()
@@ -453,7 +454,7 @@ async def on_message(message):
                 await message.channel.set_permissions(roleB, overwrite=overwrite)
                 await close_notice.delete()
                 return
-        embed = discord.Embed(title="分析中...", description="20% 完了")
+        embed = Embed(title="分析中...", description="20% 完了")
         await status.edit(embed=embed)
         # 設定オン座標調査
         xy_list = []
@@ -495,7 +496,7 @@ async def on_message(message):
             xy_1 = []
         else:
             xy_1.remove("|")
-        embed = discord.Embed(title="分析中...", description="40% 完了\n一番時間のかかる作業を行っています...")
+        embed = Embed(title="分析中...", description="40% 完了\n一番時間のかかる作業を行っています...")
         await status.edit(embed=embed)
         # モバイルボイスオーバーレイ検出
         """for i in range(2):
@@ -532,7 +533,7 @@ async def on_message(message):
             all_text += text1 + text2
         all_text = all_text.replace(' ', '')
         print(all_text)
-        embed = discord.Embed(title="分析中...", description="60% 完了")
+        embed = Embed(title="分析中...", description="60% 完了")
         await status.edit(embed=embed)
         # ワード検出
         if "モバイルボイスオーバーレイ" in all_text:
@@ -560,7 +561,7 @@ async def on_message(message):
         if "ハードウェア" in all_text:
             error_msg.append('・「ハードウェア拡大縮小を有効にする」の項目が映らないようにしてください。')
             error_code += 1
-        embed = discord.Embed(title="分析中...", description="80% 完了")
+        embed = Embed(title="分析中...", description="80% 完了")
         await status.edit(embed=embed)
         # オンの設定検出
         for xy in xy_0:
@@ -571,7 +572,7 @@ async def on_message(message):
             cv2.circle(img1, (xy), 65, (0, 0, 255), 20)
         if len(xy_0) > 0 or len(xy_1) > 0:
             error_msg.append("・丸で囲われた設定をOFFにしてください。")
-        embed = discord.Embed(title="分析中...", description="100% 完了")
+        embed = Embed(title="分析中...", description="100% 完了")
         await status.edit(embed=embed, delete_after=5)
         # 結果通知
         files = []
@@ -587,7 +588,7 @@ async def on_message(message):
             files.append(discord.File(file_names[0]))
             cv2.imwrite(file_names[1], img1)
             files.append(discord.File(file_names[1]))
-        embed = discord.Embed(
+        embed = Embed(
             title="分析結果", description=description, color=color)
         value = "なし"
         if len(error_msg) > 0:
