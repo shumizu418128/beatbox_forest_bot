@@ -317,36 +317,6 @@ async def on_message(message):
         await message.channel.send("---finish---")
         return
 
-    if message.content == "s.nn":
-        idA_str = worksheet.col_values(3)
-        idA_str.remove("id")
-        idB_str = worksheet.col_values(7)
-        idB_str.remove("id")
-        idA = [int(id) for id in idA_str]
-        idB = [int(id) for id in idB_str]
-        nameA = worksheet.col_values(1)
-        nameA.remove("A部門 参加者名 (display_name)")
-        nameB = worksheet.col_values(5)
-        nameB.remove("B部門 参加者名 (display_name)")
-        if len(idA) != len(nameA) or len(idB) != len(nameB):
-            if len(idA) != len(nameA):
-                await message.channel.send("Error: 🇦部門DBデータ破損")
-            if len(idB) != len(nameB):
-                await message.channel.send("Error: 🅱️部門DBデータ破損")
-            return
-        for i in range(len(idA)):
-            member = message.guild.get_member(idA[i])
-            if member.display_name != nameA[i]:
-                await message.channel.send(f"登録名: {nameA[i]}\n現在の名前: {member.display_name}")
-                await member.edit(nick=nameA[i])
-        for i in range(len(idB)):
-            member = message.guild.get_member(idB[i])
-            if member.display_name != nameB[i]:
-                await message.channel.send(f"登録名: {nameB[i]}\n現在の名前: {member.display_name}")
-                await member.edit(nick=nameB[i])
-        await message.channel.send("---処理終了---")
-        return
-
     if message.content.startswith("s.read"):
         input_ = message.content[7:]  # s.read をカット
         try:
