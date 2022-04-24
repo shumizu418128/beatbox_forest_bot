@@ -267,7 +267,7 @@ async def on_message(message):
         if entryA is None and entryB is None:  # 未エントリー
             embed = Embed(title=member.display_name, description=f"ビト森杯にエントリーしていません")
             embed.add_field(name="ID", value=member.id, inline=False)
-            embed.add_field(name="Discordアカウント名", value=f"{member.name}#{member.discriminator}", inline=False)
+            embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await embed_msg.edit(embed=embed)
             await embed_msg.add_reaction("🇦")
             await embed_msg.add_reaction("🅱️")
@@ -328,7 +328,7 @@ async def on_message(message):
         embed.add_field(name="読みがな", value=read, inline=False)
         embed.add_field(name="エントリー部門", value=category, inline=False)
         embed.add_field(name="ID", value=member.id, inline=False)
-        embed.add_field(name="Discordアカウント名", value=f"{member.name}#{member.discriminator}", inline=False)
+        embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
         if check_mic is None and category == "🅱️部門":
             embed.add_field(name="マイク設定確認", value="❌", inline=False)
             button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
