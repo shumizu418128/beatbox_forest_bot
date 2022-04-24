@@ -124,7 +124,7 @@ async def on_message(message):
         if roleA is None and roleB is None:
             embed = Embed(title=member.display_name, description="ビト森杯にエントリーしていません")
             embed.add_field(name="ID", value=member.id, inline=False)
-            embed.add_field(name="Discordアカウント名", value=f"{member.name}#{member.discriminator}", inline=False)
+            embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await message.channel.send(embed=embed)
         elif roleA is not None and roleB is not None:
             embed = Embed(title=member.display_name, description="Error: 重複エントリーを検知", color=0xff0000)
@@ -144,7 +144,7 @@ async def on_message(message):
             embed.add_field(name="読みがな", value=read, inline=False)
             embed.add_field(name="エントリー部門", value=category, inline=False)
             embed.add_field(name="ID", value=member.id, inline=False)
-            embed.add_field(name="Discordアカウント名", value=f"{member.name}#{member.discriminator}", inline=False)
+            embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             if check_mic is None and category == "🅱️部門":
                 embed.add_field(name="マイク設定確認", value="❌", inline=False)
                 button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
