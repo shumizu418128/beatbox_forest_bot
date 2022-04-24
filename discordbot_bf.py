@@ -3,6 +3,7 @@ import re
 import shutil
 from asyncio import sleep
 from datetime import datetime
+from difflib import get_close_matches
 
 import cv2
 import discord
@@ -12,6 +13,7 @@ import pyocr
 import pyocr.builders
 from discord import Embed
 from discord.ui import Button, InputText, Modal, View
+from neologdn import normalize
 from oauth2client.service_account import ServiceAccountCredentials
 from PIL import Image
 
@@ -180,41 +182,136 @@ async def on_message(message):
         await message.channel.send(f"{message.author.mention}\nError: s.cancelはビト森杯運営専用コマンドです\n\n`{message.content}`")
         return
 
-    if message.content.startswith("s.entry"):  # s.entryA or B と記入する
+    if message.content.startswith("s.s"):
         await message.delete(delay=1)
-        input_ = message.content[9:]  # s.entryA or B をカット
-        if message.content.startswith("s.entryA"):
-            entry_amount = int(worksheet.acell('J1').value) + 1
-            place_key = 0
-            category = "🇦"
-            worksheet.update_cell(1, 10, f"{entry_amount}")
-            role = message.guild.get_role(920320926887862323)  # A部門 ビト森杯
-        elif message.content.startswith("s.entryB"):
-            entry_amount = int(worksheet.acell('J2').value) + 1
-            place_key = 4
-            category = "🅱️"
-            worksheet.update_cell(2, 10, f"{entry_amount}")
-            role = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
-        else:
-            await message.channel.send("Error: 入力方法が間違っています。")
-            return
+        input_ = message.content[4:]
         try:
-            name = message.guild.get_member(int(input_))
+            member = message.guild.get_member(int(input_))
         except ValueError:
-            name = message.guild.get_member_named(input_)
-        if name is None:
-            await message.channel.send("Error: 検索結果なし")
+            member = message.guild.get_member_named(input_)
+        embed = Embed(title="検索中...")
+        embed_msg = await message.channel.send(embed=embed)
+        if member is None:
+            all_names = []
+            for mem in message.guild.members:
+                if not mem.bot:
+                    all_names.append(mem.display_name)
+            all_names_edited = [normalize(mem).lower() for mem in all_names]
+            results_edited = get_close_matches(normalize(input_).lower(), all_names_edited, n=5, cutoff=0.3)
+            stamps = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+            if len(results_edited) == 0:
+                embed = Embed(title="検索結果なし", description=f"`検索ワード：`{input_}")
+                await embed_msg.edit(embed=embed)
+                return
+            embed = Embed(title="検索結果", description=f"`検索ワード：`{input_}")
+            results = []
+            for i in range(len(results_edited)):
+                index = all_names_edited.index(results_edited[i])
+                results.append(all_names[index])
+                embed.add_field(name=f"{stamps[i]}:", value=all_names[index], inline=False)
+            await embed_msg.edit(embed=embed)
+            for i in range(len(results_edited)):
+                await embed_msg.add_reaction(stamps[i])
+
+            def check(reaction, user):
+                return user == message.author and str(reaction.emoji) in stamps and reaction.message == embed_msg
+
+            try:
+                reaction, user = await client.wait_for('reaction_add', timeout=30.0, check=check)
+            except asyncio.TimeoutError:
+                await embed_msg.clear_reactions()
+                return
+            await embed_msg.clear_reactions()
+            index_result = stamps.index(reaction.emoji)
+            member = message.guild.get_member_named(results[index_result])
+        entryA = member.get_role(920320926887862323)  # A部門 ビト森杯
+        entryB = member.get_role(920321241976541204)  # B部門 ビト森杯
+        if entryA is not None and entryB is not None:  # 重複エントリー警告
+            embed = Embed(title=member.display_name, description="Error: 重複エントリーを検知", color=0xff0000)
+            await embed_msg.edit("<@412082841829113877>", embed=embed)
             return
-        await message.channel.send("名前の読みかたを入力してください：")
-        def check(m):
-            return m.channel == message.channel and m.author == message.author
-        read = await client.wait_for('message', check=check)
-        worksheet.update_cell(entry_amount + 1, place_key + 1, f"{name.display_name}")
-        worksheet.update_cell(entry_amount + 1, place_key + 2, f"{read.content}")
-        worksheet.update_cell(entry_amount + 1, place_key + 3, f"{name.id}")
-        await name.add_roles(role)
-        embed = Embed(title=f"{category}部門 エントリー完了", description=f"`名前：`{name.display_name}\n`読み：`{read.content}")
-        await message.channel.send(embed=embed)
+        if entryA is None and entryB is None:  # 未エントリー
+            embed = Embed(title=member.display_name, description=f"ビト森杯にエントリーしていません")
+            embed.add_field(name="ID", value=member.id, inline=False)
+            await embed_msg.edit(embed=embed)
+            await embed_msg.add_reaction("🇦")
+            await embed_msg.add_reaction("🅱️")
+
+            def check(reaction, user):
+                ab = ["🇦", "🅱️"]
+                return user == message.author and str(reaction.emoji) in ab and reaction.message == embed_msg
+
+            try:
+                reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await embed_msg.clear_reactions()
+                return
+            await embed_msg.clear_reactions()
+            category = str(reaction.emoji)
+            await message.channel.send(f"{member.display_name} {category}部門 手動エントリー\n名前の読みかたを入力してください：")
+
+            def check(m):
+                return m.channel == message.channel and m.author == message.author
+
+            try:
+                read = await client.wait_for('message', timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await message.channel.send("Error: timeout")
+                return
+            if read.content == "cancel":
+                await message.channel.send("キャンセルしました。")
+                return
+            if category == "🇦":
+                entry_amount = int(worksheet.acell('J1').value) + 1
+                place_key = 0
+                worksheet.update_cell(1, 10, entry_amount)
+                role = message.guild.get_role(920320926887862323)  # A部門 ビト森杯
+            elif category == "🅱️":
+                entry_amount = int(worksheet.acell('J2').value) + 1
+                place_key = 4
+                worksheet.update_cell(2, 10, entry_amount)
+                role = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
+            worksheet.update_cell(entry_amount + 1, place_key + 1, member.display_name)
+            worksheet.update_cell(entry_amount + 1, place_key + 2, read.content)
+            worksheet.update_cell(entry_amount + 1, place_key + 3, f"{member.id}")
+            await member.add_roles(role)
+            embed = Embed(title=f"✅ {category}部門エントリー完了", description=f"{member.mention}\n`読み：`{read.content}")
+            await message.channel.send(embed=embed)
+            return
+        cell = worksheet.find(f'{member.id}')
+        if cell is None:
+            embed = Embed(title=member.display_name, description="Error: DB検索結果なし", color=0xff0000)
+            await embed_msg.edit("<@412082841829113877>", embed=embed)
+            return
+        read = worksheet.cell(cell.row, cell.col - 1).value
+        if entryA is not None:
+            category = "🇦 ※マイク設定確認不要"
+        elif entryB is not None:
+            category = "🅱️部門"
+        check_mic = member.get_role(952951691047747655)  # verified
+        embed = Embed(title=member.display_name)
+        embed.add_field(name="読みがな", value=read, inline=False)
+        embed.add_field(name="エントリー部門", value=category, inline=False)
+        embed.add_field(name="ID", value=member.id, inline=False)
+        if check_mic is None and category == "🅱️部門":
+            embed.add_field(name="マイク設定確認", value="❌", inline=False)
+            button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
+            async def button_callback(interaction):
+                admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
+                if admin is not None:
+                    channel = client.get_channel(897784178958008322)  # bot用チャット
+                    await channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
+                    verified = message.guild.get_role(952951691047747655)  # verified
+                    await member.add_roles(verified)
+                    await interaction.response.send_message(f"✅{member.display_name}にverifiedロールを付与しました。")
+            button.callback = button_callback
+            view = View()
+            view.add_item(button)
+            await embed_msg.edit(embed=embed, view=view)
+            return
+        if check_mic is not None:
+            embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
+        await embed_msg.edit(embed=embed)
         return
 
     if message.content.startswith("s.poll"):
@@ -227,29 +324,6 @@ async def on_message(message):
         poll = await message.channel.send(embed=embed)
         await poll.add_reaction("1⃣")
         await poll.add_reaction("2⃣")
-        return
-
-    if message.content.startswith("s.check"):
-        await message.delete(delay=1)
-        input_ = message.content[8:]  # s.check をカット
-        try:
-            name = message.guild.get_member(int(input_))
-        except ValueError:
-            name = message.guild.get_member_named(input_)
-        if name is None:
-            await message.channel.send("Error: 検索結果なし")
-            return
-        cell = worksheet.find(f'{name.id}')
-        if cell is not None:
-            await message.channel.send(f"DB登録：`{cell.row}, {cell.col}`")
-        for role in name.roles:
-            if role.id == 920320926887862323:  # A部門 ビト森杯
-                await message.channel.send("%sさんはビト森杯 🇦部門エントリー済み" % (name.display_name))
-                return
-            if role.id == 920321241976541204:  # B部門 ビト森杯
-                await message.channel.send("%sさんはビト森杯 🅱️部門エントリー済み" % (name.display_name))
-                return
-        await message.channel.send("%sさんはビト森杯にエントリーしていません" % (name.display_name))
         return
 
     if message.content.startswith("s.role"):
@@ -315,37 +389,6 @@ async def on_message(message):
         for e in error:
             await message.channel.send(e)
         await message.channel.send("---finish---")
-        return
-
-    if message.content.startswith("s.read"):
-        input_ = message.content[7:]  # s.read をカット
-        try:
-            member = message.guild.get_member(int(input_))
-        except ValueError:
-            member = message.guild.get_member_named(input_)
-        if member is None:
-            await message.channel.send("Error: 検索結果なし")
-            return
-        cell = worksheet.find(f'{member.id}')
-        if cell is None:
-            await message.channel.send("Error: DB検索結果なし")
-            return
-        read = worksheet.cell(cell.row, cell.col - 1).value
-        await message.channel.send(f"名前：{member.display_name}\n読み：{read}")
-        return
-
-    if message.content.startswith("s.verify"):
-        contents = message.content[9:]
-        try:
-            member = message.guild.get_member(int(contents))
-        except ValueError:
-            member = message.guild.get_member_named(contents)
-        if member is None:
-            await message.channel.send("Error: 検索結果なし")
-            return
-        verified = message.guild.get_role(952951691047747655)  # verified
-        await member.add_roles(verified)
-        await message.channel.send(f"{member.display_name}にverifiedロールを追加しました。")
         return
 
     if len(message.attachments) != 2 and message.channel.id == 952946795573571654:  # 画像提出
