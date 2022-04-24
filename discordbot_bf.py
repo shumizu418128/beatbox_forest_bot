@@ -122,7 +122,7 @@ async def on_message(message):
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if roleA is None and roleB is None:
-            embed = Embed(title=member.display_name, description=f"ビト森杯にエントリーしていません")
+            embed = Embed(title=member.display_name, description="ビト森杯にエントリーしていません")
             embed.add_field(name="ID", value=member.id, inline=False)
             embed.add_field(name="Discordアカウント名", value=f"{member.name}#{member.discriminator}", inline=False)
             await message.channel.send(embed=embed)
@@ -265,7 +265,7 @@ async def on_message(message):
             await embed_msg.edit("<@412082841829113877>", embed=embed)
             return
         if entryA is None and entryB is None:  # 未エントリー
-            embed = Embed(title=member.display_name, description=f"ビト森杯にエントリーしていません")
+            embed = Embed(title=member.display_name, description="ビト森杯にエントリーしていません")
             embed.add_field(name="ID", value=member.id, inline=False)
             embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await embed_msg.edit(embed=embed)
