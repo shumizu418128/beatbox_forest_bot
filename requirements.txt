@@ -8,3 +8,4 @@ opencv-python--headless
 scipy
 gspread
 oauth2client
+neologdn
