@@ -223,6 +223,7 @@ async def on_message(message):
 
     if message.content.startswith("s.s"):
         await message.delete(delay=1)
+        admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
         input_ = message.content[4:]
         try:
             member = message.guild.get_member(int(input_))
@@ -256,7 +257,7 @@ async def on_message(message):
                 return user == message.author and str(reaction.emoji) in stamps and reaction.message == embed_msg
 
             try:
-                reaction, user = await client.wait_for('reaction_add', timeout=30.0, check=check)
+                reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await embed_msg.clear_reactions()
                 return
@@ -267,7 +268,7 @@ async def on_message(message):
         entryB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if entryA is not None and entryB is not None:  # 重複エントリー警告
             embed = Embed(title=member.display_name, description="Error: 重複エントリーを検知", color=0xff0000)
-            await embed_msg.edit("<@412082841829113877>", embed=embed)
+            await embed_msg.edit(admin.mention, embed=embed)
             return
         if entryA is None and entryB is None:  # 未エントリー
             embed = Embed(title=member.display_name, description="ビト森杯にエントリーしていません")
@@ -315,13 +316,15 @@ async def on_message(message):
             worksheet.update_cell(entry_amount + 1, place_key + 2, read.content)
             worksheet.update_cell(entry_amount + 1, place_key + 3, f"{member.id}")
             await member.add_roles(role)
-            embed = Embed(title=f"{category}部門エントリー完了✅", description=f"{member.mention}\n`読み：`{read.content}")
+            embed = Embed(title=f"{category}部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
             await message.channel.send(embed=embed)
+            channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
+            await channel.send(embed=embed)
             return
         cell = worksheet.find(f'{member.id}')
         if cell is None:
             embed = Embed(title=member.display_name, description="Error: DB検索結果なし", color=0xff0000)
-            await embed_msg.edit("<@412082841829113877>", embed=embed)
+            await embed_msg.edit(admin.mention, embed=embed)
             return
         read = worksheet.cell(cell.row, cell.col - 1).value
         if entryA is not None:
