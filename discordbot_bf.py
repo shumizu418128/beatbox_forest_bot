@@ -249,9 +249,8 @@ async def on_message(message):
                 index = all_names_edited.index(results_edited[i])
                 results.append(all_names[index])
                 embed.add_field(name=f"{stamps[i]}:", value=all_names[index], inline=False)
-            await embed_msg.edit(embed=embed)
-            for i in range(len(results_edited)):
                 await embed_msg.add_reaction(stamps[i])
+            await embed_msg.edit(embed=embed)
 
             def check(reaction, user):
                 return user == message.author and str(reaction.emoji) in stamps and reaction.message == embed_msg
