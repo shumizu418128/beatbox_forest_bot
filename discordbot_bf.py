@@ -288,7 +288,7 @@ async def on_message(message):
                 return
             await embed_msg.clear_reactions()
             category = str(reaction.emoji)
-            await message.channel.send(f"{member.display_name} {category}部門 手動エントリー\n名前の読みかたを入力してください：")
+            await message.channel.send(f"{member.display_name} {category}部門 手動エントリー\n`cancelと入力するとキャンセルされます`\n名前の読みかたを入力してください：")
 
             def check(m):
                 return m.channel == message.channel and m.author == message.author
