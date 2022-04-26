@@ -430,7 +430,7 @@ async def on_message(message):
         if error == []:
             await message.channel.send("エラーなし")
             return
-        await message.channel.send("見つかったエラー：")
+        await message.channel.send("<@412082841829113877>\n見つかったエラー：")
         for e in error:
             await message.channel.send(e)
         await message.channel.send("---finish---")
