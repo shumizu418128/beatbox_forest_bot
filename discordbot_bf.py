@@ -184,6 +184,11 @@ async def on_message(message):
         if member is None:
             await message.channel.send("Error: 検索結果なし")
             return
+        roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
+        roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
+        if roleA is None and roleB is None:
+            await message.channel.send("%sさんはビト森杯にエントリーしていません" % (member.display_name))
+            return
         notice = await message.channel.send(f"{member.display_name} さんのビト森杯エントリーを取り消します。\n\n⭕ `OK`\n❌ 中止")
         await notice.add_reaction("⭕")
         await notice.add_reaction("❌")
@@ -205,12 +210,9 @@ async def on_message(message):
             worksheet.update_cell(cell.row, cell.col - 1, '')
             worksheet.update_cell(cell.row, cell.col - 2, '')
             await message.channel.send(f"DB削除完了 `{cell.row}, {cell.col}`")
+        else:
+            await message.channel.send("Error: DB登録なし")
         bot_channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
-        roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
-        if roleA is None and roleB is None:
-            await message.channel.send("%sさんはビト森杯にエントリーしていません" % (member.display_name))
-            return
         if roleA is not None:
             await member.remove_roles(roleA)
             await message.channel.send("%sさんのビト森杯 🇦部門エントリーを取り消しました。" % (member.display_name))
