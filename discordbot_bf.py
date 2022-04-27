@@ -151,7 +151,7 @@ async def on_message(message):
             try:
                 cell = worksheet.find(f'{member.id}')
             except gspread.exceptions.APIError:
-                await channel.send("Error: gspread.exceptions.APIError")
+                await message.channel.send("Error: gspread.exceptions.APIError")
                 return
             if cell is None:
                 embed = Embed(title=member.display_name, description="Error: DB検索結果なし", color=0xff0000)
@@ -162,7 +162,7 @@ async def on_message(message):
                 try:
                     read = worksheet.cell(cell.row, cell.col - 1).value
                 except gspread.exceptions.APIError:
-                    await channel.send("Error: gspread.exceptions.APIError")
+                    await message.channel.send("Error: gspread.exceptions.APIError")
                     return
                 if roleA is not None:
                     category = "🇦 ※マイク設定確認不要"
@@ -217,7 +217,7 @@ async def on_message(message):
         try:
             cell = worksheet.find(f'{member.id}')
         except gspread.exceptions.APIError:
-            await channel.send("Error: gspread.exceptions.APIError")
+            await message.channel.send("Error: gspread.exceptions.APIError")
             return
         if cell is not None:
             try:
@@ -225,7 +225,7 @@ async def on_message(message):
                 worksheet.update_cell(cell.row, cell.col - 1, '')
                 worksheet.update_cell(cell.row, cell.col - 2, '')
             except gspread.exceptions.APIError:
-                await channel.send("Error: gspread.exceptions.APIError")
+                await message.channel.send("Error: gspread.exceptions.APIError")
                 return
             await message.channel.send(f"DB削除完了 `{cell.row}, {cell.col}`")
         else:
@@ -340,7 +340,7 @@ async def on_message(message):
                 worksheet.update_cell(entry_amount + 1, place_key + 2, read.content)
                 worksheet.update_cell(entry_amount + 1, place_key + 3, f"{member.id}")
             except gspread.exceptions.APIError:
-                await channel.send("Error: gspread.exceptions.APIError")
+                await message.channel.send("Error: gspread.exceptions.APIError")
                 return
             await member.add_roles(role)
             embed = Embed(title=f"{category}部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
@@ -351,7 +351,7 @@ async def on_message(message):
         try:
             cell = worksheet.find(f'{member.id}')
         except gspread.exceptions.APIError:
-            await channel.send("Error: gspread.exceptions.APIError")
+            await message.channel.send("Error: gspread.exceptions.APIError")
             return
         if cell is None:
             embed = Embed(title=member.display_name, description="Error: DB検索結果なし", color=0xff0000)
@@ -360,7 +360,7 @@ async def on_message(message):
         try:
             read = worksheet.cell(cell.row, cell.col - 1).value
         except gspread.exceptions.APIError:
-            await channel.send("Error: gspread.exceptions.APIError")
+            await message.channel.send("Error: gspread.exceptions.APIError")
             return
         if roleA is not None:
             category = "🇦 ※マイク設定確認不要"
@@ -438,7 +438,7 @@ async def on_message(message):
             DBidA_str = worksheet.col_values(3)
             DBidB_str = worksheet.col_values(7)
         except gspread.exceptions.APIError:
-            await channel.send("Error: gspread.exceptions.APIError")
+            await message.channel.send("Error: gspread.exceptions.APIError")
             return
         DBidA_str.remove("id")
         DBidB_str.remove("id")
