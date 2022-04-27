@@ -39,11 +39,17 @@ class ModalA(Modal):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
         re_hiragana = re.compile(r'^[あ-んー]+$')
         if re_hiragana.fullmatch(self.children[0].value):
-            entry_amount = int(worksheet.acell('J1').value) + 1
-            worksheet.update_cell(1, 10, f"{entry_amount}")
-            worksheet.update_cell(entry_amount + 1, 1, f"{interaction.user.display_name}")
-            worksheet.update_cell(entry_amount + 1, 2, f"{self.children[0].value}")
-            worksheet.update_cell(entry_amount + 1, 3, f"{interaction.user.id}")
+            try:
+                entry_amount = int(worksheet.acell('J1').value) + 1
+                worksheet.update_cell(1, 10, f"{entry_amount}")
+                worksheet.update_cell(entry_amount + 1, 1, f"{interaction.user.display_name}")
+                worksheet.update_cell(entry_amount + 1, 2, f"{self.children[0].value}")
+                worksheet.update_cell(entry_amount + 1, 3, f"{interaction.user.id}")
+            except gspread.exceptions.APIError:
+                embed = Embed(title="Error", description="アクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
+                await channel.send(interaction.user.mention, embed=embed)
+                await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
+                return
             embed = Embed(title="🇦部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}", value=f"`読み：`{self.children[0].value}", inline=False)
             role = interaction.guild.get_role(920320926887862323)  # ビト森杯 A部門
@@ -65,11 +71,17 @@ class ModalB(Modal):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
         re_hiragana = re.compile(r'^[あ-んー]+$')
         if re_hiragana.fullmatch(self.children[0].value):
-            entry_amount = int(worksheet.acell('J2').value) + 1
-            worksheet.update_cell(2, 10, f"{entry_amount}")
-            worksheet.update_cell(entry_amount + 1, 5, f"{interaction.user.display_name}")
-            worksheet.update_cell(entry_amount + 1, 6, f"{self.children[0].value}")
-            worksheet.update_cell(entry_amount + 1, 7, f"{interaction.user.id}")
+            try:
+                entry_amount = int(worksheet.acell('J2').value) + 1
+                worksheet.update_cell(2, 10, f"{entry_amount}")
+                worksheet.update_cell(entry_amount + 1, 5, f"{interaction.user.display_name}")
+                worksheet.update_cell(entry_amount + 1, 6, f"{self.children[0].value}")
+                worksheet.update_cell(entry_amount + 1, 7, f"{interaction.user.id}")
+            except gspread.exceptions.APIError:
+                embed = Embed(title="Error", description="アクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
+                await channel.send(interaction.user.mention, embed=embed)
+                await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
+                return
             embed = Embed(title="🅱️部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}", value=f"`読み：`{self.children[0].value}", inline=False)
             role = interaction.guild.get_role(920321241976541204)  # ビト森杯 B部門
@@ -84,20 +96,20 @@ class ModalB(Modal):
 @client.event
 async def on_member_update(before, after):
     if before.display_name != after.display_name:
-        entryA = after.get_role(920320926887862323)  # A部門 ビト森杯
-        entryB = after.get_role(920321241976541204)  # B部門 ビト森杯
+        roleA = after.get_role(920320926887862323)  # A部門 ビト森杯
+        roleB = after.get_role(920321241976541204)  # B部門 ビト森杯
         admin = after.guild.get_role(904368977092964352)  # ビト森杯運営
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        if entryA is None and entryB is None:
+        if roleA is None and roleB is None:
             return
-        if entryA is not None and entryB is not None:
+        if roleA is not None and roleB is not None:
             await channel.send(f"{admin.mention} 重複エントリー検知\n\n{after.display_name} {after.id}")
         cell = worksheet.find(f'{after.id}')
         if cell is None:
-            if entryA is None:
+            if roleA is None:
                 await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {after.id}\nB部門")
                 return
-            if entryB is None:
+            if roleB is None:
                 await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {after.id}\nA部門")
                 return
         right_name = worksheet.cell(cell.row, cell.col - 2).value
@@ -248,13 +260,13 @@ async def on_message(message):
             await embed_msg.clear_reactions()
             index_result = stamps.index(reaction.emoji)
             member = message.guild.get_member_named(results[index_result])
-        entryA = member.get_role(920320926887862323)  # A部門 ビト森杯
-        entryB = member.get_role(920321241976541204)  # B部門 ビト森杯
-        if entryA is not None and entryB is not None:  # 重複エントリー警告
+        roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
+        roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
+        if roleA is not None and roleB is not None:  # 重複エントリー警告
             embed = Embed(title=member.display_name, description="Error: 重複エントリーを検知", color=0xff0000)
             await embed_msg.edit(admin.mention, embed=embed)
             return
-        if entryA is None and entryB is None:  # 未エントリー
+        if roleA is None and roleB is None:  # 未エントリー
             embed = Embed(title=member.display_name, description="ビト森杯にエントリーしていません")
             embed.add_field(name="ID", value=member.id, inline=False)
             embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
@@ -311,9 +323,9 @@ async def on_message(message):
             await embed_msg.edit(admin.mention, embed=embed)
             return
         read = worksheet.cell(cell.row, cell.col - 1).value
-        if entryA is not None:
+        if roleA is not None:
             category = "🇦 ※マイク設定確認不要"
-        elif entryB is not None:
+        elif roleB is not None:
             category = "🅱️部門"
         check_mic = member.get_role(952951691047747655)  # verified
         embed = Embed(title=member.display_name)
