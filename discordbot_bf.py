@@ -104,7 +104,11 @@ async def on_member_update(before, after):
             return
         if roleA is not None and roleB is not None:
             await channel.send(f"{admin.mention} 重複エントリー検知\n\n{after.display_name} {after.id}")
-        cell = worksheet.find(f'{after.id}')
+        try:
+            cell = worksheet.find(f'{after.id}')
+        except gspread.exceptions.APIError:
+            await channel.send("Error: gspread.exceptions.APIError")
+            return
         if cell is None:
             if roleA is None:
                 await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {after.id}\nB部門")
@@ -112,7 +116,11 @@ async def on_member_update(before, after):
             if roleB is None:
                 await channel.send(f"{admin.mention} データベース破損検知\n\n{after.display_name} {after.id}\nA部門")
                 return
-        right_name = worksheet.cell(cell.row, cell.col - 2).value
+        try:
+            right_name = worksheet.cell(cell.row, cell.col - 2).value
+        except gspread.exceptions.APIError:
+            await channel.send("Error: gspread.exceptions.APIError")
+            return
         if after.display_name != right_name:
             await after.edit(nick=right_name)
             await channel.send(f"{after.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
@@ -141,14 +149,22 @@ async def on_message(message):
             embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await message.channel.send(f"{admin.mention}", embed=embed)
         else:
-            cell = worksheet.find(f'{member.id}')
+            try:
+                cell = worksheet.find(f'{member.id}')
+            except gspread.exceptions.APIError:
+                await channel.send("Error: gspread.exceptions.APIError")
+                return
             if cell is None:
                 embed = Embed(title=member.display_name, description="Error: DB検索結果なし", color=0xff0000)
                 embed.add_field(name="ID", value=member.id, inline=False)
                 embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
                 await message.channel.send(f"{admin.mention}", embed=embed)
             else:
-                read = worksheet.cell(cell.row, cell.col - 1).value
+                try:
+                    read = worksheet.cell(cell.row, cell.col - 1).value
+                except gspread.exceptions.APIError:
+                    await channel.send("Error: gspread.exceptions.APIError")
+                    return
                 if roleA is not None:
                     category = "🇦 ※マイク設定確認不要"
                 elif roleB is not None:
@@ -199,23 +215,31 @@ async def on_message(message):
         if str(reaction.emoji) == "❌":
             await message.channel.send(f"{user.mention}\n中止しました。")
             return
-        cell = worksheet.find(f'{member.id}')
+        try:
+            cell = worksheet.find(f'{member.id}')
+        except gspread.exceptions.APIError:
+            await channel.send("Error: gspread.exceptions.APIError")
+            return
         if cell is not None:
-            worksheet.update_cell(cell.row, cell.col, '')
-            worksheet.update_cell(cell.row, cell.col - 1, '')
-            worksheet.update_cell(cell.row, cell.col - 2, '')
+            try:
+                worksheet.update_cell(cell.row, cell.col, '')
+                worksheet.update_cell(cell.row, cell.col - 1, '')
+                worksheet.update_cell(cell.row, cell.col - 2, '')
+            except gspread.exceptions.APIError:
+                await channel.send("Error: gspread.exceptions.APIError")
+                return
             await message.channel.send(f"DB削除完了 `{cell.row}, {cell.col}`")
         else:
             await message.channel.send("Error: DB登録なし")
-        bot_channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
+        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
         if roleA is not None:
             await member.remove_roles(roleA)
             await message.channel.send("%sさんのビト森杯 🇦部門エントリーを取り消しました。" % (member.display_name))
-            await bot_channel.send("%sさんのビト森杯 🇦部門エントリーを取り消しました。" % (member.display_name))
+            await channel.send("%sさんのビト森杯 🇦部門エントリーを取り消しました。" % (member.display_name))
         if roleB is not None:
             await member.remove_roles(roleB)
             await message.channel.send("%sさんのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
-            await bot_channel.send("%sさんのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
+            await channel.send("%sさんのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
         return
 
     if message.content.startswith("s.s"):
@@ -298,31 +322,43 @@ async def on_message(message):
             if read.content == "cancel":
                 await message.channel.send("キャンセルしました。")
                 return
-            if category == "🇦":
-                entry_amount = int(worksheet.acell('J1').value) + 1
-                place_key = 0
-                worksheet.update_cell(1, 10, entry_amount)
-                role = message.guild.get_role(920320926887862323)  # A部門 ビト森杯
-            elif category == "🅱️":
-                entry_amount = int(worksheet.acell('J2').value) + 1
-                place_key = 4
-                worksheet.update_cell(2, 10, entry_amount)
-                role = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
-            worksheet.update_cell(entry_amount + 1, place_key + 1, member.display_name)
-            worksheet.update_cell(entry_amount + 1, place_key + 2, read.content)
-            worksheet.update_cell(entry_amount + 1, place_key + 3, f"{member.id}")
+            try:
+                if category == "🇦":
+                    entry_amount = int(worksheet.acell('J1').value) + 1
+                    place_key = 0
+                    worksheet.update_cell(1, 10, entry_amount)
+                    role = message.guild.get_role(920320926887862323)  # A部門 ビト森杯
+                elif category == "🅱️":
+                    entry_amount = int(worksheet.acell('J2').value) + 1
+                    place_key = 4
+                    worksheet.update_cell(2, 10, entry_amount)
+                    role = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
+                worksheet.update_cell(entry_amount + 1, place_key + 1, member.display_name)
+                worksheet.update_cell(entry_amount + 1, place_key + 2, read.content)
+                worksheet.update_cell(entry_amount + 1, place_key + 3, f"{member.id}")
+            except gspread.exceptions.APIError:
+                await channel.send("Error: gspread.exceptions.APIError")
+                return
             await member.add_roles(role)
             embed = Embed(title=f"{category}部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
             await message.channel.send(embed=embed)
             channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
             await channel.send(embed=embed)
             return
-        cell = worksheet.find(f'{member.id}')
+        try:
+            cell = worksheet.find(f'{member.id}')
+        except gspread.exceptions.APIError:
+            await channel.send("Error: gspread.exceptions.APIError")
+            return
         if cell is None:
             embed = Embed(title=member.display_name, description="Error: DB検索結果なし", color=0xff0000)
             await embed_msg.edit(admin.mention, embed=embed)
             return
-        read = worksheet.cell(cell.row, cell.col - 1).value
+        try:
+            read = worksheet.cell(cell.row, cell.col - 1).value
+        except gspread.exceptions.APIError:
+            await channel.send("Error: gspread.exceptions.APIError")
+            return
         if roleA is not None:
             category = "🇦 ※マイク設定確認不要"
         elif roleB is not None:
@@ -395,9 +431,13 @@ async def on_message(message):
         memberB = set(roleB.members)
         mid_A = [member.id for member in roleA.members]
         mid_B = [member.id for member in roleB.members]
-        DBidA_str = worksheet.col_values(3)
+        try:
+            DBidA_str = worksheet.col_values(3)
+            DBidB_str = worksheet.col_values(7)
+        except gspread.exceptions.APIError:
+            await channel.send("Error: gspread.exceptions.APIError")
+            return
         DBidA_str.remove("id")
-        DBidB_str = worksheet.col_values(7)
         DBidB_str.remove("id")
         DBidA = [int(id) for id in DBidA_str]
         DBidB = [int(id) for id in DBidB_str]
