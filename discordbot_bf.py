@@ -27,6 +27,7 @@ intents = discord.Intents.all()  # デフォルトのIntentsオブジェクト�
 intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
 shutil.copyfile("tessdata/jpn.traineddata", "/app/vendor/tessdata/jpn.traineddata")
+re_hiragana = re.compile(r'^[あ-んー]+$')
 print("ビト森杯bot: 起動完了")
 
 class ModalA(Modal):
@@ -37,7 +38,6 @@ class ModalA(Modal):
 
     async def callback(self, interaction):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        re_hiragana = re.compile(r'^[あ-んー]+$')
         if re_hiragana.fullmatch(self.children[0].value):
             try:
                 entry_amount = int(worksheet.acell('J1').value) + 1
@@ -69,7 +69,6 @@ class ModalB(Modal):
 
     async def callback(self, interaction):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        re_hiragana = re.compile(r'^[あ-んー]+$')
         if re_hiragana.fullmatch(self.children[0].value):
             try:
                 entry_amount = int(worksheet.acell('J2').value) + 1
@@ -309,19 +308,23 @@ async def on_message(message):
                 return
             await embed_msg.clear_reactions()
             category = str(reaction.emoji)
-            await message.channel.send(f"{member.display_name} {category}部門 手動エントリー\n`cancelと入力するとキャンセルされます`\n名前の読みかたを入力してください：")
+            while True:
+                await message.channel.send(f"{member.display_name} {category}部門 手動エントリー\n`cancelと入力するとキャンセルされます`\n名前の読みかたを入力してください：")
 
-            def check(m):
-                return m.channel == message.channel and m.author == message.author
+                def check(m):
+                    return m.channel == message.channel and m.author == message.author
 
-            try:
-                read = await client.wait_for('message', timeout=60.0, check=check)
-            except asyncio.TimeoutError:
-                await message.channel.send("Error: timeout")
-                return
-            if read.content == "cancel":
-                await message.channel.send("キャンセルしました。")
-                return
+                try:
+                    read = await client.wait_for('message', timeout=60.0, check=check)
+                except asyncio.TimeoutError:
+                    await message.channel.send("Error: timeout")
+                    return
+                if read.content == "cancel":
+                    await message.channel.send("キャンセルしました。")
+                    return
+                if re_hiragana.fullmatch(read.content):
+                    break
+                await message.channel.send("登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。")
             try:
                 if category == "🇦":
                     entry_amount = int(worksheet.acell('J1').value) + 1
