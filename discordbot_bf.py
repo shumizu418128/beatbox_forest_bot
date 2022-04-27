@@ -116,9 +116,6 @@ async def on_message(message):
         await message.channel.send(admin.mention)
         input_ = [j for j in message.content.split()]
         member = message.guild.get_member(int(input_[1]))
-        if member is None:
-            await message.channel.send("Error: ID検索結果なし")
-            return
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if roleA is None and roleB is None:
@@ -152,21 +149,7 @@ async def on_message(message):
                 embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
                 if check_mic is None and category == "🅱️部門":
                     embed.add_field(name="マイク設定確認", value="❌", inline=False)
-                    button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
-                    async def button_callback(interaction):
-                        admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
-                        if admin is not None:
-                            channel = client.get_channel(897784178958008322)  # bot用チャット
-                            await channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
-                            verified = message.guild.get_role(952951691047747655)  # verified
-                            await member.add_roles(verified)
-                            await interaction.response.send_message(f"✅{member.display_name}にverifiedロールを付与しました。")
-                    button.callback = button_callback
-                    view = View()
-                    view.add_item(button)
-                    await message.channel.send(embed=embed, view=view)
-                else:
-                    await message.channel.send(embed=embed)
+                await message.channel.send(embed=embed)
         await message.channel.send(f"{member.mention}\nご用件をこのチャンネルにご記入ください。\nplease write your inquiry here.")
         return
 
