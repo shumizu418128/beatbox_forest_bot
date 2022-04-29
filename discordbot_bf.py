@@ -46,7 +46,7 @@ class ModalA(Modal):
                 worksheet.update_cell(entry_amount + 1, 2, f"{self.children[0].value}")
                 worksheet.update_cell(entry_amount + 1, 3, f"{interaction.user.id}")
             except gspread.exceptions.APIError:
-                embed = Embed(title="Error", description="アクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
+                embed = Embed(title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
                 await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
                 return
@@ -77,7 +77,7 @@ class ModalB(Modal):
                 worksheet.update_cell(entry_amount + 1, 6, f"{self.children[0].value}")
                 worksheet.update_cell(entry_amount + 1, 7, f"{interaction.user.id}")
             except gspread.exceptions.APIError:
-                embed = Embed(title="Error", description="アクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
+                embed = Embed(title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
                 await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
                 return
