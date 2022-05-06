@@ -106,7 +106,7 @@ async def on_member_update(before, after):
         try:
             cell = worksheet.find(f'{after.id}')
         except gspread.exceptions.APIError:
-            await channel.send("Error: gspread.exceptions.APIError")
+            await channel.send(f"{admin.mention}\nError: gspread.exceptions.APIError\n\n{after.display_name} {after.id}")
             return
         if cell is None:
             if roleA is None:
@@ -118,7 +118,7 @@ async def on_member_update(before, after):
         try:
             right_name = worksheet.cell(cell.row, cell.col - 2).value
         except gspread.exceptions.APIError:
-            await channel.send("Error: gspread.exceptions.APIError")
+            await channel.send(f"{admin.mention}\nError: gspread.exceptions.APIError\n\n{after.display_name} {after.id}")
             return
         if after.display_name != right_name:
             await after.edit(nick=right_name)
