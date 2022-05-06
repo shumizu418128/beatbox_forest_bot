@@ -83,7 +83,7 @@ class ModalB(Modal):
                 return
             embed = Embed(title="🅱️部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}", value=f"`読み：`{self.children[0].value}", inline=False)
-            role = interaction.guild.get_role(920321241976541204)  # ビト森杯 B部門
+            role = interaction.guild.get_role(920321241976541204)  # B部門 ビト森杯
             await interaction.user.add_roles(role)
             await interaction.response.send_message("🅱️部門 受付完了", ephemeral=True)  # 全ての作業が終わってから送信する！
             await channel.send(f"{interaction.user.mention}", embed=embed)
@@ -508,7 +508,7 @@ async def on_message(message):
         overwrite.send_messages = False
         overwrite.view_channel = True
         roleA = message.guild.get_role(920320926887862323)  # A部門 ビト森杯
-        roleB = message.guild.get_role(920321241976541204)  # ビト森杯 B部門
+        roleB = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
         await message.channel.set_permissions(roleA, overwrite=overwrite)
         await message.channel.set_permissions(roleB, overwrite=overwrite)
         overwrite.send_messages = True
