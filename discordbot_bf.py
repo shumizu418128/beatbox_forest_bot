@@ -106,7 +106,7 @@ async def on_member_update(before, after):
         try:
             cell = worksheet.find(f'{after.id}')
         except gspread.exceptions.APIError:
-            await channel.send("Error: gspread.exceptions.APIError")
+            await channel.send(f"{admin.mention}\nError: gspread.exceptions.APIError\n\n{after.display_name} {after.id}")
             return
         if cell is None:
             if roleA is None:
@@ -118,11 +118,14 @@ async def on_member_update(before, after):
         try:
             right_name = worksheet.cell(cell.row, cell.col - 2).value
         except gspread.exceptions.APIError:
-            await channel.send("Error: gspread.exceptions.APIError")
+            await channel.send(f"{admin.mention}\nError: gspread.exceptions.APIError\n\n{after.display_name} {after.id}")
             return
         if after.display_name != right_name:
             await after.edit(nick=right_name)
             await channel.send(f"{after.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
+        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+        await bot_channel.send(f"ニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+        return
 
 @client.event
 async def on_message(message):
