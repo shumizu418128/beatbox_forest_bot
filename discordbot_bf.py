@@ -153,6 +153,10 @@ async def on_message(message):
             embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await message.channel.send(f"{admin.mention}", embed=embed)
         else:
+            if roleA is not None:
+                category = "🇦 ※マイク設定確認不要"
+            elif roleB is not None:
+                category = "🅱️部門"
             try:
                 cell = worksheet.find(f'{member.id}')
             except gspread.exceptions.APIError:
@@ -161,8 +165,13 @@ async def on_message(message):
             if cell is None:
                 embed = Embed(title="Error: DB検索結果なし", color=0xff0000)
                 embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+                embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=member.id, inline=False)
                 embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+                if check_mic is None and category == "🅱️部門":
+                    embed.add_field(name="マイク設定確認", value="❌", inline=False)
+                elif check_mic is not None and category == "🅱️部門":
+                    embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
                 await message.channel.send(f"{admin.mention}", embed=embed)
             else:
                 try:
@@ -170,10 +179,6 @@ async def on_message(message):
                 except gspread.exceptions.APIError:
                     await message.channel.send("Error: gspread.exceptions.APIError")
                     return
-                if roleA is not None:
-                    category = "🇦 ※マイク設定確認不要"
-                elif roleB is not None:
-                    category = "🅱️部門"
                 check_mic = member.get_role(952951691047747655)  # verified
                 embed = Embed()
                 embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
@@ -223,6 +228,7 @@ async def on_message(message):
         if str(reaction.emoji) == "❌":
             await message.channel.send(f"{user.mention}\n中止しました。")
             return
+        await message.channel.send("処理中...", delete_after=5)
         try:
             cell = worksheet.find(f'{member.id}')
         except gspread.exceptions.APIError:
@@ -272,14 +278,19 @@ async def on_message(message):
                 embed = Embed(title="検索結果なし", description=f"`検索ワード：`{input_}")
                 await embed_msg.edit(embed=embed)
                 return
-            embed = Embed(title="検索結果", description=f"`検索ワード：`{input_}")
             results = []
+            embeds = []
+            embed = Embed(title="検索結果", description=f"`検索ワード：`{input_}")
+            embeds.append(embed)
             for i in range(len(results_edited)):
                 index = all_names_edited.index(results_edited[i])
-                results.append(all_names[index])
-                embed.add_field(name=f"{stamps[i]}:", value=all_names[index], inline=False)
+                result_member = message.guild.get_member_named(all_names[index])
+                results.append(f"{result_member.name}#{result_member.discriminator}")
+                embed = Embed(description=f"{stamps[i]}: {result_member.name}#{result_member.discriminator}", color=0x00bfff)
+                embed.set_author(name=result_member.display_name, icon_url=result_member.display_avatar.url)
                 await embed_msg.add_reaction(stamps[i])
-            await embed_msg.edit(embed=embed)
+                embeds.append(embed)
+            await embed_msg.edit(embeds=embeds)
 
             def check(reaction, user):
                 return user == message.author and str(reaction.emoji) in stamps and reaction.message == embed_msg
@@ -337,7 +348,9 @@ async def on_message(message):
                     return
                 if re_hiragana.fullmatch(read.content):
                     break
-                await message.channel.send("登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。")
+                embed = Embed(description="登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。", color=0xff0000)
+                await message.channel.send(embed=embed)
+            await message.channel.send("処理中...", delete_after=5)
             try:
                 if category == "🇦":
                     entry_amount = int(worksheet.acell('J1').value) + 1
@@ -363,6 +376,10 @@ async def on_message(message):
             channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
             await channel.send(embed=embed)
             return
+        if roleA is not None:
+            category = "🇦 ※マイク設定確認不要"
+        elif roleB is not None:
+            category = "🅱️部門"
         try:
             cell = worksheet.find(f'{member.id}')
         except gspread.exceptions.APIError:
@@ -380,10 +397,6 @@ async def on_message(message):
                 read = worksheet.cell(cell.row, cell.col - 1).value
             except gspread.exceptions.APIError:
                 read = "gspread.exceptions.APIError"
-        if roleA is not None:
-            category = "🇦 ※マイク設定確認不要"
-        elif roleB is not None:
-            category = "🅱️部門"
         check_mic = member.get_role(952951691047747655)  # verified
         embed = Embed()
         embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
