@@ -347,6 +347,7 @@ async def on_message(message):
                 return
             await member.add_roles(role)
             embed = Embed(title=f"{category}部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
+            embed.add_field(name=f"`名前：`{member.display_name}", value=f"`読み：`{read.content}", inline=False)
             await message.channel.send(embed=embed)
             channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
             await channel.send(embed=embed)
