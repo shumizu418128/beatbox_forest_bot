@@ -168,6 +168,7 @@ async def on_message(message):
                 embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=member.id, inline=False)
                 embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+                check_mic = member.get_role(952951691047747655)  # verified
                 if check_mic is None and category == "🅱️部門":
                     embed.add_field(name="マイク設定確認", value="❌", inline=False)
                 elif check_mic is not None and category == "🅱️部門":
