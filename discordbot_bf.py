@@ -334,7 +334,7 @@ async def on_message(message):
             await embed_msg.clear_reactions()
             category = str(reaction.emoji)
             while True:
-                await message.channel.send(f"{member.display_name} {category}部門 手動エントリー\n`cancelと入力するとキャンセルされます`\n名前の読みかたを入力してください：")
+                typing = await message.channel.send(f"{member.display_name} {category}部門 手動エントリー\n`cancelと入力するとキャンセルされます`\n名前の読みかたを入力してください：")
 
                 def check(m):
                     return m.channel == message.channel and m.author == message.author
@@ -349,8 +349,10 @@ async def on_message(message):
                     return
                 if re_hiragana.fullmatch(read.content):
                     break
+                await typing.delete()
+                await read.delete()
                 embed = Embed(description="登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。", color=0xff0000)
-                await message.channel.send(embed=embed)
+                await message.channel.send(embed=embed, delete_after=5)
             await message.channel.send("処理中...", delete_after=5)
             try:
                 if category == "🇦":
