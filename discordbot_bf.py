@@ -27,7 +27,7 @@ intents = discord.Intents.all()  # デフォルトのIntentsオブジェクト�
 intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
 re_hiragana = re.compile(r'^[あ-んー]+$')
-print("ビト森杯bot: 起動完了")
+print('ビト森杯bot: 起動完了')
 
 class ModalA(Modal):
     def __init__(self, name) -> None:
