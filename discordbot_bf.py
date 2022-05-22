@@ -1,10 +1,8 @@
 import asyncio
 import re
-import shutil
 from asyncio import sleep
 from datetime import datetime
 from difflib import get_close_matches
-import os
 
 import cv2
 import discord
