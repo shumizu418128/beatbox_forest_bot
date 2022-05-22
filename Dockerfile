@@ -1,6 +1,7 @@
-FROM python:3
+FROM python:3.8
 USER root
 
+COPY discordbot_bf.py discordbot_bf.py
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \
@@ -27,5 +28,5 @@ RUN pip install git+https://github.com/Pycord-Development/pycord \
     pip install oauth2client \
     pip install neologdn
 RUN /usr/local/bin/python -m pip install --upgrade pip
-CMD ["python", "python discordbot_bf.py"]
+CMD ["python", "discordbot_bf.py"]
 ARG EnvironmentVariable
