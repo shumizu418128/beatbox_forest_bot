@@ -522,10 +522,10 @@ async def on_message(message):
         buttonB = Button(label="Entry", style=discord.ButtonStyle.red, emoji="🅱️")
         channel = client.get_channel(897784178958008322)  # bot用チャット
         async def buttonA_callback(interaction):
-            await interaction.response.send_modal(ModalA())
+            await interaction.response.send_modal(ModalA(interaction.user.display_name))
             await channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}")
         async def buttonB_callback(interaction):
-            await interaction.response.send_modal(ModalB())
+            await interaction.response.send_modal(ModalB(interaction.user.display_name))
             await channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}")
         buttonA.callback = buttonA_callback
         buttonB.callback = buttonB_callback
