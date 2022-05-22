@@ -636,9 +636,9 @@ async def on_message(message):
             text_box2 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.WordBoxBuilder(tesseract_layout=6))
             text_box_list = [text_box1, text_box2]
+            print('setting check now')
             for text_box in text_box_list:
                 for texts in text_box:
-                    print('setting check now')
                     if "モバイルボイスオーバーレイ" in texts.content.replace(' ', ''):
                         text_position = texts.position
                         place_text = [text_position[1][0], text_position[1][1]]
