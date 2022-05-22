@@ -26,3 +26,4 @@ RUN pip install scipy
 RUN pip install gspread
 RUN pip install oauth2client
 RUN pip install neologdn
+RUN /usr/local/bin/python -m pip install --upgrade pip
