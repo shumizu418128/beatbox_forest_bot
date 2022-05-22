@@ -31,10 +31,10 @@ print("ビト森杯bot: 起動完了")
 print(os.system("which tesseract"))
 
 class ModalA(Modal):
-    def __init__(self) -> None:
+    def __init__(self, name) -> None:
         super().__init__(title="A部門 読みがな登録")
         self.add_item(
-            InputText(label="名前の「読みがな」を、ひらがなで入力", placeholder="例： いんぴーだんす"))
+            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
 
     async def callback(self, interaction):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
@@ -62,10 +62,10 @@ class ModalA(Modal):
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
 
 class ModalB(Modal):
-    def __init__(self) -> None:
+    def __init__(self, name) -> None:
         super().__init__(title="🅱️部門 読みがな登録")
         self.add_item(
-            InputText(label="名前の「読みがな」を、ひらがなで入力", placeholder="例： いんぴーだんす"))
+            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
 
     async def callback(self, interaction):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
