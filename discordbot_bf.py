@@ -730,4 +730,4 @@ async def on_message(message):
         await close_notice.delete()
         return
 
-client.run("OTUyOTYyOTAyMzI1ODg2OTg2.Yi9p3Q.bisIxDqKOMlESDLe1GBnvNseOBQ")
+client.run("qe87a-zKM6LkvquXZaAdpGwS6OQ1A-Xk")
