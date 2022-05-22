@@ -30,7 +30,7 @@ RUN pip install git+https://github.com/Pycord-Development/pycord \
 RUN /usr/local/bin/python -m pip install --upgrade pip
 COPY makesomenoise-4243a19364b1.json makesomenoise-4243a19364b1.json
 COPY tournament.png tournament.png
-COPY tessdata\eng.traineddata eng.traineddata
-COPY tessdata\jpn.traineddata jpn.traineddata
+COPY eng.traineddata eng.traineddata
+COPY jpn.traineddata jpn.traineddata
 CMD ["python", "discordbot_bf.py"]
 ARG EnvironmentVariable
