@@ -28,12 +28,6 @@ client = discord.Bot(intents=intents)
 re_hiragana = re.compile(r'^[あ-んー]+$')
 print("ビト森杯bot: 起動完了")
 
-import os
-
-file = os.path.abspath("tesseract.exe")
-print(file)
-
-
 class ModalA(Modal):
     def __init__(self) -> None:
         super().__init__("A部門 読みがな登録")
@@ -561,7 +555,7 @@ async def on_message(message):
             return
         embed = Embed(title="分析中...", description="0% 完了")
         status = await channel.send(embed=embed)
-        pyocr.tesseract.TESSERACT_CMD = r'\\workspace\\tesseract.exe'
+        pyocr.tesseract.TESSERACT_CMD = r'workspace\\tesseract.exe\\'
         tools = pyocr.get_available_tools()
         tool = tools[0]
         langs = tool.get_available_languages()
