@@ -4,6 +4,7 @@ import shutil
 from asyncio import sleep
 from datetime import datetime
 from difflib import get_close_matches
+import os
 
 import cv2
 import discord
@@ -28,6 +29,7 @@ intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
 re_hiragana = re.compile(r'^[あ-んー]+$')
 print("ビト森杯bot: 起動完了")
+print(os.system("which tesseract"))
 
 class ModalA(Modal):
     def __init__(self) -> None:
