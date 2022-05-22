@@ -1,5 +1,5 @@
 [[build.buildpacks]]
-uri = "heroku-community/apt.tgz"
+uri = "https://github.com/heroku/heroku-buildpack-apt.tar"
 
 [[build.buildpacks]]
-uri = "https://github.com/Chitranjan6G/heroku-buildpack-tesseract"
+uri = "https://github.com/Chitranjan6G/heroku-buildpack-tesseract.tar"
