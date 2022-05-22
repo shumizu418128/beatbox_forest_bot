@@ -1,5 +1,1 @@
-[[build.buildpacks]]
-uri = "https://github.com/Chitranjan6G/heroku-buildpack-tesseract/"
-
-[[build.buildpacks]]
-uri = "https://github.com/heroku/heroku-buildpack-apt/"
+heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-apt
