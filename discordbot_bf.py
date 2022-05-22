@@ -632,9 +632,9 @@ async def on_message(message):
         # モバイルボイスオーバーレイ検出
         for i in range(2):
             text_box1 = tool.image_to_string(Image.open(
-                file_names[i]), lang=lang, builder=pyocr.builders.WordBoxBuilder(tesseract_layout=12))
+                file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=12))
             text_box2 = tool.image_to_string(Image.open(
-                file_names[i]), lang=lang, builder=pyocr.builders.WordBoxBuilder(tesseract_layout=6))
+                file_names[i]), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6))
             text_box_list = [text_box1, text_box2]
             for text_box in text_box_list:
                 for texts in text_box:
