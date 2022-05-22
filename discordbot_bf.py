@@ -26,7 +26,6 @@ worksheet = workbook.worksheet('botデータベース（さわらないでね）
 intents = discord.Intents.all()  # デフォルトのIntentsオブジェクトを生成
 intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
-shutil.copyfile("tessdata/jpn.traineddata", "/app/vendor/tessdata/jpn.traineddata")
 re_hiragana = re.compile(r'^[あ-んー]+$')
 print("ビト森杯bot: 起動完了")
 
