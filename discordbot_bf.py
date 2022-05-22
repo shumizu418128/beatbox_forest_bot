@@ -1,5 +1,4 @@
 import asyncio
-import os
 import re
 from asyncio import sleep
 from datetime import datetime
