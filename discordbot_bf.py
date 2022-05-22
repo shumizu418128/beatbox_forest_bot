@@ -29,8 +29,6 @@ intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
 re_hiragana = re.compile(r'^[あ-んー]+$')
 print("ビト森杯bot: 起動完了")
-print(os.system("where tesseract"))
-print(os.system("where tesseract-ocr"))
 
 class ModalA(Modal):
     def __init__(self) -> None:
