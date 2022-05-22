@@ -561,7 +561,7 @@ async def on_message(message):
             return
         embed = Embed(title="分析中...", description="0% 完了")
         status = await channel.send(embed=embed)
-    #    pyocr.tesseract.TESSERACT_CMD = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+        pyocr.tesseract.TESSERACT_CMD = r'/workspace/tesseract.exe'
         tools = pyocr.get_available_tools()
         tool = tools[0]
         langs = tool.get_available_languages()
