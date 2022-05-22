@@ -1,1 +1,17 @@
-heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-apt
+[project]
+id = "discordbot_bf"
+name = "discordbot_bf"
+version = "1.0.0"
+
+[build]
+exclude = [
+    "/README.md"
+]
+
+include = []
+
+[[build.buildpacks]]
+uri = "https://github.com/Chitranjan6G/heroku-buildpack-tesseract/"
+
+[[build.buildpacks]]
+uri = "https://github.com/heroku/heroku-buildpack-apt/"
