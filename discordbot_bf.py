@@ -28,6 +28,12 @@ client = discord.Bot(intents=intents)
 re_hiragana = re.compile(r'^[あ-んー]+$')
 print("ビト森杯bot: 起動完了")
 
+import os
+
+file = os.path.abspath("tesseract.exe")
+print(file)
+
+
 class ModalA(Modal):
     def __init__(self) -> None:
         super().__init__("A部門 読みがな登録")
