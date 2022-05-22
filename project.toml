@@ -9,7 +9,7 @@ exclude = [
 ]
 
 [[build.buildpacks]]
-uri = "https://github.com/Chitranjan6G/heroku-buildpack-tesseract/"
+uri = "https://github.com/Chitranjan6G/heroku-buildpack-tesseract.git"
 
 [[build.buildpacks]]
-uri = "https://github.com/heroku/heroku-buildpack-apt/"
+uri = "https://github.com/heroku/heroku-buildpack-apt.git"
