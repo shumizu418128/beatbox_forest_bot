@@ -32,7 +32,7 @@ print(os.system("which tesseract"))
 
 class ModalA(Modal):
     def __init__(self) -> None:
-        super().__init__("A部門 読みがな登録")
+        super().__init__(title="A部門 読みがな登録")
         self.add_item(
             InputText(label="名前の「読みがな」を、ひらがなで入力", placeholder="例： いんぴーだんす"))
 
@@ -63,7 +63,7 @@ class ModalA(Modal):
 
 class ModalB(Modal):
     def __init__(self) -> None:
-        super().__init__("🅱️部門 読みがな登録")
+        super().__init__(title="🅱️部門 読みがな登録")
         self.add_item(
             InputText(label="名前の「読みがな」を、ひらがなで入力", placeholder="例： いんぴーだんす"))
 
