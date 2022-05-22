@@ -15,4 +15,14 @@ ENV LANGUAGE ja_JP:ja
 ENV LC_ALL ja_JP.UTF-8
 ENV TZ JST-9
 ENV TERM xterm
-RUN pip install -r tessdata/requirements.txt
+RUN pip install git+https://github.com/Pycord-Development/pycord
+RUN pip install pynacl
+RUN pip install asyncio
+RUN pip install Pillow
+RUN pip install numpy
+RUN pip install pyocr
+RUN pip install opencv-python--headless
+RUN pip install scipy
+RUN pip install gspread
+RUN pip install oauth2client
+RUN pip install neologdn
