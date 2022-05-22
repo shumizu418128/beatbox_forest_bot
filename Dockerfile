@@ -1,7 +1,11 @@
 FROM python:3.8
 USER root
 
-COPY discordbot_bf.py discordbot_bf.py
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
+ENV LC_ALL ja_JP.UTF-8
+ENV TZ JST-9
+ENV TERM xterm
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \
@@ -11,11 +15,6 @@ RUN apt-get update \
     libtesseract-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-ENV LANG ja_JP.UTF-8
-ENV LANGUAGE ja_JP:ja
-ENV LC_ALL ja_JP.UTF-8
-ENV TZ JST-9
-ENV TERM xterm
 RUN pip install git+https://github.com/Pycord-Development/pycord \
     pip install pynacl \
     pip install asyncio \
@@ -28,6 +27,7 @@ RUN pip install git+https://github.com/Pycord-Development/pycord \
     pip install oauth2client \
     pip install neologdn
 RUN /usr/local/bin/python -m pip install --upgrade pip
+COPY discordbot_bf.py discordbot_bf.py
 COPY makesomenoise-4243a19364b1.json makesomenoise-4243a19364b1.json
 COPY tournament.png tournament.png
 COPY eng.traineddata eng.traineddata
