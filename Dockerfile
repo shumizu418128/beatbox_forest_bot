@@ -27,4 +27,5 @@ RUN pip install git+https://github.com/Pycord-Development/pycord \
     pip install oauth2client \
     pip install neologdn
 RUN /usr/local/bin/python -m pip install --upgrade pip
-CMD [ "python", "tessdata/discordbot_bf.py"]
+CMD [ "python tessdata/discordbot_bf.py"]
+ARG EnvironmentVariable
