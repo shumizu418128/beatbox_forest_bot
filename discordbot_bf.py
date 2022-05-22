@@ -1,10 +1,10 @@
 import asyncio
+import os
 import re
 from asyncio import sleep
 from datetime import datetime
 from difflib import get_close_matches
 
-import os
 import cv2
 import discord
 import gspread
@@ -16,6 +16,7 @@ from discord.ui import Button, InputText, Modal, View
 from neologdn import normalize
 from oauth2client.service_account import ServiceAccountCredentials
 from PIL import Image
+from scipy.spatial import distance
 
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name('makesomenoise-4243a19364b1.json', scope)
@@ -629,7 +630,7 @@ async def on_message(message):
         embed = Embed(title="分析中...", description="40% 完了\n一番時間のかかる作業を行っています...")
         await status.edit(embed=embed)
         # モバイルボイスオーバーレイ検出
-        """for i in range(2):
+        for i in range(2):
             text_box1 = tool.image_to_string(Image.open(
                 file_names[i]), lang=lang, builder=pyocr.builders.WordBoxBuilder(tesseract_layout=12))
             text_box2 = tool.image_to_string(Image.open(
@@ -652,7 +653,7 @@ async def on_message(message):
                                 if distance.euclidean(place_text, (xy)) < 200:
                                     error_msg.append("・例外検知（問題なし）: モバイルボイスオーバーレイ")
                                     xy_1.remove(xy)
-                                    break"""
+                                    break
         # ワード検出(下準備)
         all_text = ""
         for i in range(2):
