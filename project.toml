@@ -8,8 +8,6 @@ exclude = [
     "/README.md"
 ]
 
-include = []
-
 [[build.buildpacks]]
 uri = "https://github.com/Chitranjan6G/heroku-buildpack-tesseract/"
 
