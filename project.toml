@@ -1,0 +1,2 @@
+pack --buildpack https://github.com/heroku/heroku-buildpack-apt \
+--buildpack https://github.com/Chitranjan6G/heroku-buildpack-tesseract
