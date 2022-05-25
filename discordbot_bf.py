@@ -790,7 +790,7 @@ async def on_message(message):
             await message.author.add_roles(verified)
         else:
             color = 0xff0000
-            description = f"以下の問題が見つかりました。再提出をお願いします。\n\n"
+            description = "以下の問題が見つかりました。再提出をお願いします。\n\n"
             cv2.imwrite(file_names[0], img0)
             files.append(discord.File(file_names[0]))
             cv2.imwrite(file_names[1], img1)
