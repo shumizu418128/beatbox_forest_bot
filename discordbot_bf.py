@@ -3,6 +3,7 @@ import re
 from asyncio import sleep
 from datetime import datetime
 from difflib import get_close_matches
+from decimal import Decimal
 
 import cv2
 import discord
@@ -637,7 +638,7 @@ async def on_message(message):
         admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
         for a in message.attachments:
             if a.content_type == "image/jpeg" or a.content_type == "image/png":
-                if a.height < a.width:
+                if Decimal(f"{a.height}") / Decimal(f"{a.width}") < Decimal("1.6"):
                     button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
                     async def button_callback(interaction):
                         admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
@@ -693,10 +694,20 @@ async def on_message(message):
             xy_list.append("|")  # ￥のキー
         embed = Embed(title="分析中...", description="40% 完了\n一番時間のかかる作業を行っています...")
         await status.edit(embed=embed)
+        # 座標仕分け
+        separator = xy_list.index("|")
+        xy_0 = xy_list[:separator]
+        try:
+            xy_1 = xy_list[separator + 1:]
+        except IndexError:
+            xy_1 = []
+        else:
+            xy_1.remove("|")
+        xy_01 = [xy_0, xy_1]
         # モバイルボイスオーバーレイ検出
         log = "なし"
         all_text = ""
-        for file_name in file_names:
+        for file_name, xy_ in zip(file_names, xy_01):
             text_box1 = tool.image_to_string(Image.open(
                 file_name), lang=lang, builder=pyocr.builders.LineBoxBuilder(tesseract_layout=12))
             text_box2 = tool.image_to_string(Image.open(
@@ -709,22 +720,11 @@ async def on_message(message):
                 if "モバイルボイスオーバーレイ" in text.content.replace(' ', ''):
                     text_position = text.position
                     place_text = [text_position[1][0], text_position[1][1]]
-                    for xy in xy_list:
-                        if xy == "|":
-                            continue
+                    for xy in xy_:
                         if distance.euclidean(place_text, (xy)) < 200:
-                            xy_list.remove(xy)
+                            xy_.remove(xy)
                             log += "検知：モバイルボイスオーバーレイ\n"
                             break
-        # 座標仕分け
-        separator = xy_list.index("|")
-        xy_0 = xy_list[:separator]
-        try:
-            xy_1 = xy_list[separator + 1:]
-        except IndexError:
-            xy_1 = []
-        else:
-            xy_1.remove("|")
         # ワード検出(下準備)
         all_text = all_text.replace('\n', '')
         if log != "なし":
