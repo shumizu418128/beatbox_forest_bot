@@ -424,6 +424,7 @@ async def on_message(message):
         embed.add_field(name="エントリー部門", value=category, inline=False)
         embed.add_field(name="ID", value=member.id, inline=False)
         embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+        view = View(timeout=None)
         if check_mic is None and category == "🅱️部門":
             embed.add_field(name="マイク設定確認", value="❌", inline=False)
             button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
@@ -435,26 +436,25 @@ async def on_message(message):
                     await member.add_roles(verified)
                     await interaction.response.send_message(f"✅{member.display_name}にverifiedロールを付与しました。")
             button.callback = button_callback
-            button_move = Button(label="メイン会場へ移動", style=discord.ButtonStyle.primary)
-            async def button_move_callback(interaction):
-                admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
-                if admin is not None:
-                    main_ch = client.get_channel(910861846888722432)  # メイン会場
-                    try:
-                        await member.move_to(main_ch)
-                    except discord.errors.HTTPException:
-                        await interaction.response.send_message(f"Error: {member.display_name}はVCに接続していません。")
-                    else:
-                        await interaction.response.send_message(f"{member.display_name}がメイン会場に接続しました。", ephemeral=True)
-            button_move.callback = button_move_callback
-            view = View(timeout=None)
             view.add_item(button)
-            view.add_item(button_move)
             await embed_msg.edit(embed=embed, view=view)
             return
         if check_mic is not None:
             embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
-        await embed_msg.edit(embed=embed)
+        button_move = Button(label="メイン会場へ移動", style=discord.ButtonStyle.primary)
+        async def button_move_callback(interaction):
+            admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
+            if admin is not None:
+                main_ch = client.get_channel(910861846888722432)  # メイン会場
+                try:
+                    await member.move_to(main_ch)
+                except discord.errors.HTTPException:
+                    await interaction.response.send_message(f"Error: {member.display_name}はVCに接続していません。")
+                else:
+                    await interaction.response.send_message(f"{member.display_name}がメイン会場に接続しました。", ephemeral=True)
+        button_move.callback = button_move_callback
+        view.add_item(button_move)
+        await embed_msg.edit(embed=embed, view=view)
         return
 
     if message.content.startswith("s.poll"):
