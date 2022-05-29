@@ -2,8 +2,8 @@ import asyncio
 import re
 from asyncio import sleep
 from datetime import datetime
-from difflib import get_close_matches
 from decimal import Decimal
+from difflib import get_close_matches
 
 import cv2
 import discord
