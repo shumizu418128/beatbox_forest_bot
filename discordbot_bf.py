@@ -2,8 +2,8 @@ import asyncio
 import re
 from asyncio import sleep
 from datetime import datetime
-from difflib import get_close_matches
 from decimal import Decimal
+from difflib import get_close_matches
 
 import cv2
 import discord
@@ -257,7 +257,7 @@ async def on_message(message):
             await channel.send("%sのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
         return
 
-    if message.content.startswith("s.s"):
+    if message.content.startswith("s.s") and not message.content.startswith("s.start"):
         await message.delete(delay=1)
         admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
         input_ = message.content[4:]
@@ -287,7 +287,7 @@ async def on_message(message):
         if member is None:
             all_names = []
             for mem in message.guild.members:
-                if not mem.bot:
+                if not mem.bot and mem.id != 332886651107934219:  # RUSY
                     all_names.append(mem.display_name)
             all_names_edited = [normalize(mem).lower() for mem in all_names]
             results_edited = get_close_matches(normalize(input_).lower(), all_names_edited, n=5, cutoff=0.3)
