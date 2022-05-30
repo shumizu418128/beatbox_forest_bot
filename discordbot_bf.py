@@ -582,12 +582,20 @@ async def on_message(message):
         buttonA = Button(label="Entry", style=discord.ButtonStyle.primary, emoji="🇦")
         buttonB = Button(label="Entry", style=discord.ButtonStyle.red, emoji="🅱️")
         channel = client.get_channel(897784178958008322)  # bot用チャット
+        roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
+        roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         async def buttonA_callback(interaction):
-            await interaction.response.send_modal(ModalA(interaction.user.display_name))
             await channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}")
+            if roleA is not None:
+                await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
+                return
+            await interaction.response.send_modal(ModalA(interaction.user.display_name))
         async def buttonB_callback(interaction):
-            await interaction.response.send_modal(ModalB(interaction.user.display_name))
             await channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}")
+            if roleB is not None:
+                await interaction.response.send_message("Error: すでに🅱️部門にエントリーしています。", ephemeral=True)
+                return
+            await interaction.response.send_modal(ModalB(interaction.user.display_name))
         buttonA.callback = buttonA_callback
         buttonB.callback = buttonB_callback
         view = View(timeout=None)
