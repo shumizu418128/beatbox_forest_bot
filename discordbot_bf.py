@@ -486,7 +486,7 @@ async def on_message(message):
         await message.delete(delay=1)
         input_id = message.content.split()
         if len(input_id) == 1:
-            input_id[1] == "0"
+            input_id.append(0)
         if input_id[1] == "A":
             input_id[1] = 920320926887862323  # A部門 ビト森杯
         elif input_id[1] == "B":
