@@ -27,7 +27,7 @@ worksheet = workbook.worksheet('botデータベース（さわらないでね）
 intents = discord.Intents.all()  # デフォルトのIntentsオブジェクトを生成
 intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
-re_hiragana = re.compile(r'^[あ-んー]+$')
+re_hiragana = re.compile(r'^[あ-んー　 ]+$')
 print('ビト森杯bot: 起動完了')
 
 class ModalA(Modal):
