@@ -257,7 +257,7 @@ async def on_message(message):
             await channel.send("%sのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
         return
 
-    if message.content.startswith("s.s") and not message.content.startswith("s.start"):
+    if message.content.startswith("s.s") and not message.content.startswith("s.start") and not message.content.startswith("s.stage"):
         await message.delete(delay=1)
         admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
         input_ = message.content[4:]
