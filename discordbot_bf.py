@@ -620,12 +620,12 @@ async def on_message(message):
         overwrite = discord.PermissionOverwrite()
         overwrite.send_messages = False
         overwrite.view_channel = True
-        roleA = message.guild.get_role(920320926887862323)  # A部門 ビト森杯
-        roleB = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
         await message.channel.set_permissions(roleA, overwrite=overwrite)
         await message.channel.set_permissions(roleB, overwrite=overwrite)
         overwrite.send_messages = True
         contact = client.get_channel(920620259810086922)  # お問い合わせ
+        roleA = message.guild.get_role(920320926887862323)  # A部門 ビト森杯
+        roleB = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
         close_notice = await message.channel.send(f"一時的に提出受付をストップしています。しばらくお待ちください。\n\n※長時間続いている場合は、お手数ですが {contact.mention} までご連絡ください。")
         try:
             channel = await message.channel.create_thread(name=f"{message.author.display_name} 分析ログ", message=message)
