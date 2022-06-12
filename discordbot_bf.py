@@ -659,7 +659,7 @@ async def on_message(message):
                     async def button_callback(interaction):
                         admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
                         if admin is not None:
-                            await message.channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
+                            await channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
                             verified = message.guild.get_role(952951691047747655)  # verified
                             await message.author.add_roles(verified)
                             await interaction.response.send_message(f"✅{message.author.display_name}にverifiedロールを付与しました。")
@@ -676,6 +676,7 @@ async def on_message(message):
                 await a.save(name)
                 file_names.append(name)
                 await sleep(1)
+                await channel.send(a.url)
             else:
                 await channel.send("Error: jpg, jpeg, png画像を投稿してください。")
                 await message.channel.set_permissions(roleA, overwrite=overwrite)
