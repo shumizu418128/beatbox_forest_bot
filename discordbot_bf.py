@@ -612,9 +612,13 @@ async def on_message(message):
 
     if len(message.attachments) != 2 and message.channel.id == 952946795573571654:  # 画像提出
         await message.delete(delay=1)
-        await message.channel.send(f"{message.author.mention}\nError: 画像を2枚同時に投稿してください。")
+        if len(message.attachments) == 0:
+            contact = client.get_channel(920620259810086922)  # お問い合わせ
+            await message.channel.send(f"お問い合わせは {contact.mention} までお願いします。", delete_after=5)
+            return
+        await message.channel.send(f"{message.author.mention}\nError: 画像を2枚同時に投稿してください。", delete_after=5)
         if len(message.attachments) == 1:
-            await message.channel.send("画像1枚では、すべての設定項目が画像内に収まりません。")
+            await message.channel.send("画像1枚では、すべての設定項目が画像内に収まりません。", delete_after=5)
         return
 
     if len(message.attachments) == 2 and message.author.bot:
