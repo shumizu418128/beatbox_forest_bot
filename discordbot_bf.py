@@ -184,8 +184,9 @@ async def on_message(message):
                 try:
                     read = worksheet.cell(cell.row, cell.col - 1).value
                 except gspread.exceptions.APIError:
-                    await message.channel.send("Error: gspread.exceptions.APIError")
-                    return
+                    read = "Error: gspread.exceptions.APIError"
+                if read is None:
+                    read = "Error: DB検索結果なし"
                 check_mic = member.get_role(952951691047747655)  # verified
                 embed = Embed()
                 embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
@@ -195,7 +196,7 @@ async def on_message(message):
                 embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
                 if check_mic is None and category == "🅱️部門":
                     embed.add_field(name="マイク設定確認", value="❌", inline=False)
-                elif check_mic is not None and category == "🅱️部門":
+                elif check_mic is not None:
                     embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
                 await message.channel.send(embed=embed)
         await message.channel.send(f"{member.mention}\nご用件をこのチャンネルにご記入ください。\nplease write your inquiry here.")
@@ -423,6 +424,8 @@ async def on_message(message):
                 read = worksheet.cell(cell.row, cell.col - 1).value
             except gspread.exceptions.APIError:
                 read = "gspread.exceptions.APIError"
+            if read is None:
+                read = "Error: DB検索結果なし"
         check_mic = member.get_role(952951691047747655)  # verified
         embed = Embed()
         embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
