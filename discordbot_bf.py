@@ -48,7 +48,7 @@ class ModalA(Modal):
             except gspread.exceptions.APIError:
                 embed = Embed(title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
-                embed.add_footer(text="made by tari3210#9924")
+                embed.set_footer(text="made by tari3210#9924")
                 await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
                 return
             embed = Embed(title="🇦部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
@@ -56,12 +56,12 @@ class ModalA(Modal):
             role = interaction.guild.get_role(920320926887862323)  # A部門 ビト森杯
             await interaction.user.add_roles(role)
             await channel.send(f"{interaction.user.mention}", embed=embed)
-            embed.add_footer(text="made by tari3210#9924")
+            embed.set_footer(text="made by tari3210#9924")
             await interaction.response.send_message("🇦部門 受付完了", ephemeral=True)  # 全ての作業が終わってから送信する！
         else:
             embed = Embed(title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
             await channel.send(interaction.user.mention, embed=embed)
-            embed.add_footer(text="made by tari3210#9924")
+            embed.set_footer(text="made by tari3210#9924")
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
 
 class ModalB(Modal):
@@ -82,7 +82,7 @@ class ModalB(Modal):
             except gspread.exceptions.APIError:
                 embed = Embed(title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
-                embed.add_footer(text="made by tari3210#9924")
+                embed.set_footer(text="made by tari3210#9924")
                 await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
                 return
             embed = Embed(title="🅱️部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
@@ -90,12 +90,12 @@ class ModalB(Modal):
             role = interaction.guild.get_role(920321241976541204)  # B部門 ビト森杯
             await interaction.user.add_roles(role)
             await channel.send(f"{interaction.user.mention}", embed=embed)
-            embed.add_footer(text="made by tari3210#9924")
+            embed.set_footer(text="made by tari3210#9924")
             await interaction.response.send_message("🅱️部門 受付完了", ephemeral=True)  # 全ての作業が終わってから送信する！
         else:
             embed = Embed(title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
             await channel.send(interaction.user.mention, embed=embed)
-            embed.add_footer(text="made by tari3210#9924")
+            embed.set_footer(text="made by tari3210#9924")
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
 
 @client.event
@@ -822,7 +822,7 @@ async def on_message(message):
             files.append(discord.File(file_names[1]))
         embed = Embed(
             title="分析結果", description=description, color=color)
-        embed.add_footer(text="made by tari3210#9924")
+        embed.set_footer(text="made by tari3210#9924")
         value = "なし"
         if len(error_msg) > 0:
             error_msg = str(error_msg)[1:-1]
