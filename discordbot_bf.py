@@ -649,6 +649,7 @@ async def on_message(message):
             await message.channel.send("Error: ここに画像を送信しないでください。")
             await message.delete()
             return
+        await channel.send(f"{message.author.mention}\nご提出ありがとうございます。\n分析を行います。しばらくお待ちください。", delete_after=20)
         embed = Embed(title="分析中...", description="0% 完了")
         status = await channel.send(embed=embed)
         tools = pyocr.get_available_tools()
