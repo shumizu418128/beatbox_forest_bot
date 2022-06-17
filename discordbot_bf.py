@@ -440,7 +440,8 @@ async def on_message(message):
             async def button_callback(interaction):
                 admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
                 if admin is not None:
-                    await message.channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
+                    bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+                    await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}\nチャンネル：{message.channel.mention}")
                     verified = message.guild.get_role(952951691047747655)  # verified
                     await member.add_roles(verified)
                     await interaction.response.send_message(f"✅{member.display_name}にverifiedロールを付与しました。")
@@ -590,17 +591,17 @@ async def on_message(message):
         await message.delete()
         buttonA = Button(label="Entry", style=discord.ButtonStyle.primary, emoji="🇦")
         buttonB = Button(label="Entry", style=discord.ButtonStyle.red, emoji="🅱️")
-        channel = client.get_channel(897784178958008322)  # bot用チャット
+        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         async def buttonA_callback(interaction):
-            await channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}")
+            await bot_channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}")
             if roleA is not None:
                 await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
                 return
             await interaction.response.send_modal(ModalA(interaction.user.display_name))
         async def buttonB_callback(interaction):
-            await channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}")
+            await bot_channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}")
             if roleB is not None:
                 await interaction.response.send_message("Error: すでに🅱️部門にエントリーしています。", ephemeral=True)
                 return
@@ -668,7 +669,8 @@ async def on_message(message):
                     async def button_callback(interaction):
                         admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
                         if admin is not None:
-                            await channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
+                            bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+                            await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
                             verified = message.guild.get_role(952951691047747655)  # verified
                             await message.author.add_roles(verified)
                             await interaction.response.send_message(f"✅{message.author.display_name}にverifiedロールを付与しました。")
@@ -764,7 +766,8 @@ async def on_message(message):
             async def button_callback(interaction):
                 admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
                 if admin is not None:
-                    await message.channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
+                    bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+                    await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
                     verified = message.guild.get_role(952951691047747655)  # verified
                     await message.author.add_roles(verified)
                     await interaction.response.send_message(f"✅{message.author.display_name}にverifiedロールを付与しました。")
