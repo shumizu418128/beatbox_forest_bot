@@ -402,7 +402,9 @@ async def on_message(message):
             await message.channel.send(embed=embed)
             channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
             await channel.send(embed=embed)
-            return
+            embed_msg = await message.channel.send("処理中...")
+            roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
+            roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if roleA is not None:
             category = "🇦 ※マイク設定確認不要"
         elif roleB is not None:
