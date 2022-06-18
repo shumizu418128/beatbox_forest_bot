@@ -449,7 +449,7 @@ async def on_message(message):
                     await interaction.response.send_message(f"✅{member.display_name}にverifiedロールを付与しました。")
             button.callback = button_callback
             view.add_item(button)
-            await embed_msg.edit(embed=embed, view=view)
+            await embed_msg.edit(content="", embed=embed, view=view)
             return
         if check_mic is not None:
             embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
@@ -466,7 +466,7 @@ async def on_message(message):
                     await interaction.response.send_message(f"{member.display_name}がメイン会場に接続しました。", ephemeral=True)
         button_move.callback = button_move_callback
         view.add_item(button_move)
-        await embed_msg.edit(embed=embed, view=view)
+        await embed_msg.edit(content="", embed=embed, view=view)
         return
 
     if message.content.startswith("s.poll"):
