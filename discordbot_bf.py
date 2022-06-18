@@ -34,7 +34,7 @@ class ModalA(Modal):
     def __init__(self, name) -> None:
         super().__init__(title="A部門 読みがな登録")
         self.add_item(
-            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力\n※注意 後から変更できません！", placeholder=f"{name} の読みがな"))
+            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
 
     async def callback(self, interaction):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
@@ -68,7 +68,7 @@ class ModalB(Modal):
     def __init__(self, name) -> None:
         super().__init__(title="🅱️部門 読みがな登録")
         self.add_item(
-            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力\n※注意 後から変更できません！", placeholder=f"{name} の読みがな"))
+            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
 
     async def callback(self, interaction):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
