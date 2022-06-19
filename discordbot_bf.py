@@ -715,6 +715,9 @@ async def on_message(message):
         await message.channel.set_permissions(roleB, overwrite=overwrite)
         overwrite.send_messages = True
         contact = client.get_channel(920620259810086922)  # お問い合わせ
+        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+        admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
+        verified = message.guild.get_role(952951691047747655)  # verified
         await message.delete()
         close_notice = await message.channel.send(f"一時的に提出受付をストップしています。しばらくお待ちください。\n\n※長時間続いている場合は、お手数ですが {contact.mention} までご連絡ください。")
         try:
@@ -736,7 +739,6 @@ async def on_message(message):
         file_names = []
         error_msg = []
         error_code = 0
-        admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
         for a in message.attachments:
             if a.content_type == "image/jpeg" or a.content_type == "image/png":
                 if Decimal(f"{a.height}") / Decimal(f"{a.width}") < Decimal("1.6"):
@@ -747,11 +749,7 @@ async def on_message(message):
                         admin = interaction.user.get_role(
                             904368977092964352)  # ビト森杯運営
                         if bool(admin):
-                            bot_channel = client.get_channel(
-                                897784178958008322)  # bot用チャット
                             await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
-                            verified = message.guild.get_role(
-                                952951691047747655)  # verified
                             await message.author.add_roles(verified)
                             await interaction.response.send_message(f"✅{message.author.display_name}にverifiedロールを付与しました。")
                     button.callback = button_callback
@@ -850,11 +848,7 @@ async def on_message(message):
             async def button_callback(interaction):
                 admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
                 if bool(admin):
-                    bot_channel = client.get_channel(
-                        897784178958008322)  # bot用チャット
                     await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
-                    verified = message.guild.get_role(
-                        952951691047747655)  # verified
                     await message.author.add_roles(verified)
                     await interaction.response.send_message(f"✅{message.author.display_name}にverifiedロールを付与しました。")
             button.callback = button_callback
@@ -901,7 +895,6 @@ async def on_message(message):
         if error_code == 0:
             color = 0x00ff00
             description = "問題なし\n\n🙇‍♂️ご協力ありがとうございました！🙇‍♂️"
-            verified = message.guild.get_role(952951691047747655)  # verified
             await message.author.add_roles(verified)
         else:
             color = 0xff0000
