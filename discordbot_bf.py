@@ -126,10 +126,12 @@ async def on_member_update(before, after):
         roleB = after.get_role(920321241976541204)  # B部門 ビト森杯
         admin = after.guild.get_role(904368977092964352)  # ビト森杯運営
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
+        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         if roleA is None and roleB is None:
             return
         if bool(roleA) and bool(roleB):
             await channel.send(f"{admin.mention}\nAB重複エントリー検知\n\n{after.display_name} {after.id}")
+            await bot_channel.send(f"AB重複エントリー検知\n\n{after.display_name} {after.id}")
             category = "重複エントリー"
         if bool(roleA):
             category = "🇦部門"
@@ -143,6 +145,7 @@ async def on_member_update(before, after):
             return
         if cell is None:
             await channel.send(f"{admin.mention}\nニックネーム変更・データベース破損検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await bot_channel.send(f"ニックネーム変更・データベース破損検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
             return
         try:
             right_name = worksheet.cell(cell.row, cell.col - 2).value
@@ -153,7 +156,6 @@ async def on_member_update(before, after):
         if after.display_name != right_name:
             await after.edit(nick=right_name)
             await channel.send(f"{after.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
-        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         await bot_channel.send(f"ニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
         return
 
