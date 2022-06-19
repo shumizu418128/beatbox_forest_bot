@@ -263,7 +263,7 @@ async def on_message(message):
         await notice.add_reaction("❌")
 
         def check(reaction, user):
-            return user == message.author and str(reaction.emoji) in emoji_list and reaction.message == notice
+            return user == message.author and reaction.emoji in emoji_list and reaction.message == notice
 
         try:
             reaction, user = await client.wait_for('reaction_add', timeout=10.0, check=check)
@@ -272,7 +272,7 @@ async def on_message(message):
             await notice.clear_reactions()
             return
         await notice.clear_reactions()
-        if str(reaction.emoji) == "❌":
+        if reaction.emoji == "❌":
             await message.channel.send(f"{user.mention}\n中止しました。")
             return
         await message.channel.send("処理中...", delete_after=5)
@@ -361,7 +361,7 @@ async def on_message(message):
             await embed_msg.edit(embeds=embeds)
 
             def check(reaction, user):
-                return user == message.author and str(reaction.emoji) in stamps and reaction.message == embed_msg
+                return user == message.author and reaction.emoji in stamps and reaction.message == embed_msg
 
             try:
                 reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
@@ -395,7 +395,7 @@ async def on_message(message):
 
             def check(reaction, user):
                 ab = ["🇦", "🅱️"]
-                return user == message.author and str(reaction.emoji) in ab and reaction.message == embed_msg
+                return user == message.author and reaction.emoji in ab and reaction.message == embed_msg
 
             try:
                 reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
@@ -403,7 +403,7 @@ async def on_message(message):
                 await embed_msg.clear_reactions()
                 return
             await embed_msg.clear_reactions()
-            category = str(reaction.emoji)
+            category = reaction.emoji
             while True:
                 typing = await message.channel.send(f"{member.display_name} {category}部門 手動エントリー\n`cancelと入力するとキャンセルされます`\n名前の読みかたを入力してください：")
 
