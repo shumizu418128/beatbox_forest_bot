@@ -18,8 +18,10 @@ from oauth2client.service_account import ServiceAccountCredentials
 from PIL import Image
 from scipy.spatial import distance
 
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-credentials = ServiceAccountCredentials.from_json_keyfile_name('makesomenoise-4243a19364b1.json', scope)
+scope = ['https://spreadsheets.google.com/feeds',
+         'https://www.googleapis.com/auth/drive']
+credentials = ServiceAccountCredentials.from_json_keyfile_name(
+    'makesomenoise-4243a19364b1.json', scope)
 gc = gspread.authorize(credentials)
 SPREADSHEET_KEY = '1WcwdGVf7NRKerM1pnZu9kIsgA0VYy5TddyGdKHBzAu4'
 workbook = gc.open_by_key(SPREADSHEET_KEY)
@@ -29,6 +31,7 @@ intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
 re_hiragana = re.compile(r'^[あ-んー　 ]+$')
 print('ビト森杯bot: 起動完了')
+
 
 class ModalA(Modal):
     def __init__(self, name) -> None:
@@ -42,27 +45,36 @@ class ModalA(Modal):
             try:
                 entry_amount = int(worksheet.acell('J1').value) + 1
                 worksheet.update_cell(1, 10, f"{entry_amount}")
-                worksheet.update_cell(entry_amount + 1, 1, f"{interaction.user.display_name}")
-                worksheet.update_cell(entry_amount + 1, 2, f"{self.children[0].value}")
-                worksheet.update_cell(entry_amount + 1, 3, f"{interaction.user.id}")
+                worksheet.update_cell(
+                    entry_amount + 1, 1, f"{interaction.user.display_name}")
+                worksheet.update_cell(
+                    entry_amount + 1, 2, f"{self.children[0].value}")
+                worksheet.update_cell(
+                    entry_amount + 1, 3, f"{interaction.user.id}")
             except gspread.exceptions.APIError:
-                embed = Embed(title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
+                embed = Embed(
+                    title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
                 embed.set_footer(text="made by tari3210#9924")
                 await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
                 return
-            embed = Embed(title="🇦部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
-            embed.add_field(name=f"`名前：`{interaction.user.display_name}", value=f"`読み：`{self.children[0].value}", inline=False)
+            embed = Embed(title="🇦部門 受付完了",
+                          description="エントリー受付が完了しました。", color=0x00ff00)
+            embed.add_field(name=f"`名前：`{interaction.user.display_name}",
+                            value=f"`読み：`{self.children[0].value}", inline=False)
             role = interaction.guild.get_role(920320926887862323)  # A部門 ビト森杯
             await interaction.user.add_roles(role)
             await channel.send(f"{interaction.user.mention}", embed=embed)
             embed.set_footer(text="made by tari3210#9924")
-            await interaction.response.send_message("🇦部門 受付完了", ephemeral=True)  # 全ての作業が終わってから送信する！
+            # 全ての作業が終わってから送信する！
+            await interaction.response.send_message("🇦部門 受付完了", ephemeral=True)
         else:
-            embed = Embed(title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
+            embed = Embed(
+                title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
             await channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="made by tari3210#9924")
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
+
 
 class ModalB(Modal):
     def __init__(self, name) -> None:
@@ -76,27 +88,36 @@ class ModalB(Modal):
             try:
                 entry_amount = int(worksheet.acell('J2').value) + 1
                 worksheet.update_cell(2, 10, f"{entry_amount}")
-                worksheet.update_cell(entry_amount + 1, 5, f"{interaction.user.display_name}")
-                worksheet.update_cell(entry_amount + 1, 6, f"{self.children[0].value}")
-                worksheet.update_cell(entry_amount + 1, 7, f"{interaction.user.id}")
+                worksheet.update_cell(
+                    entry_amount + 1, 5, f"{interaction.user.display_name}")
+                worksheet.update_cell(
+                    entry_amount + 1, 6, f"{self.children[0].value}")
+                worksheet.update_cell(
+                    entry_amount + 1, 7, f"{interaction.user.id}")
             except gspread.exceptions.APIError:
-                embed = Embed(title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
+                embed = Embed(
+                    title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
                 embed.set_footer(text="made by tari3210#9924")
                 await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
                 return
-            embed = Embed(title="🅱️部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
-            embed.add_field(name=f"`名前：`{interaction.user.display_name}", value=f"`読み：`{self.children[0].value}", inline=False)
+            embed = Embed(title="🅱️部門 受付完了",
+                          description="エントリー受付が完了しました。", color=0x00ff00)
+            embed.add_field(name=f"`名前：`{interaction.user.display_name}",
+                            value=f"`読み：`{self.children[0].value}", inline=False)
             role = interaction.guild.get_role(920321241976541204)  # B部門 ビト森杯
             await interaction.user.add_roles(role)
             await channel.send(f"{interaction.user.mention}", embed=embed)
             embed.set_footer(text="made by tari3210#9924")
-            await interaction.response.send_message("🅱️部門 受付完了", ephemeral=True)  # 全ての作業が終わってから送信する！
+            # 全ての作業が終わってから送信する！
+            await interaction.response.send_message("🅱️部門 受付完了", ephemeral=True)
         else:
-            embed = Embed(title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
+            embed = Embed(
+                title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
             await channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="made by tari3210#9924")
             await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
+
 
 @client.event
 async def on_member_update(before, after):
@@ -133,6 +154,7 @@ async def on_member_update(before, after):
         await bot_channel.send(f"ニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
         return
 
+
 @client.event
 async def on_message(message):
     if message.author.id == message.guild.me.id:
@@ -148,15 +170,19 @@ async def on_message(message):
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if roleA is None and roleB is None:
             embed = Embed(description="ビト森杯にエントリーしていません")
-            embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+            embed.set_author(name=member.display_name,
+                             icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+            embed.add_field(
+                name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await message.channel.send(embed=embed)
         elif roleA is not None and roleB is not None:
             embed = Embed(title="Error: 重複エントリーを検知", color=0xff0000)
-            embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+            embed.set_author(name=member.display_name,
+                             icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+            embed.add_field(
+                name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await message.channel.send(f"{admin.mention}", embed=embed)
         else:
             if roleA is not None:
@@ -170,15 +196,18 @@ async def on_message(message):
                 return
             if cell is None:
                 embed = Embed(title="Error: DB検索結果なし", color=0xff0000)
-                embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+                embed.set_author(name=member.display_name,
+                                 icon_url=member.display_avatar.url)
                 embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=f"{member.id}", inline=False)
-                embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+                embed.add_field(
+                    name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
                 check_mic = member.get_role(952951691047747655)  # verified
                 if check_mic is None and category == "🅱️部門":
                     embed.add_field(name="マイク設定確認", value="❌", inline=False)
                 elif check_mic is not None and category == "🅱️部門":
-                    embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
+                    embed.add_field(
+                        name="マイク設定確認", value="⭕確認済み", inline=False)
                 await message.channel.send(f"{admin.mention}", embed=embed)
             else:
                 try:
@@ -189,15 +218,18 @@ async def on_message(message):
                     read = "Error: DB検索結果なし"
                 check_mic = member.get_role(952951691047747655)  # verified
                 embed = Embed()
-                embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+                embed.set_author(name=member.display_name,
+                                 icon_url=member.display_avatar.url)
                 embed.add_field(name="読みがな", value=read, inline=False)
                 embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=f"{member.id}", inline=False)
-                embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+                embed.add_field(
+                    name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
                 if check_mic is None and category == "🅱️部門":
                     embed.add_field(name="マイク設定確認", value="❌", inline=False)
                 elif check_mic is not None:
-                    embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
+                    embed.add_field(
+                        name="マイク設定確認", value="⭕確認済み", inline=False)
                 await message.channel.send(embed=embed)
         await message.channel.send(f"{member.mention}\nご用件をこのチャンネルにご記入ください。\nplease write your inquiry here.")
         return
@@ -299,7 +331,8 @@ async def on_message(message):
                 if not mem.bot and mem.id != 332886651107934219 and mem.id != 826371622084542474:  # RUSY, RUSY_2sub
                     all_names.append(mem.display_name)
             all_names_edited = [normalize(mem).lower() for mem in all_names]
-            results_edited = get_close_matches(normalize(input_).lower(), all_names_edited, n=5, cutoff=0.3)
+            results_edited = get_close_matches(
+                normalize(input_).lower(), all_names_edited, n=5, cutoff=0.3)
             stamps = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
             if len(results_edited) == 0:
                 embed = Embed(title="検索結果なし", description=f"`検索ワード：`{input_}")
@@ -311,10 +344,13 @@ async def on_message(message):
             embeds.append(embed)
             for i in range(len(results_edited)):
                 index = all_names_edited.index(results_edited[i])
-                result_member = message.guild.get_member_named(all_names[index])
+                result_member = message.guild.get_member_named(
+                    all_names[index])
                 results.append(result_member)
-                embed = Embed(description=f"{stamps[i]}: {result_member.name}#{result_member.discriminator}", color=0x00bfff)
-                embed.set_author(name=result_member.display_name, icon_url=result_member.display_avatar.url)
+                embed = Embed(
+                    description=f"{stamps[i]}: {result_member.name}#{result_member.discriminator}", color=0x00bfff)
+                embed.set_author(name=result_member.display_name,
+                                 icon_url=result_member.display_avatar.url)
                 await embed_msg.add_reaction(stamps[i])
                 embeds.append(embed)
             await embed_msg.edit(embeds=embeds)
@@ -334,16 +370,20 @@ async def on_message(message):
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if roleA is not None and roleB is not None:  # 重複エントリー警告
             embed = Embed(title="Error: 重複エントリーを検知", color=0xff0000)
-            embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+            embed.set_author(name=member.display_name,
+                             icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+            embed.add_field(
+                name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await embed_msg.edit(admin.mention, embed=embed)
             return
         if roleA is None and roleB is None:  # 未エントリー
             embed = Embed(description="ビト森杯にエントリーしていません")
-            embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+            embed.set_author(name=member.display_name,
+                             icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+            embed.add_field(
+                name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await embed_msg.edit(embed=embed)
             await embed_msg.add_reaction("🇦")
             await embed_msg.add_reaction("🅱️")
@@ -377,7 +417,8 @@ async def on_message(message):
                     break
                 await typing.delete()
                 await read.delete()
-                embed = Embed(description="登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。", color=0xff0000)
+                embed = Embed(
+                    description="登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。", color=0xff0000)
                 await message.channel.send(embed=embed, delete_after=5)
             await message.channel.send("処理中...", delete_after=5)
             try:
@@ -385,21 +426,28 @@ async def on_message(message):
                     entry_amount = int(worksheet.acell('J1').value) + 1
                     place_key = 0
                     worksheet.update_cell(1, 10, entry_amount)
-                    role = message.guild.get_role(920320926887862323)  # A部門 ビト森杯
+                    role = message.guild.get_role(
+                        920320926887862323)  # A部門 ビト森杯
                 elif category == "🅱️":
                     entry_amount = int(worksheet.acell('J2').value) + 1
                     place_key = 4
                     worksheet.update_cell(2, 10, entry_amount)
-                    role = message.guild.get_role(920321241976541204)  # B部門 ビト森杯
-                worksheet.update_cell(entry_amount + 1, place_key + 1, member.display_name)
-                worksheet.update_cell(entry_amount + 1, place_key + 2, read.content)
-                worksheet.update_cell(entry_amount + 1, place_key + 3, f"{member.id}")
+                    role = message.guild.get_role(
+                        920321241976541204)  # B部門 ビト森杯
+                worksheet.update_cell(
+                    entry_amount + 1, place_key + 1, member.display_name)
+                worksheet.update_cell(
+                    entry_amount + 1, place_key + 2, read.content)
+                worksheet.update_cell(
+                    entry_amount + 1, place_key + 3, f"{member.id}")
             except gspread.exceptions.APIError:
                 await message.channel.send("Error: gspread.exceptions.APIError")
                 return
             await member.add_roles(role)
-            embed = Embed(title=f"{category}部門 受付完了", description="エントリー受付が完了しました。", color=0x00ff00)
-            embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+            embed = Embed(title=f"{category}部門 受付完了",
+                          description="エントリー受付が完了しました。", color=0x00ff00)
+            embed.set_author(name=member.display_name,
+                             icon_url=member.display_avatar.url)
             embed.add_field(name="読みがな", value=read.content, inline=False)
             await message.channel.send(embed=embed)
             channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
@@ -418,10 +466,12 @@ async def on_message(message):
         else:
             if cell is None:
                 embed = Embed(title="Error: DB検索結果なし", color=0xff0000)
-                embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+                embed.set_author(name=member.display_name,
+                                 icon_url=member.display_avatar.url)
                 embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=f"{member.id}", inline=False)
-                embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+                embed.add_field(
+                    name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
                 await embed_msg.edit(admin.mention, embed=embed)
                 return
             try:
@@ -432,21 +482,27 @@ async def on_message(message):
                 read = "Error: DB検索結果なし"
         check_mic = member.get_role(952951691047747655)  # verified
         embed = Embed()
-        embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+        embed.set_author(name=member.display_name,
+                         icon_url=member.display_avatar.url)
         embed.add_field(name="読みがな", value=read, inline=False)
         embed.add_field(name="エントリー部門", value=category, inline=False)
         embed.add_field(name="ID", value=member.id, inline=False)
-        embed.add_field(name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
+        embed.add_field(name="Discordユーザーネーム",
+                        value=f"{member.name}#{member.discriminator}", inline=False)
         view = View(timeout=None)
         if check_mic is None and category == "🅱️部門":
             embed.add_field(name="マイク設定確認", value="❌", inline=False)
-            button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
+            button = Button(
+                label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
+
             async def button_callback(interaction):
                 admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
                 if admin is not None:
-                    bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+                    bot_channel = client.get_channel(
+                        897784178958008322)  # bot用チャット
                     await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}\nチャンネル：{message.channel.mention}")
-                    verified = message.guild.get_role(952951691047747655)  # verified
+                    verified = message.guild.get_role(
+                        952951691047747655)  # verified
                     await member.add_roles(verified)
                     await interaction.response.send_message(f"✅{member.display_name}にverifiedロールを付与しました。")
             button.callback = button_callback
@@ -455,7 +511,9 @@ async def on_message(message):
             return
         if check_mic is not None:
             embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
-        button_move = Button(label="メイン会場へ移動", style=discord.ButtonStyle.primary)
+        button_move = Button(
+            label="メイン会場へ移動", style=discord.ButtonStyle.primary)
+
         async def button_move_callback(interaction):
             admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
             if admin is not None:
@@ -490,7 +548,8 @@ async def on_message(message):
             if msg2.content.startswith("s.poll"):
                 return
             names = [(j) for j in msg2.content.split()]
-        embed = Embed(title="投票箱", description="1⃣ %s\n2⃣ %s" % (names[0], names[1]))
+        embed = Embed(title="投票箱", description="1⃣ %s\n2⃣ %s" %
+                      (names[0], names[1]))
         poll = await message.channel.send(embed=embed)
         await poll.add_reaction("1⃣")
         await poll.add_reaction("2⃣")
@@ -565,17 +624,20 @@ async def on_message(message):
         # メンテその2 ロール未付与
         for id in set(DBidA) - set(mid_A):
             member = message.guild.get_member(id)
-            error.append(f"・🇦部門 ロール未付与\n{member.display_name}\nID: {member.id}")
+            error.append(
+                f"・🇦部門 ロール未付与\n{member.display_name}\nID: {member.id}")
         for id in set(DBidB) - set(mid_B):
             member = message.guild.get_member(id)
-            error.append(f"・🅱️部門 ロール未付与\n{member.display_name}\nID: {member.id}")
+            error.append(
+                f"・🅱️部門 ロール未付与\n{member.display_name}\nID: {member.id}")
         # メンテその3 DB未登録
         for id in set(mid_A) - set(DBidA):
             member = message.guild.get_member(id)
             error.append(f"・🇦部門 DB未登録\n{member.display_name}\nID: {member.id}")
         for id in set(mid_B) - set(DBidB):
             member = message.guild.get_member(id)
-            error.append(f"・🅱️部門 DB未登録\n{member.display_name}\nID: {member.id}")
+            error.append(
+                f"・🅱️部門 DB未登録\n{member.display_name}\nID: {member.id}")
         # メンテその4 DB AB重複
         for id in set(DBidA) & set(DBidB):
             member = message.guild.get_member(id)
@@ -593,9 +655,12 @@ async def on_message(message):
         if message.channel.id != 904367725416153118:  # ビト森杯 参加
             return
         await message.delete()
-        buttonA = Button(label="Entry", style=discord.ButtonStyle.primary, emoji="🇦")
-        buttonB = Button(label="Entry", style=discord.ButtonStyle.red, emoji="🅱️")
+        buttonA = Button(
+            label="Entry", style=discord.ButtonStyle.primary, emoji="🇦")
+        buttonB = Button(
+            label="Entry", style=discord.ButtonStyle.red, emoji="🅱️")
         bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+
         async def buttonA_callback(interaction):
             roleA = interaction.user.get_role(920320926887862323)  # A部門 ビト森杯
             await bot_channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}")
@@ -603,6 +668,7 @@ async def on_message(message):
                 await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
                 return
             await interaction.response.send_modal(ModalA(interaction.user.display_name))
+
         async def buttonB_callback(interaction):
             roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
             await bot_channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}")
@@ -669,13 +735,18 @@ async def on_message(message):
         for a in message.attachments:
             if a.content_type == "image/jpeg" or a.content_type == "image/png":
                 if Decimal(f"{a.height}") / Decimal(f"{a.width}") < Decimal("1.6"):
-                    button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
+                    button = Button(
+                        label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
+
                     async def button_callback(interaction):
-                        admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
+                        admin = interaction.user.get_role(
+                            904368977092964352)  # ビト森杯運営
                         if admin is not None:
-                            bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+                            bot_channel = client.get_channel(
+                                897784178958008322)  # bot用チャット
                             await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
-                            verified = message.guild.get_role(952951691047747655)  # verified
+                            verified = message.guild.get_role(
+                                952951691047747655)  # verified
                             await message.author.add_roles(verified)
                             await interaction.response.send_message(f"✅{message.author.display_name}にverifiedロールを付与しました。")
                     button.callback = button_callback
@@ -719,12 +790,14 @@ async def on_message(message):
             for c in contours:
                 result = cv2.moments(c)
                 try:
-                    x, y = int(result["m10"] / result["m00"]), int(result["m01"] / result["m00"])
+                    x, y = int(result["m10"] / result["m00"]
+                               ), int(result["m01"] / result["m00"])
                 except ZeroDivisionError:
                     continue
                 xy_list.append([x, y])
             xy_list.append("|")  # ￥のキー
-        embed = Embed(title="分析中...", description="40% 完了\n一番時間のかかる作業を行っています...")
+        embed = Embed(title="分析中...",
+                      description="40% 完了\n一番時間のかかる作業を行っています...")
         await status.edit(embed=embed)
         # 座標仕分け
         separator = xy_list.index("|")
@@ -766,13 +839,17 @@ async def on_message(message):
         # ワード検出
         if "troubleshooting" in all_text:
             await channel.send("word found: troubleshooting")
-            button = Button(label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
+            button = Button(
+                label="verify", style=discord.ButtonStyle.success, emoji="🎙️")
+
             async def button_callback(interaction):
                 admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
                 if admin is not None:
-                    bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+                    bot_channel = client.get_channel(
+                        897784178958008322)  # bot用チャット
                     await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}")
-                    verified = message.guild.get_role(952951691047747655)  # verified
+                    verified = message.guild.get_role(
+                        952951691047747655)  # verified
                     await message.author.add_roles(verified)
                     await interaction.response.send_message(f"✅{message.author.display_name}にverifiedロールを付与しました。")
             button.callback = button_callback
