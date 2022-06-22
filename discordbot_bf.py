@@ -786,8 +786,6 @@ async def on_message(message):
             upper = np.array([123, 102, 242])
             # 色検出しきい値範囲内の色を抽出するマスクを作成
             frame_mask = cv2.inRange(hsv, lower, upper)
-            cv2.bitwise_and(
-                img, img, mask=frame_mask)  # 論理演算で色検出
             contours, _ = cv2.findContours(
                 frame_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)  # 輪郭抽出
             for c in contours:
