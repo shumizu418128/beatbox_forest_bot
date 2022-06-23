@@ -130,8 +130,8 @@ async def on_member_update(before, after):
         if roleA is None and roleB is None:
             return
         if bool(roleA) and bool(roleB):
-            await channel.send(f"{admin.mention}\nAB重複エントリー検知\n\n{after.display_name} {after.id}")
-            await bot_channel.send(f"AB重複エントリー検知\n\n{after.display_name} {after.id}")
+            await channel.send(f"{admin.mention}\nError: AB重複エントリー検知\n\n{after.display_name} {after.id}")
+            await bot_channel.send(f"Error: AB重複エントリー検知\n\n{after.display_name} {after.id}")
             category = "重複エントリー"
         if bool(roleA):
             category = "🇦部門"
