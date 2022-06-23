@@ -144,8 +144,8 @@ async def on_member_update(before, after):
             await bot_channel.send(f"Error: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
             return
         if cell is None:
-            await channel.send(f"{admin.mention}\nニックネーム変更・データベース破損検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
-            await bot_channel.send(f"ニックネーム変更・データベース破損検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await channel.send(f"{admin.mention}\nError: ニックネーム変更・データベース破損検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await bot_channel.send(f"Error: ニックネーム変更・データベース破損検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
             return
         try:
             right_name = worksheet.cell(cell.row, cell.col - 2).value
