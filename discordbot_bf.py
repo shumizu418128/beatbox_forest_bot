@@ -156,6 +156,10 @@ async def on_message(message):
     if message.author.id == message.guild.me.id:
         return
 
+    if message.content == "s.test":
+        await message.channel.send(f"ビト森杯: {client.latency}")
+        return
+
     emoji_list = ["⭕", "❌"]
     if message.content.startswith("contact:"):
         admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
