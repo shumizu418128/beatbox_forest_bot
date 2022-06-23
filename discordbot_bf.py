@@ -776,10 +776,8 @@ async def on_message(message):
         await status.edit(embed=embed)
         # 設定オン座標調査
         xy_list = []
-        img0 = cv2.imread(file_names[0])
-        img1 = cv2.imread(file_names[1])
-        imgs = [img0, img1]
-        for img in imgs:
+        images = [cv2.imread(file_names[0]), cv2.imread(file_names[1])]
+        for img in images:
             # BGR色空間からHSV色空間への変換
             hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             lower = np.array([113, 92, 222])  # 色検出しきい値の設定 (青)
@@ -880,10 +878,10 @@ async def on_message(message):
         # オンの設定検出
         for xy in xy_0:
             error_code += 1
-            cv2.circle(img0, (xy), 65, (0, 0, 255), 20)
+            cv2.circle(images[0], (xy), 65, (0, 0, 255), 20)
         for xy in xy_1:
             error_code += 1
-            cv2.circle(img1, (xy), 65, (0, 0, 255), 20)
+            cv2.circle(images[1], (xy), 65, (0, 0, 255), 20)
         if len(xy_0) > 0 or len(xy_1) > 0:
             error_msg.append("・丸で囲われた設定をOFFにしてください。")
         embed = Embed(title="分析中...", description=f"作業ログ\n`{log}`")
@@ -897,10 +895,9 @@ async def on_message(message):
         else:
             color = 0xff0000
             description = "以下の問題が見つかりました。再提出をお願いします。\n\n"
-            cv2.imwrite(file_names[0], img0)
-            files.append(discord.File(file_names[0]))
-            cv2.imwrite(file_names[1], img1)
-            files.append(discord.File(file_names[1]))
+            for file_name, img in zip(file_names, images):
+                cv2.imwrite(file_name, img)
+                files.append(discord.File(file_name))
         embed = Embed(
             title="分析結果", description=description, color=color)
         embed.set_footer(text="made by tari3210#9924")
