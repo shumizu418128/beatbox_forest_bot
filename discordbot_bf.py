@@ -520,8 +520,8 @@ async def on_message(message):
                 main_ch = client.get_channel(910861846888722432)  # メイン会場
                 try:
                     await member.move_to(main_ch)
-                except discord.errors.HTTPException:
-                    await interaction.response.send_message(f"Error: {member.display_name}はVCに接続していません。")
+                except discord.errors.HTTPException as e:
+                    await interaction.response.send_message(f"Error: {e}")
                 else:
                     await interaction.response.send_message(f"{member.display_name}がメイン会場に接続しました。", ephemeral=True)
         button_move.callback = button_move_callback
