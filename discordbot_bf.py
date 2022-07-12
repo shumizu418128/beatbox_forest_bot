@@ -370,7 +370,7 @@ async def on_message(message):
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if bool(roleA) and bool(roleB):  # 重複エントリー警告
             embed = Embed(title="Error: 重複エントリーを検知", color=0xff0000)
-            embed.set_author(name=member.mention,
+            embed.set_author(name=member.display_name,
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
             embed.add_field(
@@ -379,7 +379,7 @@ async def on_message(message):
             return
         if roleA is None and roleB is None:  # 未エントリー
             embed = Embed(description="ビト森杯にエントリーしていません")
-            embed.set_author(name=member.mention,
+            embed.set_author(name=member.display_name,
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
             embed.add_field(
@@ -446,7 +446,7 @@ async def on_message(message):
             await member.add_roles(role)
             embed = Embed(title=f"{category}部門 受付完了",
                           description="エントリー受付が完了しました。", color=0x00ff00)
-            embed.set_author(name=member.mention,
+            embed.set_author(name=member.display_name,
                              icon_url=member.display_avatar.url)
             embed.add_field(name="読みがな", value=read.content, inline=False)
             await message.channel.send(embed=embed)
@@ -466,7 +466,7 @@ async def on_message(message):
         else:
             if cell is None:
                 embed = Embed(title="Error: DB検索結果なし", color=0xff0000)
-                embed.set_author(name=member.mention,
+                embed.set_author(name=member.display_name,
                                  icon_url=member.display_avatar.url)
                 embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=f"{member.id}", inline=False)
@@ -482,7 +482,7 @@ async def on_message(message):
                 read = "Error: DB検索結果なし"
         check_mic = member.get_role(952951691047747655)  # verified
         embed = Embed()
-        embed.set_author(name=member.mention,
+        embed.set_author(name=member.display_name,
                          icon_url=member.display_avatar.url)
         embed.add_field(name="読みがな", value=read, inline=False)
         embed.add_field(name="エントリー部門", value=category, inline=False)
