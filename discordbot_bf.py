@@ -369,21 +369,17 @@ async def on_message(message):
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if bool(roleA) and bool(roleB):  # 重複エントリー警告
-            embed = Embed(title="Error: 重複エントリーを検知", color=0xff0000)
-            embed.set_author(name=member.display_name,
+            embed = Embed(title="Error: 重複エントリーを検知", description=member.mention, color=0xff0000)
+            embed.set_author(name=f"{member.name}#{member.discriminator}",
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            embed.add_field(
-                name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await embed_msg.edit(admin.mention, embed=embed)
             return
         if roleA is None and roleB is None:  # 未エントリー
-            embed = Embed(description="ビト森杯にエントリーしていません")
-            embed.set_author(name=member.display_name,
+            embed = Embed(description=f"{member.mention}\nビト森杯にエントリーしていません")
+            embed.set_author(name=f"{member.name}#{member.discriminator}",
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            embed.add_field(
-                name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
             await embed_msg.edit(embed=embed)
             await embed_msg.add_reaction("🇦")
             await embed_msg.add_reaction("🅱️")
@@ -445,9 +441,10 @@ async def on_message(message):
                 return
             await member.add_roles(role)
             embed = Embed(title=f"{category}部門 受付完了",
-                          description="エントリー受付が完了しました。", color=0x00ff00)
-            embed.set_author(name=member.display_name,
+                          description=f"{member.mention}\nエントリー受付が完了しました。", color=0x00ff00)
+            embed.set_author(name=f"{member.name}#{member.discriminator}",
                              icon_url=member.display_avatar.url)
+            embed.add_field(name="名前", value=member.display_name, inline=False)
             embed.add_field(name="読みがな", value=read.content, inline=False)
             await message.channel.send(embed=embed)
             channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
@@ -465,13 +462,11 @@ async def on_message(message):
             read = f"Error: {e}"
         else:
             if cell is None:
-                embed = Embed(title="Error: DB検索結果なし", color=0xff0000)
-                embed.set_author(name=member.display_name,
+                embed = Embed(title="Error: DB検索結果なし", description=member.mention, color=0xff0000)
+                embed.set_author(name=f"{member.name}#{member.discriminator}",
                                  icon_url=member.display_avatar.url)
                 embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=f"{member.id}", inline=False)
-                embed.add_field(
-                    name="Discordユーザーネーム", value=f"{member.name}#{member.discriminator}", inline=False)
                 await embed_msg.edit(admin.mention, embed=embed)
                 return
             try:
@@ -481,14 +476,12 @@ async def on_message(message):
             if read is None:
                 read = "Error: DB検索結果なし"
         check_mic = member.get_role(952951691047747655)  # verified
-        embed = Embed()
-        embed.set_author(name=member.display_name,
+        embed = Embed(description=member.mention)
+        embed.set_author(name=f"{member.name}#{member.discriminator}",
                          icon_url=member.display_avatar.url)
         embed.add_field(name="読みがな", value=read, inline=False)
         embed.add_field(name="エントリー部門", value=category, inline=False)
         embed.add_field(name="ID", value=member.id, inline=False)
-        embed.add_field(name="Discordユーザーネーム",
-                        value=f"{member.name}#{member.discriminator}", inline=False)
         view = View(timeout=None)
         if check_mic is None and category == "🅱️部門":
             embed.add_field(name="マイク設定確認", value="❌", inline=False)
