@@ -369,7 +369,8 @@ async def on_message(message):
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if bool(roleA) and bool(roleB):  # 重複エントリー警告
-            embed = Embed(title="Error: 重複エントリーを検知", description=member.mention, color=0xff0000)
+            embed = Embed(title="Error: 重複エントリーを検知",
+                          description=member.mention, color=0xff0000)
             embed.set_author(name=f"{member.name}#{member.discriminator}",
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
@@ -462,7 +463,8 @@ async def on_message(message):
             read = f"Error: {e}"
         else:
             if cell is None:
-                embed = Embed(title="Error: DB検索結果なし", description=member.mention, color=0xff0000)
+                embed = Embed(title="Error: DB検索結果なし",
+                              description=member.mention, color=0xff0000)
                 embed.set_author(name=f"{member.name}#{member.discriminator}",
                                  icon_url=member.display_avatar.url)
                 embed.add_field(name="エントリー部門", value=category, inline=False)
