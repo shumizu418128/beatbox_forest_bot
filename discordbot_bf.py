@@ -328,7 +328,7 @@ async def on_message(message):
         if member is None:
             all_names = []
             for mem in message.guild.members:
-                if not mem.bot and mem.id != 332886651107934219 and mem.id != 826371622084542474:  # RUSY, RUSY_2sub
+                if not mem.bot and mem.id not in [332886651107934219, 826371622084542474]:  # RUSY, RUSY_2sub
                     all_names.append(mem.display_name)
             all_names_edited = [normalize(mem).lower() for mem in all_names]
             results_edited = get_close_matches(
