@@ -124,9 +124,9 @@ async def on_member_update(before, after):
             await channel.send(f"{admin.mention}\nError: AB重複エントリー検知\n\n{after.display_name} {after.id}")
             await bot_channel.send(f"Error: AB重複エントリー検知\n\n{after.display_name} {after.id}")
             category = "重複エントリー"
-        if bool(roleA):
+        elif bool(roleA):
             category = "🇦部門"
-        if bool(roleB):
+        elif bool(roleB):
             category = "🅱️部門"
         try:
             cell = worksheet.find(f'{after.id}')
