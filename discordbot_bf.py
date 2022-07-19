@@ -169,7 +169,7 @@ async def on_message(message):
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if roleA is None and roleB is None:
-            embed = Embed(description="ビト森杯にエントリーしていません", description=member.mention)
+            embed = Embed(description=f"{member.mention}\nビト森杯にエントリーしていません")
             embed.set_author(name=f"{member.name}#{member.discriminator}",
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
