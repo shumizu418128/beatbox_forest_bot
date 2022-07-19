@@ -292,7 +292,7 @@ async def on_message(message):
             await member.remove_roles(roleA)
             await message.channel.send("%sのビト森杯 🇦部門エントリーを取り消しました。" % (member.display_name))
             await channel.send("%sのビト森杯 🇦部門エントリーを取り消しました。" % (member.display_name))
-        if bool(roleB):
+        elif bool(roleB):
             await member.remove_roles(roleB)
             await message.channel.send("%sのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
             await channel.send("%sのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
