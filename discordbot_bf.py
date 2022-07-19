@@ -332,6 +332,12 @@ async def on_message(message):
             if len(results_edited) == 0:
                 embed = Embed(title="検索結果なし", description=f"`検索ワード：`{input_}")
                 await embed_msg.edit(embed=embed)
+                await embed_msg.add_reaction("🗑️")
+
+                def check(reaction, user):
+                    return user == message.author and reaction.emoji == "🗑️" and reaction.message == embed_msg
+                _, _ = await client.wait_for('reaction_add', check=check)
+                await embed_msg.delete()
                 return
             results = []
             embeds = []
@@ -349,14 +355,24 @@ async def on_message(message):
                 await embed_msg.add_reaction(stamps[i])
                 embeds.append(embed)
             await embed_msg.edit(embeds=embeds)
+            await embed_msg.add_reaction("🗑️")
 
             def check(reaction, user):
-                return user == message.author and reaction.emoji in stamps and reaction.message == embed_msg
+                return user == message.author and reaction.emoji in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "🗑️"] and reaction.message == embed_msg
 
             try:
                 reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await embed_msg.clear_reactions()
+                await embed_msg.add_reaction("🗑️")
+
+                def check(reaction, user):
+                    return user == message.author and reaction.emoji == "🗑️" and reaction.message == embed_msg
+                _, _ = await client.wait_for('reaction_add', check=check)
+                await embed_msg.delete()
+                return
+            if reaction.emoji == "🗑️":
+                await embed_msg.delete()
                 return
             await embed_msg.clear_reactions()
             index_result = stamps.index(reaction.emoji)
@@ -370,6 +386,12 @@ async def on_message(message):
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
             await embed_msg.edit(admin.mention, embed=embed)
+            await embed_msg.add_reaction("🗑️")
+
+            def check(reaction, user):
+                return user == message.author and reaction.emoji == "🗑️" and reaction.message == embed_msg
+            _, _ = await client.wait_for('reaction_add', check=check)
+            await embed_msg.delete()
             return
         if roleA is None and roleB is None:  # 未エントリー
             embed = Embed(description=f"{member.mention}\nビト森杯にエントリーしていません")
@@ -379,15 +401,25 @@ async def on_message(message):
             await embed_msg.edit(embed=embed)
             await embed_msg.add_reaction("🇦")
             await embed_msg.add_reaction("🅱️")
+            await embed_msg.add_reaction("🗑️")
 
             def check(reaction, user):
-                ab = ["🇦", "🅱️"]
+                ab = ["🇦", "🅱️", "🗑️"]
                 return user == message.author and reaction.emoji in ab and reaction.message == embed_msg
 
             try:
                 reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await embed_msg.clear_reactions()
+                await embed_msg.add_reaction("🗑️")
+
+                def check(reaction, user):
+                    return user == message.author and reaction.emoji == "🗑️" and reaction.message == embed_msg
+                _, _ = await client.wait_for('reaction_add', check=check)
+                await embed_msg.delete()
+                return
+            if reaction.emoji == "🗑️":
+                await embed_msg.delete()
                 return
             await embed_msg.clear_reactions()
             category = reaction.emoji
@@ -465,6 +497,12 @@ async def on_message(message):
                 embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=f"{member.id}", inline=False)
                 await embed_msg.edit(admin.mention, embed=embed)
+                await embed_msg.add_reaction("🗑️")
+
+                def check(reaction, user):
+                    return user == message.author and reaction.emoji == "🗑️" and reaction.message == embed_msg
+                _, _ = await client.wait_for('reaction_add', check=check)
+                await embed_msg.delete()
                 return
             try:
                 read = worksheet.cell(cell.row, cell.col - 1).value
@@ -498,6 +536,12 @@ async def on_message(message):
             button.callback = button_callback
             view.add_item(button)
             await embed_msg.edit(content="", embed=embed, view=view)
+            await embed_msg.add_reaction("🗑️")
+
+            def check(reaction, user):
+                return user == message.author and reaction.emoji == "🗑️" and reaction.message == embed_msg
+            _, _ = await client.wait_for('reaction_add', check=check)
+            await embed_msg.delete()
             return
         if bool(check_mic):
             embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
@@ -517,6 +561,12 @@ async def on_message(message):
         button_move.callback = button_move_callback
         view.add_item(button_move)
         await embed_msg.edit(content="", embed=embed, view=view)
+        await embed_msg.add_reaction("🗑️")
+
+        def check(reaction, user):
+            return user == message.author and reaction.emoji == "🗑️" and reaction.message == embed_msg
+        _, _ = await client.wait_for('reaction_add', check=check)
+        await embed_msg.delete()
         return
 
     if message.content.startswith("s.poll"):
