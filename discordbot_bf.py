@@ -153,7 +153,7 @@ async def on_member_update(before, after):
 
 @client.event
 async def on_message(message):
-    if message.author.id == message.guild.me.id:
+    if message.author.id == 952962902325886986:  # ビト森杯bot
         return
 
     if message.content == "s.test":
