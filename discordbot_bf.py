@@ -297,7 +297,7 @@ async def on_message(message):
         admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
         input_ = message.content[4:]
         if input_ == "":
-            await message.channel.send("`cancelと入力するとキャンセルできます`検索したいワードを入力してください：")
+            await message.channel.send("`cancelと入力するとキャンセルできます`\n検索したいワードを入力してください：")
 
             def check(m):
                 return m.channel == message.channel and m.author == message.author
