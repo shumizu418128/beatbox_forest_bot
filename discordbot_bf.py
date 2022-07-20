@@ -245,7 +245,7 @@ async def on_message(message):
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if roleA is None and roleB is None:
-            await message.channel.send("%sはビト森杯にエントリーしていません" % (member.display_name))
+            await message.channel.send(f"{member.display_name}はビト森杯にエントリーしていません")
             return
         notice = await message.channel.send(f"{member.display_name} のビト森杯エントリーを取り消します。\n\n⭕ `OK`\n❌ 中止")
         await notice.add_reaction("⭕")
@@ -284,12 +284,12 @@ async def on_message(message):
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
         if bool(roleA):
             await member.remove_roles(roleA)
-            await message.channel.send("%sのビト森杯 🇦部門エントリーを取り消しました。" % (member.display_name))
-            await channel.send("%sのビト森杯 🇦部門エントリーを取り消しました。" % (member.display_name))
+            await message.channel.send(f"{member.display_name}のビト森杯 🇦部門エントリーを取り消しました。")
+            await channel.send(f"{member.display_name}のビト森杯 🇦部門エントリーを取り消しました。")
         elif bool(roleB):
             await member.remove_roles(roleB)
-            await message.channel.send("%sのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
-            await channel.send("%sのビト森杯 🅱️部門エントリーを取り消しました。" % (member.display_name))
+            await message.channel.send(f"{member.display_name}のビト森杯 🅱️部門エントリーを取り消しました。")
+            await channel.send(f"{member.display_name}のビト森杯 🅱️部門エントリーを取り消しました。")
         return
 
     if message.content.startswith("s.s") and not message.content.startswith("s.start") and not message.content.startswith("s.stage"):
@@ -588,8 +588,7 @@ async def on_message(message):
             if msg2.content.startswith("s.poll"):
                 return
             names = [(j) for j in msg2.content.split()]
-        embed = Embed(title="投票箱", description="1⃣ %s\n2⃣ %s" %
-                      (names[0], names[1]))
+        embed = Embed(title="投票箱", description=f"1⃣ {names[0]}\n2⃣ {names[1]}")
         poll = await message.channel.send(embed=embed)
         await poll.add_reaction("1⃣")
         await poll.add_reaction("2⃣")
