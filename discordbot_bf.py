@@ -247,7 +247,7 @@ async def on_message(message):
         if roleA is None and roleB is None:
             await message.channel.send(f"{member.display_name}はビト森杯にエントリーしていません")
             return
-        notice = await message.channel.send(f"{member.display_name} のビト森杯エントリーを取り消します。\n\n⭕ `OK`\n❌ 中止")
+        notice = await message.channel.send(f"{member.display_name}のビト森杯エントリーを取り消します。\n\n⭕ `OK`\n❌ 中止")
         await notice.add_reaction("⭕")
         await notice.add_reaction("❌")
 
