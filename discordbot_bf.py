@@ -638,6 +638,10 @@ async def on_message(message):
         await message.channel.send("---finish---")
         return
 
+    if message.content == "s.tm":
+        # 45,92,160,207,276,323,391,439
+        return
+
     if message.content == "button":
         if message.channel.id != 904367725416153118:  # ビト森杯 参加
             return
