@@ -32,5 +32,6 @@ COPY makesomenoise-4243a19364b1.json makesomenoise-4243a19364b1.json
 COPY tournament.png tournament.png
 COPY eng.traineddata eng.traineddata
 COPY jpn.traineddata jpn.traineddata
+COPY GenEiLateGo_v2.ttc GenEiLateGo_v2.ttc
 CMD ["python", "-u", "discordbot_bf.py"]
 ARG EnvironmentVariable
