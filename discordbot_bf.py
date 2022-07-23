@@ -668,9 +668,13 @@ async def on_message(message):
 
         async def buttonA_callback(interaction):
             roleA = interaction.user.get_role(920320926887862323)  # A部門 ビト森杯
+            roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
             await bot_channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}\nlocale: {interaction.locale}")
             if bool(roleA):
                 await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
+                return
+            if bool(roleB):
+                await interaction.response.send_message("Error: すでに🅱️部門にエントリーしています。", ephemeral=True)
                 return
             if interaction.locale == "ja":
                 await interaction.response.send_modal(ModalA(interaction.user.display_name))
@@ -687,8 +691,12 @@ async def on_message(message):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         async def buttonB_callback(interaction):
+            roleA = interaction.user.get_role(920320926887862323)  # A部門 ビト森杯
             roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
             await bot_channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}\nlocale: {interaction.locale}")
+            if bool(roleA):
+                await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
+                return
             if bool(roleB):
                 await interaction.response.send_message("Error: すでに🅱️部門にエントリーしています。", ephemeral=True)
                 return
