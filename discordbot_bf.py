@@ -658,7 +658,7 @@ async def on_message(message):
     if message.content == "button":
         if message.channel.id != 904367725416153118:  # ビト森杯 参加
             return
-        await message.delete()
+        await message.delete(delay=1)
         buttonA = Button(
             label="Entry", style=discord.ButtonStyle.primary, emoji="🇦")
         buttonB = Button(
