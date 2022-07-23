@@ -651,20 +651,27 @@ async def on_message(message):
         buttonB = Button(
             label="Entry", style=discord.ButtonStyle.red, emoji="🅱️")
         bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+        contact = client.get_channel(920620259810086922)  # 問い合わせ
 
         async def buttonA_callback(interaction):
             roleA = interaction.user.get_role(920320926887862323)  # A部門 ビト森杯
-            await bot_channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}")
+            await bot_channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}\nlocale: {interaction.locale}")
             if bool(roleA):
                 await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
+                return
+            if interaction.locale != "ja":
+                await interaction.response.send_message(f"Error: please contact us via {contact.mention}\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
                 return
             await interaction.response.send_modal(ModalA(interaction.user.display_name))
 
         async def buttonB_callback(interaction):
             roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
-            await bot_channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}")
+            await bot_channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}\nlocale: {interaction.locale}")
             if bool(roleB):
                 await interaction.response.send_message("Error: すでに🅱️部門にエントリーしています。", ephemeral=True)
+                return
+            if interaction.locale != "ja":
+                await interaction.response.send_message(f"Error: please contact us via {contact.mention}\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
                 return
             await interaction.response.send_modal(ModalB(interaction.user.display_name))
         buttonA.callback = buttonA_callback
