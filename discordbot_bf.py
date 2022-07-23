@@ -676,12 +676,12 @@ async def on_message(message):
                 await interaction.response.send_modal(ModalA(interaction.user.display_name))
                 return
             if interaction.locale in ["zh-CN", "zh-TW"]:
-                await interaction.response.send_message(f"错误：请点击 {contact.mention} 联系我们\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
-                return
-            if interaction.locale == "ko":
-                await interaction.response.send_message(f" (韓国語) \nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
-                return
-            await interaction.response.send_message(f"Error: please contact us via {contact.mention}\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
+                embed = Embed(title="Error: contact required", description=f"错误：请点击 {contact.mention} 联系我们\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
+            elif interaction.locale == "ko":
+                embed = Embed(title="Error: contact required", description=f"문의는 {contact.mention} 로 보내주세요\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
+            else:
+                embed = Embed(title="Error: contact required", description=f"please contact us via {contact.mention}\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
         async def buttonB_callback(interaction):
             roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
@@ -693,12 +693,12 @@ async def on_message(message):
                 await interaction.response.send_modal(ModalB(interaction.user.display_name))
                 return
             if interaction.locale in ["zh-CN", "zh-TW"]:
-                await interaction.response.send_message(f"错误：请点击 {contact.mention} 联系我们\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
-                return
-            if interaction.locale == "ko":
-                await interaction.response.send_message(f" (韓国語) \nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
-                return
-            await interaction.response.send_message(f"Error: please contact us via {contact.mention}\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
+                embed = Embed(title="Error: contact required", description=f"错误：请点击 {contact.mention} 联系我们\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
+            elif interaction.locale == "ko":
+                embed = Embed(title="Error: contact required", description=f"문의는 {contact.mention} 로 보내주세요\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
+            else:
+                embed = Embed(title="Error: contact required", description=f"please contact us via {contact.mention}\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
         buttonA.callback = buttonA_callback
         buttonB.callback = buttonB_callback
         view = View(timeout=None)
