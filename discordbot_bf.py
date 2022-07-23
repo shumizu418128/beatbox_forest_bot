@@ -8,6 +8,7 @@ from discord import Embed
 from discord.ui import Button, InputText, Modal, View
 from neologdn import normalize
 from oauth2client.service_account import ServiceAccountCredentials
+from PIL import Image, ImageDraw, ImageFont
 
 scope = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
@@ -639,7 +640,19 @@ async def on_message(message):
         return
 
     if message.content == "s.tm":
-        # 45,92,160,207,276,323,391,439
+        await message.channel.send("処理中...")
+        names = worksheet.col_values(13)
+        names.remove("名前")
+        names.remove("名前")
+        for j, category in zip([0, 8], ["A", "B"]):
+            image = Image.open("tournament.png")
+            draw = ImageDraw.Draw(image)
+            font = ImageFont.truetype('GenEiLateGo_v2.ttc', 25)
+            for i, y in zip(range(8), [45, 92, 160, 207, 276, 323, 391, 439]):
+                draw.text((5, y), names[i + j], font=font, fill=(0, 0, 0))
+            image.save('/tmp/out.png', 'PNG', quality=100, optimize=True)
+            file = discord.File('/tmp/out.png')
+            await message.channel.send(f"{category}部門 トーナメント", file=file)
         return
 
     if message.content == "button":
@@ -659,10 +672,16 @@ async def on_message(message):
             if bool(roleA):
                 await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
                 return
-            if interaction.locale != "ja":
-                await interaction.response.send_message(f"Error: please contact us via {contact.mention}\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
+            if interaction.locale == "ja":
+                await interaction.response.send_modal(ModalA(interaction.user.display_name))
                 return
-            await interaction.response.send_modal(ModalA(interaction.user.display_name))
+            if interaction.locale in ["zh-CN", "zh-TW"]:
+                await interaction.response.send_message(f"错误：请点击 {contact.mention} 联系我们\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
+                return
+            if interaction.locale == "ko":
+                await interaction.response.send_message(f" (韓国語) \nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
+                return
+            await interaction.response.send_message(f"Error: please contact us via {contact.mention}\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
 
         async def buttonB_callback(interaction):
             roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
@@ -670,10 +689,16 @@ async def on_message(message):
             if bool(roleB):
                 await interaction.response.send_message("Error: すでに🅱️部門にエントリーしています。", ephemeral=True)
                 return
-            if interaction.locale != "ja":
-                await interaction.response.send_message(f"Error: please contact us via {contact.mention}\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
+            if interaction.locale == "ja":
+                await interaction.response.send_modal(ModalB(interaction.user.display_name))
                 return
-            await interaction.response.send_modal(ModalB(interaction.user.display_name))
+            if interaction.locale in ["zh-CN", "zh-TW"]:
+                await interaction.response.send_message(f"错误：请点击 {contact.mention} 联系我们\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
+                return
+            if interaction.locale == "ko":
+                await interaction.response.send_message(f" (韓国語) \nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
+                return
+            await interaction.response.send_message(f"Error: please contact us via {contact.mention}\nお手数ですが、 {contact.mention}までお問い合わせください。", ephemeral=True)
         buttonA.callback = buttonA_callback
         buttonB.callback = buttonB_callback
         view = View(timeout=None)
