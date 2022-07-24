@@ -59,7 +59,7 @@ class ModalA(Modal):
             await channel.send(f"{interaction.user.mention}", embed=embed)
             embed.set_footer(text="made by tari3210#9924")
             # 全ての作業が終わってから送信する！
-            await interaction.response.send_message("🇦部門 受付完了", ephemeral=True)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
             embed = Embed(
                 title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
@@ -102,7 +102,7 @@ class ModalB(Modal):
             await channel.send(f"{interaction.user.mention}", embed=embed)
             embed.set_footer(text="made by tari3210#9924")
             # 全ての作業が終わってから送信する！
-            await interaction.response.send_message("🅱️部門 受付完了", ephemeral=True)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
             embed = Embed(
                 title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
