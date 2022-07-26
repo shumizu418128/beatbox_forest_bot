@@ -32,6 +32,7 @@ class ModalA(Modal):
             InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
 
     async def callback(self, interaction):
+        await interaction.response.defer(ephemeral=True, invisible=False)
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
         if re_hiragana.fullmatch(self.children[0].value):
             try:
@@ -48,7 +49,7 @@ class ModalA(Modal):
                     title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
                 embed.set_footer(text="made by tari3210#9924")
-                await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
+                await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
                 return
             role = interaction.guild.get_role(920320926887862323)  # A部門 ビト森杯
             await interaction.user.add_roles(role)
@@ -59,13 +60,13 @@ class ModalA(Modal):
             await channel.send(f"{interaction.user.mention}", embed=embed)
             embed.set_footer(text="made by tari3210#9924")
             # 全ての作業が終わってから送信する！
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.followup.send(embed=embed, ephemeral=True)
         else:
             embed = Embed(
                 title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
             await channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="made by tari3210#9924")
-            await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
+            await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
 
 
 class ModalB(Modal):
@@ -75,6 +76,7 @@ class ModalB(Modal):
             InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
 
     async def callback(self, interaction):
+        await interaction.response.defer(ephemeral=True, invisible=False)
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
         if re_hiragana.fullmatch(self.children[0].value):
             try:
@@ -91,7 +93,7 @@ class ModalB(Modal):
                     title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
                 embed.set_footer(text="made by tari3210#9924")
-                await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
+                await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
                 return
             role = interaction.guild.get_role(920321241976541204)  # B部門 ビト森杯
             await interaction.user.add_roles(role)
@@ -102,13 +104,13 @@ class ModalB(Modal):
             await channel.send(f"{interaction.user.mention}", embed=embed)
             embed.set_footer(text="made by tari3210#9924")
             # 全ての作業が終わってから送信する！
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.followup.send(embed=embed, ephemeral=True)
         else:
             embed = Embed(
                 title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
             await channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="made by tari3210#9924")
-            await interaction.response.send_message(interaction.user.mention, embed=embed, ephemeral=True)
+            await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
 
 
 @client.event
