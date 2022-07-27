@@ -53,6 +53,7 @@ class ModalA(Modal):
                 return
             role = interaction.guild.get_role(920320926887862323)  # A部門 ビト森杯
             await interaction.user.add_roles(role)
+            await interaction.user.edit(nick=interaction.user.display_name)
             embed = Embed(title="🇦部門 受付完了",
                           description="エントリー受付が完了しました。", color=0x00ff00)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}",
@@ -97,6 +98,7 @@ class ModalB(Modal):
                 return
             role = interaction.guild.get_role(920321241976541204)  # B部門 ビト森杯
             await interaction.user.add_roles(role)
+            await interaction.user.edit(nick=interaction.user.display_name)
             embed = Embed(title="🅱️部門 受付完了",
                           description="エントリー受付が完了しました。", color=0x00ff00)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}",
