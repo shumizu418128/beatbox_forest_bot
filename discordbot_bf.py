@@ -157,6 +157,32 @@ async def on_member_update(before, after):
 
 
 @client.event
+async def on_user_update(before, after):
+    if before.display_name != after.display_name:
+        admin = after.guild.get_role(904368977092964352)  # ビト森杯運営
+        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
+        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
+        try:
+            cell = worksheet.find(f'{after.id}')
+        except gspread.exceptions.APIError as e:
+            await bot_channel.send(f"Error: {e}\nニックネーム変更検知（エントリー状況不明）\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            return
+        if cell is None:
+            return
+        try:
+            right_name = worksheet.cell(cell.row, cell.col - 2).value
+        except gspread.exceptions.APIError as e:
+            await channel.send(f"{admin.mention}\nError: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            await bot_channel.send(f"Error: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            return
+        if after.display_name != right_name:
+            await after.edit(nick=right_name)
+            await channel.send(f"{after.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
+        await bot_channel.send(f"ニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+        return
+
+
+@client.event
 async def on_message(message):
     if message.author.id == 952962902325886986:  # ビト森杯bot
         return
