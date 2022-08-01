@@ -136,23 +136,23 @@ async def on_member_update(before, after):
         try:
             cell = worksheet.find(f'{after.id}')
         except gspread.exceptions.APIError as e:
-            await channel.send(f"{admin.mention}\nError: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
-            await bot_channel.send(f"Error: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await channel.send(f"{admin.mention}\nError: {e}\nニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await bot_channel.send(f"Error: {e}\nニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
             return
         if cell is None:
-            await channel.send(f"{admin.mention}\nError: ニックネーム変更・データベース破損検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
-            await bot_channel.send(f"Error: ニックネーム変更・データベース破損検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await channel.send(f"{admin.mention}\nError: ニックネーム変更・データベース破損検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await bot_channel.send(f"Error: ニックネーム変更・データベース破損検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
             return
         try:
             right_name = worksheet.cell(cell.row, cell.col - 2).value
         except gspread.exceptions.APIError as e:
-            await channel.send(f"{admin.mention}\nError: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
-            await bot_channel.send(f"Error: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await channel.send(f"{admin.mention}\nError: {e}\nニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            await bot_channel.send(f"Error: {e}\nニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
             return
         if after.display_name != right_name:
             await after.edit(nick=right_name)
             await channel.send(f"{after.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
-        await bot_channel.send(f"ニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+        await bot_channel.send(f"ニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
         return
 
 
@@ -166,22 +166,22 @@ async def on_user_update(before, after):
         try:
             cell = worksheet.find(f'{after.id}')
         except gspread.exceptions.APIError as e:
-            await bot_channel.send(f"Error: {e}\nニックネーム変更検知（エントリー状況不明）\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            await bot_channel.send(f"Error: {e}\nアカウント名変更検知（エントリー状況不明）\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
             return
         if cell is None:
             return
         try:
             right_name = worksheet.cell(cell.row, cell.col - 2).value
         except gspread.exceptions.APIError as e:
-            await channel.send(f"{admin.mention}\nError: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
-            await bot_channel.send(f"Error: {e}\nニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            await channel.send(f"{admin.mention}\nError: {e}\nアカウント名変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            await bot_channel.send(f"Error: {e}\nアカウント名変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
             return
-        if after.display_name != right_name:
-            member = guild.get_member(after.id)
+        member = guild.get_member(after.id)
+        if member.display_name != right_name:
             await member.edit(nick=right_name)
-            await channel.send(f"{after.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
-        await bot_channel.send(f"ニックネーム変更検知\n\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
-        return
+            await channel.send(f"{member.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
+        await bot_channel.send(f"アカウント名変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+    return
 
 
 @client.event
