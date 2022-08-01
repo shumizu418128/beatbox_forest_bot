@@ -215,8 +215,9 @@ async def on_message(message):
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
             await message.channel.send(f"{admin.mention}", embed=embed)
         else:
-            channel_names = [channel.name for channel in message.guild.channels]
-            URLs = [channel.jump_url for channel in message.guild.channels]
+            image_channel = client.get_channel(952946795573571654)  #画像提出
+            thread_names = [thread.name for thread in image_channel.threads]
+            URLs = [thread.jump_url for thread in image_channel.threads]
             if bool(roleA):
                 category = "🇦 ※マイク設定確認不要"
             elif bool(roleB):
@@ -239,8 +240,8 @@ async def on_message(message):
                 elif bool(check_mic) and category == "🅱️部門":
                     embed.add_field(
                         name="マイク設定確認", value="⭕確認済み", inline=False)
-                for channel_name, URL in zip(channel_names, URLs):
-                    if member.display_name in channel_name:
+                for thread_name, URL in zip(thread_names, URLs):
+                    if member.display_name in thread_name:
                         embed.add_field(name="画像分析提出", value=URL, inline=False)
                 await message.channel.send(f"{admin.mention}", embed=embed)
             else:
@@ -262,8 +263,8 @@ async def on_message(message):
                 elif bool(check_mic):
                     embed.add_field(
                         name="マイク設定確認", value="⭕確認済み", inline=False)
-                for channel_name, URL in zip(channel_names, URLs):
-                    if member.display_name in channel_name:
+                for thread, URL in zip(thread_names, URLs):
+                    if member.display_name in thread:
                         embed.add_field(name="画像分析提出", value=URL, inline=False)
                 await message.channel.send(embed=embed)
         await message.channel.send(f"{member.mention}\nご用件をこのチャンネルにご記入ください。\nplease write your inquiry here.")
@@ -418,8 +419,9 @@ async def on_message(message):
             await embed_msg.clear_reactions()
             index_result = stamps.index(reaction.emoji)
             member = results[index_result]
-        channel_names = [channel.name for channel in message.guild.channels]
-        URLs = [channel.jump_url for channel in message.guild.channels]
+        image_channel = client.get_channel(952946795573571654)  #画像提出
+        thread_names = [thread.name for thread in image_channel.threads]
+        URLs = [thread.jump_url for thread in image_channel.threads]
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
         roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
         if bool(roleA) and bool(roleB):  # 重複エントリー警告
@@ -428,8 +430,8 @@ async def on_message(message):
             embed.set_author(name=f"{member.name}#{member.discriminator}",
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            for channel_name, URL in zip(channel_names, URLs):
-                if member.display_name in channel_name:
+            for thread_name, URL in zip(thread_names, URLs):
+                if member.display_name in thread_name:
                     embed.add_field(name="画像分析提出", value=URL, inline=False)
             await embed_msg.edit(admin.mention, embed=embed)
             await embed_msg.add_reaction("🗑️")
@@ -542,8 +544,8 @@ async def on_message(message):
                                  icon_url=member.display_avatar.url)
                 embed.add_field(name="エントリー部門", value=category, inline=False)
                 embed.add_field(name="ID", value=f"{member.id}", inline=False)
-                for channel_name, URL in zip(channel_names, URLs):
-                    if member.display_name in channel_name:
+                for thread_name, URL in zip(thread_names, URLs):
+                    if member.display_name in thread_name:
                         embed.add_field(name="画像分析提出", value=URL, inline=False)
                 await embed_msg.edit(admin.mention, embed=embed)
                 await embed_msg.add_reaction("🗑️")
@@ -584,8 +586,8 @@ async def on_message(message):
                     await interaction.response.send_message(f"✅{member.display_name}にverifiedロールを付与しました。")
             button.callback = button_callback
             view.add_item(button)
-            for channel_name, URL in zip(channel_names, URLs):
-                if member.display_name in channel_name:
+            for thread_name, URL in zip(thread_names, URLs):
+                if member.display_name in thread_name:
                     embed.add_field(name="画像分析提出", value=URL, inline=False)
             await embed_msg.edit(content="", embed=embed, view=view)
             await embed_msg.add_reaction("🗑️")
@@ -612,8 +614,8 @@ async def on_message(message):
                     await interaction.response.send_message(f"{member.display_name}がメイン会場に接続しました。", ephemeral=True)
         button_move.callback = button_move_callback
         view.add_item(button_move)
-        for channel_name, URL in zip(channel_names, URLs):
-            if member.display_name in channel_name:
+        for thread_name, URL in zip(thread_names, URLs):
+            if member.display_name in thread_name:
                 embed.add_field(name="画像分析提出", value=URL, inline=False)
         await embed_msg.edit(content="", embed=embed, view=view)
         await embed_msg.add_reaction("🗑️")
