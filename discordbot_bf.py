@@ -217,7 +217,7 @@ async def on_message(message):
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
             await message.channel.send(f"{admin.mention}", embed=embed)
         else:
-            image_channel = client.get_channel(952946795573571654)  #画像提出
+            image_channel = client.get_channel(952946795573571654)  # 画像提出
             thread_names = [thread.name for thread in image_channel.threads]
             URLs = [thread.jump_url for thread in image_channel.threads]
             if bool(roleA):
@@ -421,7 +421,7 @@ async def on_message(message):
             await embed_msg.clear_reactions()
             index_result = stamps.index(reaction.emoji)
             member = results[index_result]
-        image_channel = client.get_channel(952946795573571654)  #画像提出
+        image_channel = client.get_channel(952946795573571654)  # 画像提出
         thread_names = [thread.name for thread in image_channel.threads]
         URLs = [thread.jump_url for thread in image_channel.threads]
         roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
