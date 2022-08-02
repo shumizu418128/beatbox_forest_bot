@@ -34,6 +34,7 @@ class ModalA(Modal):
     async def callback(self, interaction):
         await interaction.response.defer(ephemeral=True, invisible=False)
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
+        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         if re_hiragana.fullmatch(self.children[0].value):
             try:
                 entry_amount = int(worksheet.acell('J1').value) + 1
@@ -44,7 +45,8 @@ class ModalA(Modal):
                     entry_amount + 1, 2, f"{self.children[0].value}")
                 worksheet.update_cell(
                     entry_amount + 1, 3, f"{interaction.user.id}")
-            except gspread.exceptions.APIError:
+            except gspread.exceptions.APIError as e:
+                await bot_channel.send(f"APIError: {e}\n{interaction.user.display_name}\nID: {interaction.user.id}")
                 embed = Embed(
                     title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
@@ -79,6 +81,7 @@ class ModalB(Modal):
     async def callback(self, interaction):
         await interaction.response.defer(ephemeral=True, invisible=False)
         channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
+        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         if re_hiragana.fullmatch(self.children[0].value):
             try:
                 entry_amount = int(worksheet.acell('J2').value) + 1
@@ -89,7 +92,8 @@ class ModalB(Modal):
                     entry_amount + 1, 6, f"{self.children[0].value}")
                 worksheet.update_cell(
                     entry_amount + 1, 7, f"{interaction.user.id}")
-            except gspread.exceptions.APIError:
+            except gspread.exceptions.APIError as e:
+                await bot_channel.send(f"APIError: {e}\n{interaction.user.display_name}\nID: {interaction.user.id}")
                 embed = Embed(
                     title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
                 await channel.send(interaction.user.mention, embed=embed)
