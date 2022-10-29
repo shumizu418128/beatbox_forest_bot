@@ -21,20 +21,26 @@ worksheet = workbook.worksheet('botデータベース（さわらないでね）
 intents = discord.Intents.all()  # デフォルトのIntentsオブジェクトを生成
 intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
-re_hiragana = re.compile(r'^[あ-んー　 ぁ]+$')
+re_hiragana = re.compile(r'^[ぁ-ゞ　 ]+$')
 print('ビト森杯bot: 起動完了')
+
+
+green = 0x00ff00
+yellow = 0xffff00
+red = 0xff0000
 
 
 class ModalA(Modal):
     def __init__(self, name) -> None:
         super().__init__(title="A部門 読みがな登録")
         self.add_item(
-            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
+            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな（ひらがな）"))
 
     async def callback(self, interaction):
+        bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
+        bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
+        roleA = bot_channel.guild.get_role(1035945116591996979)  # A部門 ビト森杯
         await interaction.response.defer(ephemeral=True, invisible=False)
-        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         if re_hiragana.fullmatch(self.children[0].value):
             try:
                 entry_amount = int(worksheet.acell('J1').value) + 1
@@ -46,27 +52,28 @@ class ModalA(Modal):
                 worksheet.update_cell(
                     entry_amount + 1, 3, f"{interaction.user.id}")
             except gspread.exceptions.APIError as e:
-                await bot_channel.send(f"APIError: {e}\n{interaction.user.display_name}\nID: {interaction.user.id}")
                 embed = Embed(
-                    title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
-                await channel.send(interaction.user.mention, embed=embed)
+                    description=f"APIError: {e}\n{interaction.user.display_name}\nID: {interaction.user.id}")
+                await bot_test_channel.send(embed=embed)
+                embed = Embed(
+                    title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=red)
+                await bot_channel.send(interaction.user.mention, embed=embed)
                 embed.set_footer(text="bot制作: tari3210#9924")
                 await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
                 return
-            role = interaction.guild.get_role(920320926887862323)  # A部門 ビト森杯
-            await interaction.user.add_roles(role)
+            await interaction.user.add_roles(roleA)
             embed = Embed(title="🇦部門 受付完了",
-                          description="エントリー受付が完了しました。", color=0x00ff00)
+                          description="エントリー受付が完了しました。", color=green)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}",
                             value=f"`読み：`{self.children[0].value}", inline=False)
-            await channel.send(f"{interaction.user.mention}", embed=embed)
+            await bot_channel.send(f"{interaction.user.mention}", embed=embed)
             embed.set_footer(text="bot制作: tari3210#9924")
             # 全ての作業が終わってから送信する！
             await interaction.followup.send(embed=embed, ephemeral=True)
         else:
             embed = Embed(
-                title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
-            await channel.send(interaction.user.mention, embed=embed)
+                title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=red)
+            await bot_channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="bot制作: tari3210#9924")
             await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
 
@@ -78,9 +85,10 @@ class ModalB(Modal):
             InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
 
     async def callback(self, interaction):
+        bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
+        bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
+        roleB = bot_channel.guild.get_role(1035945267733737542)  # B部門 ビト森杯
         await interaction.response.defer(ephemeral=True, invisible=False)
-        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         if re_hiragana.fullmatch(self.children[0].value):
             try:
                 entry_amount = int(worksheet.acell('J2').value) + 1
@@ -92,184 +100,155 @@ class ModalB(Modal):
                 worksheet.update_cell(
                     entry_amount + 1, 7, f"{interaction.user.id}")
             except gspread.exceptions.APIError as e:
-                await bot_channel.send(f"APIError: {e}\n{interaction.user.display_name}\nID: {interaction.user.id}")
                 embed = Embed(
-                    title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=0xff0000)
-                await channel.send(interaction.user.mention, embed=embed)
+                    description=f"APIError: {e}\n{interaction.user.display_name}\nID: {interaction.user.id}")
+                await bot_test_channel.send(embed=embed)
+                embed = Embed(
+                    title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=red)
+                await bot_channel.send(interaction.user.mention, embed=embed)
                 embed.set_footer(text="bot制作: tari3210#9924")
                 await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
                 return
-            role = interaction.guild.get_role(920321241976541204)  # B部門 ビト森杯
-            await interaction.user.add_roles(role)
+            await interaction.user.add_roles(roleB)
             embed = Embed(title="🅱️部門 受付完了",
-                          description="エントリー受付が完了しました。", color=0x00ff00)
+                          description="エントリー受付が完了しました。", color=green)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}",
                             value=f"`読み：`{self.children[0].value}", inline=False)
-            await channel.send(f"{interaction.user.mention}", embed=embed)
+            await bot_channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="bot制作: tari3210#9924")
             # 全ての作業が終わってから送信する！
             await interaction.followup.send(embed=embed, ephemeral=True)
         else:
             embed = Embed(
-                title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=0xff0000)
-            await channel.send(interaction.user.mention, embed=embed)
+                title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=red)
+            await bot_channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="bot制作: tari3210#9924")
             await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
 
 
 @client.event
 async def on_member_update(before, after):
+    roleA = after.get_role(1035945116591996979)  # A部門 ビト森杯
+    roleB = after.get_role(1035945267733737542)  # B部門 ビト森杯
+    admin = after.guild.get_role(904368977092964352)  # ビト森杯運営
+    bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
+    bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
     if before.display_name != after.display_name:
-        roleA = after.get_role(920320926887862323)  # A部門 ビト森杯
-        roleB = after.get_role(920321241976541204)  # B部門 ビト森杯
-        admin = after.guild.get_role(904368977092964352)  # ビト森杯運営
-        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         if roleA is None and roleB is None:
             return
         if bool(roleA) and bool(roleB):
-            await channel.send(f"{admin.mention}\nError: AB重複エントリー検知\n\n{after.display_name} {after.id}")
-            await bot_channel.send(f"Error: AB重複エントリー検知\n\n{after.display_name} {after.id}")
-            category = "重複エントリー"
-        elif bool(roleA):
-            category = "🇦部門"
-        elif bool(roleB):
-            category = "🅱️部門"
+            embed = Embed(
+                title=f"AB重複エントリー検知", description=f"{after.display_name}\n{after.id}", color=red)
+            await bot_channel.send(admin.mention, embed=embed)
+            await bot_test_channel.send(embed=embed)
         try:
             cell = worksheet.find(f'{after.id}')
         except gspread.exceptions.APIError as e:
-            await channel.send(f"{admin.mention}\nError: {e}\nニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
-            await bot_channel.send(f"Error: {e}\nニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            embed = Embed(title="ニックネーム変更検知",
+                          description=f"APIError:\n{e}\n\n{after.id}", color=red)
+            embed.add_field(
+                name="before", value=before.display_name, inline=False)
+            embed.add_field(
+                name="after", value=after.display_name, inline=False)
+            await bot_channel.send(admin.mention, embed=embed)
+            await bot_test_channel.send(embed=embed)
             return
         if cell is None:
-            await channel.send(f"{admin.mention}\nError: ニックネーム変更・データベース破損検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
-            await bot_channel.send(f"Error: ニックネーム変更・データベース破損検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            embed = Embed(title="ニックネーム変更・データベース破損検知",
+                          description=f"{after.id}", color=red)
+            embed.add_field(
+                name="before", value=before.display_name, inline=False)
+            embed.add_field(
+                name="after", value=after.display_name, inline=False)
+            await bot_channel.send(admin.mention, embed=embed)
+            await bot_test_channel.send(embed=embed)
             return
         try:
             right_name = worksheet.cell(cell.row, cell.col - 2).value
         except gspread.exceptions.APIError as e:
-            await channel.send(f"{admin.mention}\nError: {e}\nニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
-            await bot_channel.send(f"Error: {e}\nニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            embed = Embed(title="ニックネーム変更検知",
+                          description=f"APIError:\n{e}\n\n{after.id}", color=red)
+            embed.add_field(
+                name="before", value=before.display_name, inline=False)
+            embed.add_field(
+                name="after", value=after.display_name, inline=False)
+            await bot_channel.send(admin.mention, embed=embed)
+            await bot_test_channel.send(embed=embed)
             return
         if after.display_name != right_name:
             await after.edit(nick=right_name)
-            await channel.send(f"{after.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
-        await bot_channel.send(f"ニックネーム変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}\n{category}")
+            embed = Embed(
+                title="WARNING", description=f"エントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited", color=red)
+            await bot_channel.send(after.mention, embed=embed)
+        embed = Embed(title="ニックネーム変更検知", description=f"{after.id}", color=red)
+        embed.add_field(name="before", value=before.display_name, inline=False)
+        embed.add_field(name="after", value=after.display_name, inline=False)
+        await bot_test_channel.send(embed=embed)
         return
 
 
 @client.event
 async def on_user_update(before, after):
+    admin = after.guild.get_role(904368977092964352)  # ビト森杯運営
+    bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
+    bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
     if before.display_name != after.display_name:
-        guild = client.get_guild(864475338340171786)  # ビト森
-        admin = guild.get_role(904368977092964352)  # ビト森杯運営
-        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
         try:
             cell = worksheet.find(f'{after.id}')
         except gspread.exceptions.APIError as e:
-            await bot_channel.send(f"Error: {e}\nアカウント名変更検知（エントリー状況不明）\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            embed = Embed(title="アカウント名変更検知（エントリー状況不明）",
+                          description=f"APIError:\n{e}\n\n{after.id}", color=red)
+            embed.add_field(
+                name="before", value=before.display_name, inline=False)
+            embed.add_field(
+                name="after", value=after.display_name, inline=False)
+            await bot_test_channel.send(embed=embed)
             return
         if cell is None:
             return
         try:
             right_name = worksheet.cell(cell.row, cell.col - 2).value
         except gspread.exceptions.APIError as e:
-            await channel.send(f"{admin.mention}\nError: {e}\nアカウント名変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
-            await bot_channel.send(f"Error: {e}\nアカウント名変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            embed = Embed(title="アカウント名変更検知",
+                          description=f"APIError:\n{e}\n\n{after.id}", color=red)
+            embed.add_field(
+                name="before", value=before.display_name, inline=False)
+            embed.add_field(
+                name="after", value=after.display_name, inline=False)
+            await bot_channel.send(admin.mention, embed=embed)
+            await bot_test_channel.send(embed=embed)
             return
-        member = guild.get_member(after.id)
+        member = after.guild.get_member(after.id)
         if member.display_name != right_name:
             await member.edit(nick=right_name)
-            await channel.send(f"{member.mention}\nエントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited")
-        await bot_channel.send(f"アカウント名変更検知\nbefore: {before.display_name}\nafter: {after.display_name}\nid: {after.id}")
+            embed = Embed(
+                title="WARNING", description=f"エントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited", color=red)
+            await bot_channel.send(after.mention, embed=embed)
+        embed = Embed(title="アカウント名変更検知", description=f"{after.id}", color=red)
+        embed.add_field(name="before", value=before.display_name, inline=False)
+        embed.add_field(name="after", value=after.display_name, inline=False)
+        await bot_test_channel.send(embed=embed)
     return
 
 
 @client.event
 async def on_message(message):
+    bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
+    bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
+    admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
+    roleA = member.get_role(1035945116591996979)  # A部門 ビト森杯
+    roleB = member.get_role(1035945267733737542)  # B部門 ビト森杯
+    image_channel = client.get_channel(952946795573571654)  # 画像提出
+    verified = message.guild.get_role(952951691047747655)  # verified
+    contact = client.get_channel(1035964918198960128)  # 問い合わせ
+    main_ch = client.get_channel(1030840789040893962)  # メイン会場
+    ox_list = ["⭕", "❌"]
+
     if message.author.id == 952962902325886986:  # ビト森杯bot
         return
 
     if message.content == "s.test":
-        await message.channel.send(f"ビト森杯: {client.latency}")
-        return
-
-    emoji_list = ["⭕", "❌"]
-    if message.content.startswith("contact:"):
-        admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
-        await message.channel.send(admin.mention)
-        input_ = [j for j in message.content.split()]
-        member = message.guild.get_member(int(input_[1]))
-        roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
-        roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
-        if roleA is None and roleB is None:
-            embed = Embed(description=f"{member.mention}\nビト森杯にエントリーしていません")
-            embed.set_author(name=f"{member.name}#{member.discriminator}",
-                             icon_url=member.display_avatar.url)
-            embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            await message.channel.send(embed=embed)
-        elif bool(roleA) and bool(roleB):
-            embed = Embed(title="Error: 重複エントリーを検知",
-                          description=member.mention, color=0xff0000)
-            embed.set_author(name=f"{member.name}#{member.discriminator}",
-                             icon_url=member.display_avatar.url)
-            embed.add_field(name="ID", value=f"{member.id}", inline=False)
-            await message.channel.send(f"{admin.mention}", embed=embed)
-        else:
-            image_channel = client.get_channel(952946795573571654)  # 画像提出
-            thread_names = [thread.name for thread in image_channel.threads]
-            URLs = [thread.jump_url for thread in image_channel.threads]
-            if bool(roleA):
-                category = "🇦 ※マイク設定確認不要"
-            elif bool(roleB):
-                category = "🅱️部門"
-            try:
-                cell = worksheet.find(f'{member.id}')
-            except gspread.exceptions.APIError as e:
-                await message.channel.send(f"Error: {e}")
-                return
-            if cell is None:
-                embed = Embed(title="Error: DB検索結果なし",
-                              description=member.mention, color=0xff0000)
-                embed.set_author(
-                    name=f"{member.name}#{member.discriminator}", icon_url=member.display_avatar.url)
-                embed.add_field(name="エントリー部門", value=category, inline=False)
-                embed.add_field(name="ID", value=f"{member.id}", inline=False)
-                check_mic = member.get_role(952951691047747655)  # verified
-                if check_mic is None and category == "🅱️部門":
-                    embed.add_field(name="マイク設定確認", value="❌", inline=False)
-                elif bool(check_mic) and category == "🅱️部門":
-                    embed.add_field(
-                        name="マイク設定確認", value="⭕確認済み", inline=False)
-                for thread_name, URL in zip(thread_names, URLs):
-                    if member.display_name in thread_name:
-                        embed.add_field(name="画像分析提出", value=URL, inline=False)
-                await message.channel.send(f"{admin.mention}", embed=embed)
-            else:
-                try:
-                    read = worksheet.cell(cell.row, cell.col - 1).value
-                except gspread.exceptions.APIError as e:
-                    read = f"Error: {e}"
-                if read is None:
-                    read = "Error: DB検索結果なし"
-                check_mic = member.get_role(952951691047747655)  # verified
-                embed = Embed(description=member.mention)
-                embed.set_author(
-                    name=f"{member.name}#{member.discriminator}", icon_url=member.display_avatar.url)
-                embed.add_field(name="読みがな", value=read, inline=False)
-                embed.add_field(name="エントリー部門", value=category, inline=False)
-                embed.add_field(name="ID", value=f"{member.id}", inline=False)
-                if check_mic is None and category == "🅱️部門":
-                    embed.add_field(name="マイク設定確認", value="❌", inline=False)
-                elif bool(check_mic):
-                    embed.add_field(
-                        name="マイク設定確認", value="⭕確認済み", inline=False)
-                for thread, URL in zip(thread_names, URLs):
-                    if member.display_name in thread:
-                        embed.add_field(name="画像分析提出", value=URL, inline=False)
-                await message.channel.send(embed=embed)
-        await message.channel.send(f"{member.mention}\nご用件をこのチャンネルにご記入ください。\nplease write your inquiry here.")
+        await message.channel.send(f"ビト森杯 (Local): {client.latency}")
         return
 
     if message.content.startswith("s.cancel"):
@@ -286,8 +265,8 @@ async def on_message(message):
         if member is None:
             await message.channel.send("Error: 検索結果なし")
             return
-        roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
-        roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
+        roleA = member.get_role(1035945116591996979)  # A部門 ビト森杯
+        roleB = member.get_role(1035945267733737542)  # B部門 ビト森杯
         if roleA is None and roleB is None:
             await message.channel.send(f"{member.display_name}はビト森杯にエントリーしていません")
             return
@@ -296,7 +275,7 @@ async def on_message(message):
         await notice.add_reaction("❌")
 
         def check(reaction, user):
-            return user == message.author and reaction.emoji in emoji_list and reaction.message == notice
+            return user == message.author and reaction.emoji in ox_list and reaction.message == notice
 
         try:
             reaction, user = await client.wait_for('reaction_add', timeout=10.0, check=check)
@@ -325,20 +304,18 @@ async def on_message(message):
             await message.channel.send(f"DB削除完了 `{cell.row}, {cell.col}`")
         else:
             await message.channel.send("Error: DB登録なし")
-        channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
         if bool(roleA):
             await member.remove_roles(roleA)
             await message.channel.send(f"{member.display_name}のビト森杯 🇦部門エントリーを取り消しました。")
-            await channel.send(f"{member.display_name}のビト森杯 🇦部門エントリーを取り消しました。")
-        elif bool(roleB):
+            await bot_test_channel.send(f"{member.display_name}のビト森杯 🇦部門エントリーを取り消しました。")
+        if bool(roleB):
             await member.remove_roles(roleB)
             await message.channel.send(f"{member.display_name}のビト森杯 🅱️部門エントリーを取り消しました。")
-            await channel.send(f"{member.display_name}のビト森杯 🅱️部門エントリーを取り消しました。")
+            await bot_test_channel.send(f"{member.display_name}のビト森杯 🅱️部門エントリーを取り消しました。")
         return
 
     if message.content.startswith("s.s") and not message.content.startswith("s.start") and not message.content.startswith("s.stage"):
         await message.delete(delay=1)
-        admin = message.guild.get_role(904368977092964352)  # ビト森杯運営
         input_ = message.content[4:]
         if input_ == "":
             await message.channel.send("`cancelと入力するとキャンセルできます`\n検索したいワードを入力してください：")
@@ -366,8 +343,8 @@ async def on_message(message):
         if member is None:
             all_names = []
             for mem in message.guild.members:
-                # RUSY, RUSY_2sub
-                if not mem.bot and mem.id not in [332886651107934219, 826371622084542474]:
+                RUSY = [332886651107934219, 826371622084542474]  # RUSY, RUSY_2sub
+                if not mem.bot and mem.id not in RUSY:
                     all_names.append(mem.display_name)
             all_names_edited = [normalize(mem).lower() for mem in all_names]
             results_edited = get_close_matches(
@@ -421,14 +398,13 @@ async def on_message(message):
             await embed_msg.clear_reactions()
             index_result = stamps.index(reaction.emoji)
             member = results[index_result]
-        image_channel = client.get_channel(952946795573571654)  # 画像提出
         thread_names = [thread.name for thread in image_channel.threads]
         URLs = [thread.jump_url for thread in image_channel.threads]
-        roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
-        roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
+        roleA = member.get_role(1035945116591996979)  # A部門 ビト森杯
+        roleB = member.get_role(1035945267733737542)  # B部門 ビト森杯
         if bool(roleA) and bool(roleB):  # 重複エントリー警告
             embed = Embed(title="Error: 重複エントリーを検知",
-                          description=member.mention, color=0xff0000)
+                          description=member.mention, color=red)
             embed.set_author(name=f"{member.name}#{member.discriminator}",
                              icon_url=member.display_avatar.url)
             embed.add_field(name="ID", value=f"{member.id}", inline=False)
@@ -492,22 +468,23 @@ async def on_message(message):
                 await typing.delete()
                 await read.delete()
                 embed = Embed(
-                    description="登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。", color=0xff0000)
+                    description="登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。", color=red)
                 await message.channel.send(embed=embed, delete_after=5)
             await message.channel.send("処理中...", delete_after=5)
+            worksheet_check = ""
             try:
                 if category == "🇦":
                     entry_amount = int(worksheet.acell('J1').value) + 1
                     place_key = 0
                     worksheet.update_cell(1, 10, entry_amount)
                     role = message.guild.get_role(
-                        920320926887862323)  # A部門 ビト森杯
+                        1035945116591996979)  # A部門 ビト森杯
                 elif category == "🅱️":
                     entry_amount = int(worksheet.acell('J2').value) + 1
                     place_key = 4
                     worksheet.update_cell(2, 10, entry_amount)
                     role = message.guild.get_role(
-                        920321241976541204)  # B部門 ビト森杯
+                        1035945267733737542)  # B部門 ビト森杯
                 worksheet.update_cell(
                     entry_amount + 1, place_key + 1, member.display_name)
                 worksheet.update_cell(
@@ -515,33 +492,34 @@ async def on_message(message):
                 worksheet.update_cell(
                     entry_amount + 1, place_key + 3, f"{member.id}")
             except gspread.exceptions.APIError as e:
-                await message.channel.send(f"Error: {e}")
-                return
+                worksheet_check = e
             await member.add_roles(role)
             embed = Embed(title=f"{category}部門 受付完了",
-                          description=f"{member.mention}\nエントリー受付が完了しました。", color=0x00ff00)
+                          description=f"{member.mention}\nエントリー受付が完了しました。", color=green)
             embed.set_author(name=f"{member.name}#{member.discriminator}",
                              icon_url=member.display_avatar.url)
             embed.add_field(name="名前", value=member.display_name, inline=False)
             embed.add_field(name="読みがな", value=read.content, inline=False)
             await message.channel.send(embed=embed)
-            channel = client.get_channel(916608669221806100)  # ビト森杯 進行bot
-            await channel.send(embed=embed)
+            notice_entry = await bot_channel.send(embed=embed)
+            if bool(worksheet_check):
+                embed = Embed(title="データシート登録失敗", description=f"{worksheet_check}\n\nロール付与は完了しました。")
+                await notice_entry.reply(embed=embed)
             embed_msg = await message.channel.send("処理中...")
-            roleA = member.get_role(920320926887862323)  # A部門 ビト森杯
-            roleB = member.get_role(920321241976541204)  # B部門 ビト森杯
+            roleA = member.get_role(1035945116591996979)  # A部門 ビト森杯
+            roleB = member.get_role(1035945267733737542)  # B部門 ビト森杯
         if bool(roleA):
-            category = "🇦 ※マイク設定確認不要"
+            category = "🇦"
         elif bool(roleB):
             category = "🅱️部門"
         try:
             cell = worksheet.find(f'{member.id}')
         except gspread.exceptions.APIError as e:
-            read = f"Error: {e}"
+            read = e
         else:
             if cell is None:
                 embed = Embed(title="Error: DB検索結果なし",
-                              description=member.mention, color=0xff0000)
+                              description=member.mention, color=red)
                 embed.set_author(name=f"{member.name}#{member.discriminator}",
                                  icon_url=member.display_avatar.url)
                 embed.add_field(name="エントリー部門", value=category, inline=False)
@@ -563,7 +541,6 @@ async def on_message(message):
                 read = f"Error: {e}"
             if read is None:
                 read = "Error: DB検索結果なし"
-        check_mic = member.get_role(952951691047747655)  # verified
         embed = Embed(description=member.mention)
         embed.set_author(name=f"{member.name}#{member.discriminator}",
                          icon_url=member.display_avatar.url)
@@ -571,6 +548,7 @@ async def on_message(message):
         embed.add_field(name="エントリー部門", value=category, inline=False)
         embed.add_field(name="ID", value=member.id, inline=False)
         view = View(timeout=None)
+        check_mic = member.get_role(952951691047747655)  # verified
         if check_mic is None and category == "🅱️部門":
             embed.add_field(name="マイク設定確認", value="❌", inline=False)
             button = Button(
@@ -579,11 +557,7 @@ async def on_message(message):
             async def button_callback(interaction):
                 admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
                 if bool(admin):
-                    bot_channel = client.get_channel(
-                        897784178958008322)  # bot用チャット
                     await bot_channel.send(f"interaction verify: {interaction.user.display_name}\nID: {interaction.user.id}\nチャンネル：{message.channel.mention}")
-                    verified = message.guild.get_role(
-                        952951691047747655)  # verified
                     await member.add_roles(verified)
                     await interaction.response.send_message(f"✅{member.display_name}にverifiedロールを付与しました。")
             button.callback = button_callback
@@ -607,7 +581,6 @@ async def on_message(message):
         async def button_move_callback(interaction):
             admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
             if bool(admin):
-                main_ch = client.get_channel(910861846888722432)  # メイン会場
                 try:
                     await member.move_to(main_ch)
                 except discord.errors.HTTPException as e:
@@ -629,7 +602,7 @@ async def on_message(message):
         return
 
     if message.content.startswith("s.poll"):
-        names = [(j) for j in message.content.replace('s.poll', '').split()]
+        names = message.content.replace('s.poll', '').split()
         while len(names) != 2:
             await message.channel.send("Error: 入力方法が間違っています。\n\n`cancelと入力するとキャンセルできます`\nもう一度入力してください：")
 
@@ -646,7 +619,7 @@ async def on_message(message):
                 return
             if msg2.content.startswith("s.poll"):
                 return
-            names = [(j) for j in msg2.content.split()]
+            names = msg2.content.split()
         embed = Embed(title="投票箱", description=f"1⃣ {names[0]}\n2⃣ {names[1]}")
         poll = await message.channel.send(embed=embed)
         await poll.add_reaction("1⃣")
@@ -659,9 +632,9 @@ async def on_message(message):
         if len(input_id) == 1:
             input_id.append(0)
         if input_id[1] == "A":
-            input_id[1] = 920320926887862323  # A部門 ビト森杯
+            input_id[1] = 1035945116591996979  # A部門 ビト森杯
         elif input_id[1] == "B":
-            input_id[1] = 920321241976541204  # B部門 ビト森杯
+            input_id[1] = 1035945267733737542  # B部門 ビト森杯
         try:
             role = message.guild.get_role(int(input_id[1]))
         except ValueError:
@@ -684,17 +657,17 @@ async def on_message(message):
                 return
             input_id[1] = msg2.content
             if input_id[1] == "A":
-                input_id[1] = 920320926887862323  # A部門 ビト森杯
+                input_id[1] = 1035945116591996979  # A部門 ビト森杯
             elif input_id[1] == "B":
-                input_id[1] = 920321241976541204  # B部門 ビト森杯
+                input_id[1] = 1035945267733737542  # B部門 ビト森杯
             try:
                 role = message.guild.get_role(int(input_id[1]))
             except ValueError:
                 role = None
-        role_member = role.members
-        for member in role_member:
-            await message.channel.send(f"{member.display_name}, {member.id}")
-        await message.channel.send("---finish---")
+        description = ""
+        for member in role.member:
+            description += f"{member.display_name}, {member.id}\n"
+        embed = Embed(title=f"{role.name}", description=description)
         return
 
     if message.content == "s.tm":
@@ -714,69 +687,8 @@ async def on_message(message):
         return
 
     if message.content == "button":
-        if message.channel.id != 904367725416153118:  # ビト森杯 参加
-            return
         await message.delete(delay=1)
-        buttonA = Button(
-            label="Entry", style=discord.ButtonStyle.primary, emoji="🇦")
-        buttonB = Button(
-            label="Entry", style=discord.ButtonStyle.red, emoji="🅱️")
-        bot_channel = client.get_channel(897784178958008322)  # bot用チャット
-        contact = client.get_channel(920620259810086922)  # 問い合わせ
 
-        async def buttonA_callback(interaction):
-            roleA = interaction.user.get_role(920320926887862323)  # A部門 ビト森杯
-            roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
-            await bot_channel.send(f"interaction🇦: {interaction.user.display_name}\nID: {interaction.user.id}\nlocale: {interaction.locale}")
-            if bool(roleA):
-                await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
-                return
-            if bool(roleB):
-                await interaction.response.send_message("Error: すでに🅱️部門にエントリーしています。", ephemeral=True)
-                return
-            if interaction.locale == "ja":
-                await interaction.response.send_modal(ModalA(interaction.user.display_name))
-                return
-            if interaction.locale in ["zh-CN", "zh-TW"]:
-                embed = Embed(title="Error: contact required",
-                              description=f"错误：请点击 {contact.mention} 联系我们\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
-            elif interaction.locale == "ko":
-                embed = Embed(title="Error: contact required",
-                              description=f"문의는 {contact.mention} 로 보내주세요\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
-            else:
-                embed = Embed(title="Error: contact required",
-                              description=f"please contact us via {contact.mention}\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        async def buttonB_callback(interaction):
-            roleA = interaction.user.get_role(920320926887862323)  # A部門 ビト森杯
-            roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
-            await bot_channel.send(f"interaction🅱️: {interaction.user.display_name}\nID: {interaction.user.id}\nlocale: {interaction.locale}")
-            if bool(roleA):
-                await interaction.response.send_message("Error: すでに🇦部門にエントリーしています。", ephemeral=True)
-                return
-            if bool(roleB):
-                await interaction.response.send_message("Error: すでに🅱️部門にエントリーしています。", ephemeral=True)
-                return
-            if interaction.locale == "ja":
-                await interaction.response.send_modal(ModalB(interaction.user.display_name))
-                return
-            if interaction.locale in ["zh-CN", "zh-TW"]:
-                embed = Embed(title="Error: contact required",
-                              description=f"错误：请点击 {contact.mention} 联系我们\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
-            elif interaction.locale == "ko":
-                embed = Embed(title="Error: contact required",
-                              description=f"문의는 {contact.mention} 로 보내주세요\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
-            else:
-                embed = Embed(title="Error: contact required",
-                              description=f"please contact us via {contact.mention}\nお手数ですが {contact.mention}までお問い合わせください。", color=0xff0000)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-        buttonA.callback = buttonA_callback
-        buttonB.callback = buttonB_callback
-        view = View(timeout=None)
-        view.add_item(buttonA)
-        view.add_item(buttonB)
-        await message.channel.send(view=view)
         return
 
 client.run("OTUyOTYyOTAyMzI1ODg2OTg2.GaOseR.nhstAXFsu7mIyenljeWbC6liMf3T2OldssKq_E")
