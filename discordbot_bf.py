@@ -30,97 +30,56 @@ yellow = 0xffff00
 red = 0xff0000
 
 
-class ModalA(Modal):
-    def __init__(self, name) -> None:
-        super().__init__(title="A部門 読みがな登録")
+class entry_modal(Modal):
+    def __init__(self, name, category) -> None:
+        super().__init__(title=f"{category}部門 読みがな登録", custom_id=category)
         self.add_item(
             InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな（ひらがな）"))
 
+    # self = modal.children(ユーザー入力内容), custom_id, title
     async def callback(self, interaction):
         bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
         bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
         roleA = bot_channel.guild.get_role(1035945116591996979)  # A部門 ビト森杯
+        roleB = bot_channel.guild.get_role(1035945267733737542)  # B部門 ビト森杯
+        admin = bot_channel.guild.get_role(904368977092964352)  # ビト森杯運営
+        materials = {"A": {"role": roleA, "number": 1},
+                     "B": {"role": roleB, "number": 2}}
+        material = materials[self.custom_id]
+
         await interaction.response.defer(ephemeral=True, invisible=False)
         if re_hiragana.fullmatch(self.children[0].value):
+            worksheet_check = ""
+            await interaction.user.add_roles(material["role"])
             try:
-                entry_amount = int(worksheet.acell('J1').value) + 1
-                worksheet.update_cell(1, 10, f"{entry_amount}")
+                entry_amount = int(worksheet.acell(
+                    f'J{material["number"]}').value) + 1
                 worksheet.update_cell(
-                    entry_amount + 1, 1, f"{interaction.user.display_name}")
+                    material["number"], 10, f"{entry_amount}")
                 worksheet.update_cell(
-                    entry_amount + 1, 2, f"{self.children[0].value}")
+                    entry_amount + 1, 1, interaction.user.display_name)
+                worksheet.update_cell(
+                    entry_amount + 1, 2, self.children[0].value)
                 worksheet.update_cell(
                     entry_amount + 1, 3, f"{interaction.user.id}")
             except gspread.exceptions.APIError as e:
-                embed = Embed(
-                    description=f"APIError: {e}\n{interaction.user.display_name}\nID: {interaction.user.id}")
-                await bot_test_channel.send(embed=embed)
-                embed = Embed(
-                    title="Error", description="🇦部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=red)
-                await bot_channel.send(interaction.user.mention, embed=embed)
-                embed.set_footer(text="bot制作: tari3210#9924")
-                await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
-                return
-            await interaction.user.add_roles(roleA)
-            embed = Embed(title="🇦部門 受付完了",
-                          description="エントリー受付が完了しました。", color=green)
+                worksheet_check = e
+            embed = Embed(title=f"{self.custom_id}部門 受付完了",
+                          description="ご参加ありがとうごさいます！", color=green)
             embed.add_field(name=f"`名前：`{interaction.user.display_name}",
                             value=f"`読み：`{self.children[0].value}", inline=False)
-            await bot_channel.send(f"{interaction.user.mention}", embed=embed)
+            notice_entry = await bot_channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="bot制作: tari3210#9924")
+            if bool(worksheet_check):
+                embed_error = Embed(
+                    title="データベース登録失敗", description=f"{worksheet_check}\n\nロール付与は完了しました。運営はデータベースの確認を行ってください\n\n※{interaction.user.display_name}さんのエントリー受付は完了しています。ご安心ください", color=yellow)
+                await notice_entry.reply(admin.mention, embed=embed_error)
+                await bot_test_channel.send(embed=embed_error)
             # 全ての作業が終わってから送信する！
             await interaction.followup.send(embed=embed, ephemeral=True)
         else:
             embed = Embed(
-                title="Error", description=f"🇦部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=red)
-            await bot_channel.send(interaction.user.mention, embed=embed)
-            embed.set_footer(text="bot制作: tari3210#9924")
-            await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
-
-
-class ModalB(Modal):
-    def __init__(self, name) -> None:
-        super().__init__(title="🅱️部門 読みがな登録")
-        self.add_item(
-            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder=f"{name} の読みがな"))
-
-    async def callback(self, interaction):
-        bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
-        bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
-        roleB = bot_channel.guild.get_role(1035945267733737542)  # B部門 ビト森杯
-        await interaction.response.defer(ephemeral=True, invisible=False)
-        if re_hiragana.fullmatch(self.children[0].value):
-            try:
-                entry_amount = int(worksheet.acell('J2').value) + 1
-                worksheet.update_cell(2, 10, f"{entry_amount}")
-                worksheet.update_cell(
-                    entry_amount + 1, 5, f"{interaction.user.display_name}")
-                worksheet.update_cell(
-                    entry_amount + 1, 6, f"{self.children[0].value}")
-                worksheet.update_cell(
-                    entry_amount + 1, 7, f"{interaction.user.id}")
-            except gspread.exceptions.APIError as e:
-                embed = Embed(
-                    description=f"APIError: {e}\n{interaction.user.display_name}\nID: {interaction.user.id}")
-                await bot_test_channel.send(embed=embed)
-                embed = Embed(
-                    title="Error", description="🅱️部門 登録できませんでした。\n\nアクセス過多によるエラーです。\nお手数ですが、しばらく時間をおいてからもう一度お試しください。", color=red)
-                await bot_channel.send(interaction.user.mention, embed=embed)
-                embed.set_footer(text="bot制作: tari3210#9924")
-                await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
-                return
-            await interaction.user.add_roles(roleB)
-            embed = Embed(title="🅱️部門 受付完了",
-                          description="エントリー受付が完了しました。", color=green)
-            embed.add_field(name=f"`名前：`{interaction.user.display_name}",
-                            value=f"`読み：`{self.children[0].value}", inline=False)
-            await bot_channel.send(interaction.user.mention, embed=embed)
-            embed.set_footer(text="bot制作: tari3210#9924")
-            # 全ての作業が終わってから送信する！
-            await interaction.followup.send(embed=embed, ephemeral=True)
-        else:
-            embed = Embed(
-                title="Error", description=f"🅱️部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=red)
+                title="Error", description=f"{self.custom_id}部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=red)
             await bot_channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text="bot制作: tari3210#9924")
             await interaction.followup.send(interaction.user.mention, embed=embed, ephemeral=True)
@@ -343,7 +302,8 @@ async def on_message(message):
         if member is None:
             all_names = []
             for mem in message.guild.members:
-                RUSY = [332886651107934219, 826371622084542474]  # RUSY, RUSY_2sub
+                # RUSY, RUSY_2sub
+                RUSY = [332886651107934219, 826371622084542474]
                 if not mem.bot and mem.id not in RUSY:
                     all_names.append(mem.display_name)
             all_names_edited = [normalize(mem).lower() for mem in all_names]
@@ -503,13 +463,14 @@ async def on_message(message):
             await message.channel.send(embed=embed)
             notice_entry = await bot_channel.send(embed=embed)
             if bool(worksheet_check):
-                embed = Embed(title="データシート登録失敗", description=f"{worksheet_check}\n\nロール付与は完了しました。")
-                await notice_entry.reply(embed=embed)
+                embed = Embed(
+                    title="データベース登録失敗", description=f"{worksheet_check}\n\nロール付与は完了しました。運営はデータベースの確認を行ってください\n\n※{member.display_name}さんのエントリー受付は完了しています。ご安心ください", color=yellow)
+                await notice_entry.reply(admin.mention, embed=embed)
             embed_msg = await message.channel.send("処理中...")
             roleA = member.get_role(1035945116591996979)  # A部門 ビト森杯
             roleB = member.get_role(1035945267733737542)  # B部門 ビト森杯
         if bool(roleA):
-            category = "🇦"
+            category = "A"
         elif bool(roleB):
             category = "🅱️部門"
         try:
