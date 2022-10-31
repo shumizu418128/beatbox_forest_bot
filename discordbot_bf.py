@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import asyncio
 import re
 from difflib import get_close_matches
@@ -152,7 +152,7 @@ async def new_contact(member_id: int):  # 新規問い合わせを作成
               "4️⃣": "スポンサー協力・賞金・賞品",
               "5️⃣": "事前マイクチェック (開催日前日に公開)",
               "6️⃣": "その他"}
-    #stamp_number = {"4️⃣": 4, "5️⃣": 3}
+    # stamp_number = {"4️⃣": 4, "5️⃣": 3}
     questions_list = {"1️⃣": "1️⃣ A, B部門 elimination, battleのルール\n2️⃣ LOOP部門 showcaseのルール\n3️⃣ 開催日、開催時間、スケジュール\n4️⃣ 賞金・賞品\n5️⃣ 開催場所、中継配信\n6️⃣ マイクの使用・顔出し\n7️⃣ A, B部門の違い",
                       "2️⃣": "1️⃣ エントリー方法・締切\n2️⃣ 複数部門エントリー\n3️⃣ A, B部門の違い\n4️⃣ エントリー状況確認・変更・キャンセル\n5️⃣ 海外からのエントリー",
                       "3️⃣": "1️⃣ elimination, showcase 順番の希望\n2️⃣ 当日の集合時間に遅れる可能性がある",
