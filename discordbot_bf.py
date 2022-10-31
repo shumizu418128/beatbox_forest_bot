@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import asyncio
 import re
 from difflib import get_close_matches
@@ -151,8 +152,7 @@ async def new_contact(member_id: int):  # 新規問い合わせを作成
               "4️⃣": "スポンサー協力・賞金・賞品",
               "5️⃣": "事前マイクチェック (開催日前日に公開)",
               "6️⃣": "その他"}
-    stamp_number = {"4️⃣": 4,
-                    "5️⃣": 3}
+    #stamp_number = {"4️⃣": 4, "5️⃣": 3}
     questions_list = {"1️⃣": "1️⃣ A, B部門 elimination, battleのルール\n2️⃣ LOOP部門 showcaseのルール\n3️⃣ 開催日、開催時間、スケジュール\n4️⃣ 賞金・賞品\n5️⃣ 開催場所、中継配信\n6️⃣ マイクの使用・顔出し\n7️⃣ A, B部門の違い",
                       "2️⃣": "1️⃣ エントリー方法・締切\n2️⃣ 複数部門エントリー\n3️⃣ A, B部門の違い\n4️⃣ エントリー状況確認・変更・キャンセル\n5️⃣ 海外からのエントリー",
                       "3️⃣": "1️⃣ elimination, showcase 順番の希望\n2️⃣ 当日の集合時間に遅れる可能性がある",
@@ -218,7 +218,7 @@ async def new_contact(member_id: int):  # 新規問い合わせを作成
             await interaction.response.defer(ephemeral=True, invisible=False)
             embed = Embed(description=f"{interaction.user.mention}")
             embed.set_author(name=f"{interaction.user.name}#{interaction.user.discriminator}",
-                            icon_url=interaction.user.display_avatar.url)
+                             icon_url=interaction.user.display_avatar.url)
             roleA = interaction.user.get_role(1035945116591996979)  # A部門 ビト森杯
             roleB = interaction.user.get_role(1035945267733737542)  # B部門 ビト森杯
             roleLOOP = interaction.user.get_role(1036149651847524393)  # LOOP部門 ビト森杯
@@ -278,7 +278,7 @@ async def on_member_update(before, after):
         if after.display_name != right_name:
             await after.edit(nick=right_name)
             embed = Embed(
-                title="WARNING", description=f"エントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited", color=red)
+                title="WARNING", description="エントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited", color=red)
             await bot_channel.send(after.mention, embed=embed)
         embed = Embed(title="ニックネーム変更検知", description=f"{after.id}", color=red)
         embed.add_field(name="before", value=before.display_name, inline=False)
@@ -304,7 +304,7 @@ async def on_user_update(before, after):
         if member.display_name != right_name:
             await member.edit(nick=right_name)
             embed = Embed(
-                title="WARNING", description=f"エントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited", color=red)
+                title="WARNING", description="エントリー後のニックネーム変更は禁止されています\nchanging nickname after entry is prohibited", color=red)
             await bot_channel.send(after.mention, embed=embed)
         embed = Embed(title="アカウント名変更検知", description=f"{after.id}", color=red)
         embed.add_field(name="before", value=before.display_name, inline=False)
