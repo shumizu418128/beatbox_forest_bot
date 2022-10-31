@@ -93,36 +93,38 @@ async def find_contact(member_id: int, create: bool):  # 問い合わせthread�
     return None
 
 
-async def end_or_admin_button(thread: discord.Thread):
-    button_new_contact = Button(
-        label="別の問い合わせをする", style=discord.ButtonStyle.primary)
+async def get_view(*, change_contact=False, call_admin=False):
     button_call_admin = Button(
-        label="ここに無い内容について知りたい (運営メンバーが対応します)", style=discord.ButtonStyle.primary)
-
-    async def button_new_contact_callback(interaction):
-        await interaction.response.send_message("処理中...", ephemeral=True)
-        await button_message.delete()
-        await new_contact(interaction.user.id)
-        return
+        label="運営メンバーに問い合わせる", style=discord.ButtonStyle.green)
+    button_change_contact = Button(
+        label="別の問い合わせをする", style=discord.ButtonStyle.primary)
 
     async def button_call_admin_callback(interaction):
         admin = interaction.user.get_role(904368977092964352)  # ビト森杯運営
-        await interaction.response.send_message(admin.mention)
+        embed = Embed(title="運営メンバーが対応します", description="ご用件をこのチャンネルにご記入ください")
+        await interaction.response.send_message(f"{admin.mention} {interaction.user.mention}", embed=embed)
         return
 
-    button_new_contact.callback = button_new_contact_callback
+    async def button_change_contact_callback(interaction):
+        await interaction.response.send_message("処理中...", ephemeral=True)
+        await new_contact(interaction.user.id)
+        return
+
+    button_change_contact.callback = button_change_contact_callback
     button_call_admin.callback = button_call_admin_callback
     view = View(timeout=None)
-    view.add_item(button_new_contact)
-    view.add_item(button_call_admin)
-    button_message = await thread.send(view=view)
+    if change_contact:
+        view.add_item(button_change_contact)
+    if call_admin:
+        view.add_item(button_call_admin)
+    return view
 
 
 async def new_contact(member_id: int):  # 新規問い合わせを作成
     thread = await find_contact(member_id, create=True)
     admin = thread.guild.get_role(904368977092964352)  # ビト森杯運営
     member = thread.guild.get_member(member_id)
-    emoji_list = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"]
+    emoji_list = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
     embed = Embed(title="お問い合わせ",
                   description="質問内容に近いものを、以下からお選びください\n", color=blue)
     embed.set_author(name=member.display_name,
@@ -134,8 +136,8 @@ async def new_contact(member_id: int):  # 新規問い合わせを作成
     embed.description += "\n5️⃣ 事前マイクチェック (開催日前日に公開)"
     embed.description += "\n6️⃣ その他・ここに無い内容について知りたい"
     panel = await thread.send(member.mention, embed=embed)
-    for emoji in emoji_list:
-        await panel.add_reaction(emoji)
+    for i in range(6):
+        await panel.add_reaction(emoji_list[i])
 
     def check(reaction, user):
         return user == member and reaction.emoji in emoji_list and reaction.message == panel
@@ -149,63 +151,96 @@ async def new_contact(member_id: int):  # 新規問い合わせを作成
               "4️⃣": "スポンサー協力・賞金・賞品",
               "5️⃣": "事前マイクチェック (開催日前日に公開)",
               "6️⃣": "その他"}
-    stamp_number = {"3️⃣": 2,
-                    "4️⃣": 4,
+    stamp_number = {"4️⃣": 4,
                     "5️⃣": 3}
-    questions_list = {"1️⃣": "1️⃣ A, B部門 elimination, battleのルール\n2️⃣ LOOP部門 showcaseのルール\n3️⃣ 開催日、開催時間、スケジュール\n4️⃣ 賞金・賞品\n5️⃣ 開催場所、中継配信\n6️⃣ マイクの使用・顔出し",
+    questions_list = {"1️⃣": "1️⃣ A, B部門 elimination, battleのルール\n2️⃣ LOOP部門 showcaseのルール\n3️⃣ 開催日、開催時間、スケジュール\n4️⃣ 賞金・賞品\n5️⃣ 開催場所、中継配信\n6️⃣ マイクの使用・顔出し\n7️⃣ A, B部門の違い",
                       "2️⃣": "1️⃣ エントリー方法・締切\n2️⃣ 複数部門エントリー\n3️⃣ A, B部門の違い\n4️⃣ エントリー状況確認・変更・キャンセル\n5️⃣ 海外からのエントリー",
                       "3️⃣": "1️⃣ elimination, showcase 順番の希望\n2️⃣ 当日の集合時間に遅れる可能性がある",
                       "4️⃣": "1️⃣ スポンサー協力したい(賞金)\n2️⃣ スポンサー協力したい(賞品)\n3️⃣ 資金管理について\n4️⃣ 賞品について",
                       "5️⃣": "1️⃣ 事前マイクチェックとは\n2️⃣ 事前マイクチェックのやり方\n3️⃣ 分析結果に誤りがある・botが動かない"}
 
     if reaction.emoji == "6️⃣":
-        await thread.send(admin.mention)
-        await end_or_admin_button(thread)
+        embed = Embed(title="運営メンバーが対応します", description="ご用件をこのチャンネルにご記入ください")
+        view = await get_view(change_contact=True)
+        await thread.send(f"{admin.mention} {member.mention}", embed=embed, view=view)
         return
     embed = Embed(title=topics[reaction.emoji],
                   description=questions_list[reaction.emoji])
     await panel.edit(embed=embed)
 
     if reaction.emoji == "1️⃣":
-        options = [SelectOption(label="A, B部門 elimination, battleのルール", emoji="1️⃣"),
-                   SelectOption(label="LOOP部門 showcaseのルール", emoji="2️⃣"),
-                   SelectOption(label="開催日、開催時間、スケジュール", emoji="3️⃣"),
-                   SelectOption(label="賞金・賞品", emoji="4️⃣"),
-                   SelectOption(label="開催場所、中継配信", emoji="5️⃣"),
-                   SelectOption(label="マイクの使用・顔出し", emoji="6️⃣")]
-        option_answers = {"A, B部門 elimination, battleのルール": "eliminationは、1人1分です。\n下記の基準で得点化し、順位を決定、上位8人が決勝トーナメントへ進出します。\
-                                \n```・正確さ 5点\n・オリジナリティ 5点\n・構成 5点\nボーナスポイント 5点\n計20点``` \
-                                battleは、1分2ラウンド x 2名で、延長は無し。\nオーディエンス票(1票)と審査員2名(2票) 計3票で勝敗を決定します。",
-                          "LOOP部門 showcaseのルール": "未定",
-                          "開催日、開催時間、スケジュール": "以下のURLからご確認ください。\n※時間は前後する可能性があります。",
-                          "賞金・賞品": "以下のURLからご確認ください。",
-                          "開催場所、中継配信": "Discordサーバー「あつまれ！ビートボックスの森」で開催します。\n \
-                                配信はこちらのチャンネルにて行います。\nhttps://www.youtube.com/channel/UCrBlxDIuyUKXlUWiYF9GKyQ",
-                          "マイクの使用・顔出し": "マイクに関してルールはありません。ただし、必ずDiscordのノイズキャンセリング機能をOFFにしてください。\n \
-                                顔出しは不要です。Discordのカメラ機能を使用しても、当日配信には映りません。"}
-        select = Select(placeholder="ここをクリック",
-                        custom_id="1️⃣", options=options)
+        options1 = [SelectOption(label="A, B部門 elimination, battleのルール", emoji="1️⃣"),
+                    SelectOption(label="LOOP部門 showcaseのルール", emoji="2️⃣"),
+                    SelectOption(label="開催日、開催時間、スケジュール", emoji="3️⃣"),
+                    SelectOption(label="賞金・賞品", emoji="4️⃣"),
+                    SelectOption(label="開催場所、中継配信", emoji="5️⃣"),
+                    SelectOption(label="マイクの使用・顔出し", emoji="6️⃣"),
+                    SelectOption(label="A, B部門の違い", emoji="7️⃣")]
+        option1_answers = {"A, B部門 elimination, battleのルール": "eliminationは、1人1分です。\n下記の基準で得点化し、順位を決定、上位8人が決勝トーナメントへ進出します。\n```・正確さ 5点\n・オリジナリティ 5点\n・構成 5点\nボーナスポイント 5点\n計20点```battleは、1分2ラウンド x 2名で、延長は無し。\nオーディエンス票(1票)と審査員2名(2票) 計3票で勝敗を決定します。",
+                           "LOOP部門 showcaseのルール": "未定",
+                           "開催日、開催時間、スケジュール": "以下のURLからご確認ください。\n※時間は前後する可能性があります。",
+                           "賞金・賞品": "以下のURLからご確認ください。",
+                           "開催場所、中継配信": "Discordサーバー「あつまれ！ビートボックスの森」で開催します。\n配信はこちらのチャンネルにて行います。\nhttps://www.youtube.com/channel/UCrBlxDIuyUKXlUWiYF9GKyQ",
+                           "マイクの使用・顔出し": "マイクに関してルールはありません。ただし、必ずDiscordのノイズキャンセリング機能をOFFにしてください。\n顔出しは不要です。Discordのカメラ機能を使用しても、当日配信には映りません。",
+                           "A, B部門の違い": "A部門: 大会出場経験あり\nB部門: 大会出場経験なし\n```大会出場経験とは、オフラインもしくはオンラインで開催されたもののうち、「審査員による審査を勝ち上がった経験」を指します。\n※大会の規模は考慮しません。\n\n大会出場経験の例\n・狼煙の予選通過\n・小規模オンライン大会予選通過\n\n大会出場経験と見なされない例\n・ビト森で毎週土曜開催「battle stadium」(審査が無いイベント)\n・BoiceLess Festival初戦敗退 (審査を勝ち上がっていない)```"}
+        select1 = Select(placeholder="ここをクリック", options=options1)
 
-        async def select_callback(interaction):
+        async def select1_callback(interaction):
             embed = Embed(
-                title=select.values[0], description=option_answers[select.values[0]])
+                title=select1.values[0], description=option1_answers[select1.values[0]])
             await interaction.response.send_message(embed=embed, ephemeral=True)
-        select.callback = select_callback
-        view = View(timeout=None)
-        view.add_item(select)
+        select1.callback = select1_callback
+        view = await get_view(change_contact=True, call_admin=True)
+        view.add_item(select1)
         await panel.edit(view=view)
-
-    return
-    for i in range(stamp_number[reaction.emoji]):
-        await panel.add_reaction(emoji_list[i])
-
-    try:
-        reaction, _ = await client.wait_for('reaction_add', timeout=5, check=check)
-    except asyncio.TimeoutError:
-        await end_or_admin_button(thread)
-        reaction, _ = await client.wait_for('reaction_add', check=check)
-
-    await panel.clear_reactions()
+        return
+    if reaction.emoji == "2️⃣":
+        gc = gspread_asyncio.AsyncioGspreadClientManager(get_credits)
+        agc = await gc.authorize()
+        workbook = await agc.open_by_key('1WcwdGVf7NRKerM1pnZu9kIsgA0VYy5TddyGdKHBzAu4')
+        worksheet = await workbook.worksheet('botデータベース（さわらないでね）')
+        options2 = [SelectOption(label="エントリー方法・締切", emoji="1️⃣"),
+                    SelectOption(label="複数部門エントリー", emoji="2️⃣"),
+                    SelectOption(label="A, B部門の違い", emoji="3️⃣"),
+                    SelectOption(label="エントリー状況確認・変更・キャンセル", emoji="4️⃣"),
+                    SelectOption(label="海外からのエントリー", emoji="5️⃣")]
+        option2_answers = {"エントリー方法・締切": "以下のURLからご確認ください。",
+                           "複数部門エントリー": "以下の組み合わせのみ可能です。```・A部門, LOOP部門 重複エントリー\n・B部門, LOOP部門 重複エントリー```これ以外の組み合わせはできません。",
+                           "A, B部門の違い": "A部門: 大会出場経験あり\nB部門: 大会出場経験なし\n```大会出場経験とは、オフラインもしくはオンラインで開催されたもののうち、「審査員による審査を勝ち上がった経験」を指します。\n※大会の規模は考慮しません。\n\n大会出場経験の例\n・狼煙の予選通過\n・小規模オンライン大会予選通過\n\n大会出場経験と見なされない例\n・ビト森で毎週土曜開催「battle stadium」(審査が無いイベント)\n・BoiceLess Festival初戦敗退 (審査を勝ち上がっていない)```",
+                           "海外からのエントリー": "エントリー前にお伝えすることがありますので、エントリーボタンを押すと自動で問い合わせシステムに接続されます。"}
+        select2 = Select(placeholder="ここをクリック", options=options2)
+        async def select2_callback(interaction):
+            if select2.values[0] != "エントリー状況確認・変更・キャンセル":
+                embed = Embed(
+                    title=select2.values[0], description=option2_answers[select2.values[0]])
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+            await interaction.response.defer(ephemeral=True, invisible=False)
+            embed = Embed(description=f"{interaction.user.mention}")
+            embed.set_author(name=f"{interaction.user.name}#{interaction.user.discriminator}",
+                            icon_url=interaction.user.display_avatar.url)
+            roleA = interaction.user.get_role(1035945116591996979)  # A部門 ビト森杯
+            roleB = interaction.user.get_role(1035945267733737542)  # B部門 ビト森杯
+            roleLOOP = interaction.user.get_role(1036149651847524393)  # LOOP部門 ビト森杯
+            check_entry = [bool(roleA), bool(roleB), bool(roleLOOP)]
+            if any(check_entry):
+                category = ""
+                for role, name in zip(check_entry, ["A", "B", "LOOP"]):
+                    if role:
+                        category += f"{name} "
+                embed.add_field(name="エントリー部門", value=category, inline=False)
+                cell = await worksheet.find(f'{interaction.user.id}')
+                read = await worksheet.cell(cell.row, cell.col - 1).value
+                embed.add_field(name="読みがな", value=read, inline=False)
+            else:
+                embed.description += "\nビト森杯にエントリーしていません"
+            embed.add_field(name="ID", value=interaction.user.id, inline=False)
+            await interaction.followup.send_message(embed=embed)
+        select2.callback = select2_callback
+        view = await get_view(change_contact=True, call_admin=True)
+        view.add_item(select2)
+        await panel.edit(view=view)
+        return
 
 
 @client.event
@@ -225,7 +260,7 @@ async def on_member_update(before, after):
             return
         if bool(roleA) and bool(roleB):
             embed = Embed(
-                title=f"AB重複エントリー検知", description=f"{after.display_name}\n{after.id}", color=red)
+                title="AB重複エントリー検知", description=f"{after.display_name}\n{after.id}", color=red)
             await bot_channel.send(admin.mention, embed=embed)
             await bot_test_channel.send(embed=embed)
             cell = await worksheet.find(f'{after.id}')
