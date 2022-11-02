@@ -21,5 +21,6 @@ COPY discordbot_bf.py discordbot_bf.py
 COPY makesomenoise-4243a19364b1.json makesomenoise-4243a19364b1.json
 COPY tournament.png tournament.png
 COPY GenEiLateGo_v2.ttc GenEiLateGo_v2.ttc
+COPY neolgdn.py neolgdn.py
 CMD ["python", "-u", "discordbot_bf.py"]
 ARG EnvironmentVariable
