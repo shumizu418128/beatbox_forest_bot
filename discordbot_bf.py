@@ -34,7 +34,7 @@ class entry_modal(Modal):
     def __init__(self, name: str, category: str) -> None:
         super().__init__(title=f"{category}部門 読みがな登録", custom_id=category)
         self.add_item(
-            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder="読みがな（ひらがな）"))
+            InputText(label=f"あなたの名前（{name}）の「読みがな」を、ひらがなで入力", placeholder="ひらがなで入力"))
 
     # self → children[0].value(ユーザー入力内容), custom_id, title
     async def callback(self, interaction):
