@@ -727,9 +727,7 @@ async def on_message(message):
         admin = message.author.get_role(904368977092964352)  # ビト森杯運営
         if admin is None:
             return
-        emoji_names = [emoji.name for emoji in message.guild.emojis]
-        index = emoji_names.index("rcc")
-        loop_emoji = message.guild.emojis[index]
+        loop_emoji = await message.guild.fetch_emoji(885778461879320586)  # Loopボタンの絵文字
         buttonA = Button(
             label="Entry", style=discord.ButtonStyle.primary, emoji="🇦", custom_id="A")
         buttonB = Button(
