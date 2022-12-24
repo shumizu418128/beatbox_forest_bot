@@ -63,7 +63,7 @@ class entry_modal(Modal):
         gc = gspread_asyncio.AsyncioGspreadClientManager(get_credits)
         agc = await gc.authorize()
         workbook = await agc.open_by_key('1WcwdGVf7NRKerM1pnZu9kIsgA0VYy5TddyGdKHBzAu4')
-        worksheet = await workbook.worksheet('botデータベース（さわらないでね）')
+        worksheet = await workbook.worksheet('botデータベース（参加者）')
         materials = {"A": {"role": roleA, "number": 0},
                      "B": {"role": roleB, "number": 1},
                      "LOOP": {"role": roleLOOP, "number": 2}}
@@ -198,7 +198,7 @@ async def new_contact(member_id: int):  # 新規問い合わせを作成
         gc = gspread_asyncio.AsyncioGspreadClientManager(get_credits)
         agc = await gc.authorize()
         workbook = await agc.open_by_key('1WcwdGVf7NRKerM1pnZu9kIsgA0VYy5TddyGdKHBzAu4')
-        worksheet = await workbook.worksheet('botデータベース（さわらないでね）')
+        worksheet = await workbook.worksheet('botデータベース（参加者）')
         options2 = [SelectOption(label="エントリー方法・締切", emoji="1️⃣"),
                     SelectOption(label="複数部門エントリー", emoji="2️⃣"),
                     SelectOption(label="A, B部門の違い", emoji="3️⃣"),
@@ -209,6 +209,7 @@ async def new_contact(member_id: int):  # 新規問い合わせを作成
                            "A, B部門の違い": "A部門: 大会出場経験あり\nB部門: 大会出場経験なし\n```大会出場経験とは、オフラインもしくはオンラインで開催されたもののうち、「審査員による審査を勝ち上がった経験」を指します。\n※大会の規模は考慮しません。\n\n大会出場経験の例\n・狼煙の予選通過\n・小規模オンライン大会予選通過\n\n大会出場経験と見なされない例\n・ビト森で毎週土曜開催「battle stadium」(審査が無いイベント)\n・BoiceLess Festival初戦敗退 (審査を勝ち上がっていない)```",
                            "海外からのエントリー": "エントリー前にお伝えすることがありますので、エントリーボタンを押すと自動で問い合わせシステムに接続されます。"}
         select2 = Select(placeholder="ここをクリック", options=options2)
+
         async def select2_callback(interaction):
             if select2.values[0] != "エントリー状況確認・変更・キャンセル":
                 embed = Embed(
@@ -221,7 +222,8 @@ async def new_contact(member_id: int):  # 新規問い合わせを作成
                              icon_url=interaction.user.display_avatar.url)
             roleA = interaction.user.get_role(1035945116591996979)  # A部門 ビト森杯
             roleB = interaction.user.get_role(1035945267733737542)  # B部門 ビト森杯
-            roleLOOP = interaction.user.get_role(1036149651847524393)  # LOOP部門 ビト森杯
+            roleLOOP = interaction.user.get_role(
+                1036149651847524393)  # LOOP部門 ビト森杯
             check_entry = [bool(roleA), bool(roleB), bool(roleLOOP)]
             if any(check_entry):
                 category = ""
@@ -248,7 +250,7 @@ async def on_member_update(before, after):
     gc = gspread_asyncio.AsyncioGspreadClientManager(get_credits)
     agc = await gc.authorize()
     workbook = await agc.open_by_key('1WcwdGVf7NRKerM1pnZu9kIsgA0VYy5TddyGdKHBzAu4')
-    worksheet = await workbook.worksheet('botデータベース（さわらないでね）')
+    worksheet = await workbook.worksheet('botデータベース（参加者）')
     roleA = after.get_role(1035945116591996979)  # A部門 ビト森杯
     roleB = after.get_role(1035945267733737542)  # B部門 ビト森杯
     roleLOOP = after.get_role(1036149651847524393)  # LOOP部門 ビト森杯
@@ -292,7 +294,7 @@ async def on_user_update(before, after):
     gc = gspread_asyncio.AsyncioGspreadClientManager(get_credits)
     agc = await gc.authorize()
     workbook = await agc.open_by_key('1WcwdGVf7NRKerM1pnZu9kIsgA0VYy5TddyGdKHBzAu4')
-    worksheet = await workbook.worksheet('botデータベース（さわらないでね）')
+    worksheet = await workbook.worksheet('botデータベース（参加者）')
     bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
     bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
     if before.display_name != after.display_name:
@@ -318,7 +320,7 @@ async def on_message(message):
     gc = gspread_asyncio.AsyncioGspreadClientManager(get_credits)
     agc = await gc.authorize()
     workbook = await agc.open_by_key('1WcwdGVf7NRKerM1pnZu9kIsgA0VYy5TddyGdKHBzAu4')
-    worksheet = await workbook.worksheet('botデータベース（さわらないでね）')
+    worksheet = await workbook.worksheet('botデータベース（参加者）')
     # channels
     bot_channel = client.get_channel(1035946838487994449)  # ビト森杯 進行bot
     bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
@@ -727,7 +729,8 @@ async def on_message(message):
         admin = message.author.get_role(904368977092964352)  # ビト森杯運営
         if admin is None:
             return
-        loop_emoji = await message.guild.fetch_emoji(885778461879320586)  # Loopボタンの絵文字
+        # Loopボタンの絵文字
+        loop_emoji = await message.guild.fetch_emoji(885778461879320586)
         buttonA = Button(
             label="Entry", style=discord.ButtonStyle.primary, emoji="🇦", custom_id="A")
         buttonB = Button(
