@@ -20,7 +20,7 @@ yellow = 0xffff00
 red = 0xff0000
 blue = 0x00bfff
 ox_list = ["⭕", "❌"]
-print(f"ビト森杯bot (Local): {discord.__version__}")
+print(f"ビト森杯bot: {discord.__version__}")
 
 
 def get_credits():
