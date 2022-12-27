@@ -576,12 +576,12 @@ async def on_user_update(before, after):
 
 @client.event
 async def on_interaction(interaction):
-    if interaction.channel.id == 930446820839157820:  # バトスタ参加
+    if interaction.channel.id in [930446820839157820, 930839018671837184]:  # バトスタ参加, チャット
         return
     bot_test_channel = client.get_channel(897784178958008322)  # bot用チャット
     interaction_type = "button"
     if interaction.type == discord.InteractionType.modal_submit:
-        interaction_type = "modal"
+        interaction_type = "modal_submit"
     embed = Embed(title=f"interaction: {interaction_type}",
                   description=f"```custom_id: {interaction.custom_id}\nmember_id: {interaction.user.id}\n  channel: {interaction.channel.name}```{interaction.channel.jump_url}", color=blue)
     embed.set_author(name=interaction.user.display_name,
