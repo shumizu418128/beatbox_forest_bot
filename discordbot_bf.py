@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 import asyncio
 import re
+from datetime import datetime, timedelta, timezone
 from difflib import get_close_matches
 
 import discord
 import gspread_asyncio
 from discord import Embed
 from discord.ui import Button, InputText, Modal, View
-from neologdn import normalize
 from oauth2client.service_account import ServiceAccountCredentials
 from PIL import Image, ImageDraw, ImageFont
+
+from neologdn import normalize
 
 intents = discord.Intents.all()  # デフォルトのIntentsオブジェクトを生成
 intents.typing = False  # typingを受け取らないように
 client = discord.Bot(intents=intents)
+JST = timezone(timedelta(hours=9))
 re_hiragana = re.compile(r'^[ぁ-ゞ　 ー]+$')
 green = 0x00ff00
 yellow = 0xffff00
@@ -49,7 +52,7 @@ class entry_modal(Modal):
         # ひらがな判定・応答
         if not re_hiragana.fullmatch(self.children[0].value):
             embed = Embed(
-                title="Error", description=f"{self.custom_id}部門 登録できませんでした。\n読みがなは、ひらがな・伸ばし棒 `ー` のみで入力してください。\n\n入力内容：{self.children[0].value}", color=red)
+                title="Error", description=f"{self.custom_id}部門 登録できませんでした。\n読みがなは、**「ひらがな・伸ばし棒** `ー` **のみ」**で入力してください。\n\n入力内容：{self.children[0].value}", color=red)
             await bot_channel.send(interaction.user.mention, embed=embed)
             embed.set_footer(text=f"bot制作: {str(tari3210)}")
             await interaction.followup.send(embed=embed, ephemeral=True)
@@ -60,6 +63,7 @@ class entry_modal(Modal):
                         value=f"`読み：`{self.children[0].value}", inline=False)
         await bot_channel.send(interaction.user.mention, embed=embed)
         embed.set_footer(text=f"bot制作: {str(tari3210)}")
+        embed.timestamp = datetime.now(JST)
         await interaction.followup.send(embed=embed, ephemeral=True)
         # DBアクセス準備
         gc = gspread_asyncio.AsyncioGspreadClientManager(get_credits)
@@ -105,6 +109,7 @@ class sponsor_modal(Modal):
                        description="ご協力ありがとうございます！\n\n入力内容変更のご希望やご質問は、いつでもこのチャンネルにご記入ください。\n\n入力内容", color=green)
         embed1.set_author(name=f"{interaction.user.display_name}さん",
                           icon_url=interaction.user.display_avatar.url)
+        embed1.timestamp = datetime.now(JST)
         embed1.add_field(
             name="支援金額", value=self.children[0].value, inline=False)
         embed1.add_field(
@@ -209,6 +214,7 @@ async def get_view_contact():
                 category += category_name
         embed = Embed(title="キャンセル完了",
                       description=f"以下の部門エントリーを取り消しました。\n{category}", color=green)
+        embed.timestamp = datetime.now(JST)
         await interaction.channel.send(embed=embed)
         await contact.send(interaction.user.mention, embed=embed)
         return
@@ -260,7 +266,8 @@ async def get_view_contact():
         for role, category_name in zip([roleA, roleB, roleLOOP], category_names):
             if bool(role):
                 category += category_name
-        embed = Embed(title="エントリー状況", description=f"{category} にエントリーしています", color=blue)
+        embed = Embed(title="エントリー状況",
+                      description=f"{category} にエントリーしています", color=blue)
         embed.set_author(name=interaction.user.display_name,
                          icon_url=interaction.user.display_avatar.url)
         cell = await worksheet.find(str(interaction.user.id))
@@ -393,7 +400,8 @@ async def get_view_entry():
         for role, category_name in zip([roleA, roleB, roleLOOP], category_names):
             if bool(role):
                 category += category_name
-        embed = Embed(title="エントリー状況", description=f"{category} にエントリーしています", color=blue)
+        embed = Embed(title="エントリー状況",
+                      description=f"{category} にエントリーしています", color=blue)
         embed.set_author(name=interaction.user.display_name,
                          icon_url=interaction.user.display_avatar.url)
         cell = await worksheet.find(str(interaction.user.id))
@@ -540,7 +548,8 @@ async def name_check(member_id: int):
     cell = await worksheet.find(str(member.id))
     if cell is None:
         embed = Embed(title="ニックネーム変更・DB破損検知", description="自動修正失敗", color=red)
-        embed.add_field(name=member.display_name, value=str(member.id), inline=False)
+        embed.add_field(name=member.display_name,
+                        value=str(member.id), inline=False)
         await bot_channel.send(admin.mention, embed=embed)
         return
     right_name = await worksheet.cell(cell.row, cell.col - 2)
@@ -574,9 +583,10 @@ async def on_interaction(interaction):
     if interaction.type == discord.InteractionType.modal_submit:
         interaction_type = "modal"
     embed = Embed(title=f"interaction: {interaction_type}",
-                  description=f"```custom_id: {interaction.custom_id}\nmember_id: {interaction.user.id}\nchannel: {interaction.channel.name}```{interaction.channel.jump_url}", color=blue)
+                  description=f"```custom_id: {interaction.custom_id}\nmember_id: {interaction.user.id}\n  channel: {interaction.channel.name}```{interaction.channel.jump_url}", color=blue)
     embed.set_author(name=interaction.user.display_name,
                      icon_url=interaction.user.display_avatar.url)
+    embed.timestamp = datetime.now(JST)
     await bot_test_channel.send(embed=embed)
 
 
@@ -660,6 +670,7 @@ async def on_message(message):
                 category += category_name
         embed = Embed(title="キャンセル完了",
                       description=f"以下の部門エントリーを取り消しました。\n{category}", color=green)
+        embed.timestamp = datetime.now(JST)
         await message.channel.send(embed=embed)
         await bot_channel.send(member.mention, embed=embed)
         return
@@ -828,6 +839,7 @@ async def on_message(message):
                              icon_url=member.display_avatar.url)
             embed.add_field(name="名前", value=member.display_name, inline=False)
             embed.add_field(name="読みがな", value=read.content, inline=False)
+            embed.timestamp = datetime.now(JST)
             await message.channel.send(embed=embed)
             await bot_channel.send(member.mention, embed=embed)
             embed_msg = await message.channel.send("処理中...")
@@ -940,7 +952,7 @@ async def on_message(message):
 
     if message.content == "s.tm":
         """
-        LOOP非対応
+        LOOP非対応, スプシ座標要更新
         """
         # DBアクセス準備
         gc = gspread_asyncio.AsyncioGspreadClientManager(get_credits)
