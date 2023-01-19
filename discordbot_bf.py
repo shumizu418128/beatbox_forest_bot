@@ -312,6 +312,7 @@ async def get_view_entry():
         roleB = interaction.user.get_role(920321241976541204)  # B部門 ビト森杯
         roleLOOP = interaction.user.get_role(
             1036149651847524393)  # LOOP部門 ビト森杯
+        admin = interaction.guild.get_role(904368977092964352)  # ビト森杯運営
         if bool(roleA) and interaction.custom_id != "LOOP":
             embed = Embed(
                 title="Error", description="すでに🇦部門にエントリーしています。", color=red)
@@ -357,8 +358,7 @@ async def get_view_entry():
         embed = Embed(title=f"{interaction.custom_id}部門 海外エントリー",
                       description="Please hold on, the moderator will be here soon\n請稍候片刻, 正與管理員對接\n대회 운영자가 대응합니다. 잠시 기다려주십시오\n\n`あなたは海外からのアクセスと判定されました。\n日本語のサポートをご希望の場合、このチャンネルに`\n\n **日本語希望** \n\n`とご記入ください。`", color=blue)
         embed.set_footer(text=f"言語コード: {interaction.locale}")
-        # f"{admin.mention}\n{interaction.user.mention}",
-        await thread.send(embed=embed)
+        await thread.send(f"{admin.mention}\n{interaction.user.mention}", embed=embed)
 
         def check(m):
             return m.channel == thread and m.content == "日本語希望"
@@ -895,7 +895,7 @@ async def on_message(message):
             _, _ = await client.wait_for('reaction_add', check=check)
             await embed_msg.delete()
             return
-            embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
+        embed.add_field(name="マイク設定確認", value="⭕確認済み", inline=False)
         button_move = Button(
             label="メイン会場へ移動", style=discord.ButtonStyle.primary, custom_id="move")
 
