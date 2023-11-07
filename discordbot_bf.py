@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncio
+import os
 import re
 from datetime import datetime, timedelta, timezone
 from difflib import get_close_matches
@@ -24,6 +25,7 @@ red = 0xff0000
 blue = 0x00bfff
 ox_list = ["⭕", "❌"]
 print(f"ビト森杯bot: {discord.__version__}")
+TOKEN = os.environ['DISCORD_BOT_TOKEN']
 
 
 def get_credits():
@@ -989,4 +991,4 @@ async def on_message(message):
         if message.content == "contact":
             await message.delete(delay=1)
 
-client.run("OTUyOTYyOTAyMzI1ODg2OTg2.GaOseR.nhstAXFsu7mIyenljeWbC6liMf3T2OldssKq_E")
+client.run(TOKEN)
