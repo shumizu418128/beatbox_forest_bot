@@ -1,6 +1,5 @@
 git+https://github.com/Pycord-Development/pycord
 pynacl
-asyncio
 Pillow
 numpy
 pyocr
