@@ -4,7 +4,7 @@ asyncio
 Pillow
 numpy
 pyocr
-opencv-python--headless
+opencv-python-headless
 scipy
 gspread_asyncio
 oauth2client
